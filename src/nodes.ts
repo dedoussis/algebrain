@@ -1,16 +1,20 @@
-export class Node {
-  value: any
-}
+import { List } from 'immutable'
 
-export class Num extends Node {
-  value: number
-  constructor(value: number) {
-    super()
+export abstract class Node {
+  readonly value: any
+  constructor(value: any) {
     this.value = value
   }
 
   toString(): string {
     return this.value.toString()
+  }
+}
+
+export class Num extends Node {
+  readonly value: number
+  constructor(value: number) {
+    super(value)
   }
 }
 
@@ -29,35 +33,33 @@ export enum OperatorSymbol {
 }
 
 export class Operator extends Node {
-  value: string
-  children: Node[]
+  readonly value: string
+  readonly children: List<Node>
   constructor(value: string, children: Node[] = []) {
-    super()
-    this.value = value
-    this.children = children
+    super(value)
+    this.children = List(children)
   }
 
   addChild(child: Node): Operator {
-    return new Operator(this.value, this.children.concat([child]))
+    return new Operator(this.value, this.children.concat([child]).toArray())
   }
+
   toString(): string {
-    return this.children.join(this.value)
+    return this.children.map(child => child.toString()).join(this.value)
   }
 }
 
 export class Symbol extends Node {
-  value: string
+  readonly value: string
   constructor(value: string) {
-    super()
-    this.value = value
+    super(value)
   }
 }
 
 export class Rewritable extends Node {
-  value: string
+  readonly value: string
   constructor(value: string) {
-    super()
-    this.value = value
+    super(value)
   }
 
   toString(): string {

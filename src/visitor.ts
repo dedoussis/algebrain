@@ -26,11 +26,11 @@ export default class Visitor extends AbstractParseTreeVisitor<Node>
     return new Operator(symbol, children)
   }
 
-  defaultResult() {
-    return new Node()
+  defaultResult(): Node {
+    return new Node(null)
   }
 
-  visitPrintExpr(ctx: PrintExprContext) {
+  visitPrintExpr(ctx: PrintExprContext): Node {
     return this.visit(ctx.expr())
   }
 
