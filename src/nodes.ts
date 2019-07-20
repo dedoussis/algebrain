@@ -1,6 +1,6 @@
 import { List } from 'immutable'
 
-export abstract class Node {
+export class Node {
   readonly value: any
   constructor(value: any) {
     this.value = value
