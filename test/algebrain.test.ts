@@ -1,14 +1,33 @@
-import DummyClass from "../src/algebrain"
+import Algebrain from '../src/algebrain'
+import { Operator, Num, Symbol, OperatorSymbol } from '../src/nodes'
 
-/**
- * Dummy test
- */
-describe("Dummy test", () => {
-  it("works if true is truthy", () => {
-    expect(true).toBeTruthy()
-  })
+const cases = [
+  ['1+3', new Operator(OperatorSymbol.PLUS, [new Num(1), new Num(3)])],
+  [
+    '1-3/2',
+    new Operator(OperatorSymbol.MINUS, [
+      new Num(1),
+      new Operator(OperatorSymbol.DIV, [new Num(3), new Num(2)])
+    ])
+  ],
+  [
+    'x^5/2',
+    new Operator(OperatorSymbol.DIV, [
+      new Operator(OperatorSymbol.POW, [new Symbol('x'), new Num(5)]),
+      new Num(2)
+    ])
+  ],
+  [
+    'x^5/(2+y)',
+    new Operator(OperatorSymbol.DIV, [
+      new Operator(OperatorSymbol.POW, [new Symbol('x'), new Num(5)]),
+      new Operator(OperatorSymbol.PLUS, [new Num(2), new Symbol('y')])
+    ])
+  ]
+]
 
-  it("DummyClass is instantiable", () => {
-    expect(new DummyClass()).toBeInstanceOf(DummyClass)
+describe('Algebrain parsing', () => {
+  test.each(cases)('Parsing case: %p', (freeText, expectedRootNode) => {
+    expect(Algebrain.parse(freeText)).toEqual(expectedRootNode)
   })
 })

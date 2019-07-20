@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    // "suppressImplicitAnyIndexErrors": true,
+    "strictPropertyInitialization": false,
     "moduleResolution": "node",
-    "target": "es5",
-    "module":"es2015",
-    "lib": ["es2015", "es2016", "es2017", "dom"],
+    "target": "es2015",
+    "module": "es2015",
+    "lib": ["es2015"],
     "strict": true,
     "sourceMap": true,
     "declaration": true,
@@ -18,5 +20,10 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "typings/browser.d.ts",
+    "typings/browser",
+    "node_modules"
   ]
 }
