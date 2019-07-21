@@ -1,10 +1,10 @@
 {
   "name": "algebrain",
-  "version": "0.0.0-alpha1",
+  "version": "0.0.0-alpha2",
   "description": "Combuter Algebra System focusing on symbolic transformations",
   "keywords": ["algebra", "CAS", "symbolic", "transformation", "rewriting", "rules", "math", "mathematics", "compiler"],
-  "main": "dist/algebrain.umd.js",
-  "module": "dist/algebrain.es5.js",
+  "main": "dist/lib/algebrain.js",
+  "module": "dist/lib/algebrain.js",
   "typings": "dist/types/algebrain.d.ts",
   "files": [
     "dist"
@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "tsc --module commonjs && typedoc --out docs --target es6 --theme minimal --mode file src",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
@@ -74,8 +74,11 @@
     ]
   },
   "prettier": {
-    "semi": false,
-    "singleQuote": true
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true,
+    "endOfLine": "lf"
   },
   "commitlint": {
     "extends": [
@@ -103,11 +106,6 @@
     "replace-in-file": "^3.4.2",
     "rimraf": "^2.6.2",
     "rollup": "^0.67.0",
-    "rollup-plugin-commonjs": "^9.1.8",
-    "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-sourcemaps": "^0.4.2",
-    "rollup-plugin-typescript2": "^0.18.0",
     "semantic-release": "^15.9.16",
     "shelljs": "^0.8.3",
     "travis-deploy-once": "^5.0.9",

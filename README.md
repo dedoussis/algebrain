@@ -1,4 +1,4 @@
-# Algebrain
+# Algebrain 🧠
 [![Build Status](https://travis-ci.com/dedoussis/algebrain.ts.svg?token=Sgwg8sRpH88p8zZAzn72&branch=master)](https://travis-ci.com/dedoussis/algebrain.ts)
 
 Combuter Algebra System focusing on symbolic transformations.
