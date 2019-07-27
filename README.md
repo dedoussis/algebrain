@@ -39,7 +39,8 @@ const evaluated = expr.evaluate();
 //         ├── y
 //         └── 12
 
-console.log(`My evaluated expression: ${evaluated}`);
+console.log(`My evaluated expression is: ${evaluated}`);
+// > My evaluated expression is: 9*x+5/(y-12)
 ```
 
 ## Develop
