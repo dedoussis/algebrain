@@ -12,7 +12,7 @@ Parser generated using [ANTLR4](https://www.antlr.org/).
 ```javascript
 import Algebrain from 'algebrain';
 
-const expr = Algebrain.parse("(3^2)*x+5/y");
+const expr = Algebrain.parse("(3^2)*x+5/(y-12)");
 
 // Your string expression is now a tree of nodes:
 //  +
@@ -23,7 +23,9 @@ const expr = Algebrain.parse("(3^2)*x+5/y");
 //  │       └── 2
 //  └── /
 //      ├── 5
-//      └── y
+//      └── -
+//          ├── y
+//          └── 12
 
 const evaluated = expr.evaluate();
 // Evaluated tree of the following form:
@@ -33,8 +35,11 @@ const evaluated = expr.evaluate();
 // │   └── x
 // └── /
 //     ├── 5
-//     └── y 
+//     └── -
+//         ├── y
+//         └── 12
 
+console.log(`My evaluated expression: ${evaluated}`);
 ```
 
 ## Develop
