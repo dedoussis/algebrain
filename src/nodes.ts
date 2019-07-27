@@ -1,6 +1,8 @@
 import { List, Map } from 'immutable';
 
-export class Node {
+export abstract class Parsable {}
+
+export class Node implements Parsable {
     readonly value: any;
     constructor(value: any) {
         this.value = value;
