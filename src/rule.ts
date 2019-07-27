@@ -1,5 +1,5 @@
 import { Map, List } from 'immutable';
-import { Node, Operator, Parsable, Rewritable } from './nodes';
+import { Node, Operator, Parsable, Rewritable, TRUE } from './nodes';
 
 export class Rule implements Parsable {
     readonly lhs: Node;
@@ -40,7 +40,10 @@ export class Rule implements Parsable {
 
     match(other: Node): Map<string, Node> {
         try {
-            return Rule.matchNodes(this.lhs, other);
+            if (this.condition === undefined || this.condition.evaluate().equals(TRUE)) {
+                return Rule.matchNodes(this.lhs, other);
+            }
+            return Map<string, Node>();
         } catch {
             return Map<string, Node>();
         }
