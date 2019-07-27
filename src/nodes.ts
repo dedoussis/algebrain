@@ -18,7 +18,7 @@ export class Node {
         return this.constructor === other.constructor && this.value === other.value;
     }
 
-    cannonical(): Node {
+    canonical(): Node {
         return new Node(this.value);
     }
 
@@ -43,8 +43,15 @@ export class Num extends Node {
         if (this.value < 0) {
             return new Operator(OperatorSymbol.MINUS, [new Num(this.value * -1)]);
         }
-        return super.evaluate();
+        return new Num(this.value);
     }
+}
+
+export enum ExpressionSymbol {
+    LPARENS = '(',
+    RAPRENS = ')',
+    COMMA = ',',
+    NONE = '',
 }
 
 export enum OperatorSymbol {
@@ -62,19 +69,29 @@ export enum OperatorSymbol {
 }
 
 export class Operator extends Node {
-    private readonly evaluators: Map<OperatorSymbol, Evaluator> = evaluators;
+    private readonly handlers: Map<OperatorSymbol, Handlers> = operatorSymbolHandlers;
+    private readonly evaluator: Evaluator;
+    private readonly stringifier: Stringifier;
+
     readonly value: string;
     readonly children: List<Node>;
-    private readonly evaluator: Evaluator;
 
     constructor(value: string, children: Node[] = []) {
         super(value);
         this.children = List(children);
-        const notFoundEvaluator: Evaluator = {
-            f: (children: List<Node>) => new Operator(this.value, children.toArray()),
-            recursive: false,
+        const notFoundHandlers: Handlers = {
+            evaluator: {
+                f: (children: List<Node>) => new Operator(this.value, children.toArray()),
+                recursive: false,
+            },
+            stringifier: {
+                f: (child: Operator, index: number) => child.toString(),
+                infix: false,
+            },
         };
-        this.evaluator = this.evaluators.get(this.value as OperatorSymbol, notFoundEvaluator);
+        const handlers = this.handlers.get(this.value as OperatorSymbol, notFoundHandlers);
+        this.evaluator = handlers.evaluator;
+        this.stringifier = handlers.stringifier;
     }
 
     addChild(child: Node): Operator {
@@ -82,7 +99,12 @@ export class Operator extends Node {
     }
 
     toString(): string {
-        return this.children.map(child => child.toString()).join(this.value);
+        const stringified: List<string> = this.children.map((child: Node, index: number) =>
+            child instanceof Operator ? this.stringifier.f(child, index) : child.toString()
+        );
+        return this.stringifier.infix
+            ? infix(this.value, stringified)
+            : prefix(this.value, stringified);
     }
 
     isFlat(): boolean {
@@ -102,12 +124,12 @@ export class Operator extends Node {
         return this.evaluator.f(evaluatedChildren);
     }
 
-    cannonical(): Operator {
+    canonical(): Operator {
         let sortedChildren: List<Node> = this.children.sort((one, other) =>
             Node.compare(one, other, List<Function>([Operator, Rewritable, Symbol, Num]))
         );
         sortedChildren = sortedChildren.map(child =>
-            child instanceof Operator ? child.cannonical() : child
+            child instanceof Operator ? child.canonical() : child
         );
         return new Operator(this.value, sortedChildren.toArray());
     }
@@ -134,82 +156,29 @@ export class Rewritable extends Node {
 export const TRUE = new Num(1);
 export const FALSE = new Num(0);
 
-function evaluatePlus(children: List<Node>): Node {
-    const nums: List<Num> = children.filter(child => child instanceof Num);
-    const nonNums: List<Node> = children.filter(child => !(child instanceof Num));
-    const sumNode: Num = nums.reduce(
-        (existing: Num, num: Num) => new Num(existing.value + num.value)
-    );
-    if (nonNums.isEmpty()) {
-        return sumNode;
-    }
-    return new Operator(
-        OperatorSymbol.PLUS,
-        sumNode ? nonNums.concat(sumNode).toArray() : nonNums.toArray()
-    );
-}
-
-function evaluateMinus(children: List<Node>): Node {
-    const substractable: List<Num> = children.takeWhile(child => child instanceof Num);
-    const unsubstractable: List<Node> = children.skipWhile(child => child instanceof Num);
-    const subNode: Num = substractable.reduce(
-        (existing: Num, num: Num) => new Num(existing.value - num.value)
-    );
-    if (unsubstractable.isEmpty()) {
-        return subNode;
-    }
-
-    return new Operator(
-        OperatorSymbol.MINUS,
-        subNode ? [subNode].concat(unsubstractable.toArray()) : unsubstractable.toArray()
-    );
-}
-
-function evaluateMul(children: List<Node>): Node {
-    const nums: List<Num> = children.filter(child => child instanceof Num);
-    const nonNums: List<Node> = children.filter(child => !(child instanceof Num));
-    const mulNode: Num = nums.reduce(
-        (existing: Num, num: Num) => new Num(existing.value * num.value)
-    );
-    if (nonNums.isEmpty()) {
-        return mulNode;
-    }
-    return new Operator(
-        OperatorSymbol.MUL,
-        mulNode ? nonNums.concat(mulNode).toArray() : nonNums.toArray()
-    );
-}
-
-function evaluateDiv(children: List<Node>): Node {
-    const divisible: List<Num> = children.takeWhile(child => child instanceof Num);
-    const nonDivisible: List<Node> = children.skipWhile(child => child instanceof Num);
-    const divNode: Num = divisible.reduce(
-        (existing: Num, num: Num) => new Num(existing.value / num.value)
-    );
-
-    if (nonDivisible.isEmpty()) {
-        return divNode;
-    }
-    return new Operator(
-        OperatorSymbol.DIV,
-        divNode ? [divNode].concat(nonDivisible.toArray()) : nonDivisible.toArray()
-    );
-}
-
-function evaluatePow(children: List<Node>): Node {
-    const nums: List<Num> = children.filter(child => child instanceof Num);
-    const nonNums: List<Node> = children.filter(child => !(child instanceof Num));
-    const powNode: Num = nums.reduce(
-        (existing: Num, num: Num) => new Num(existing.value ** num.value)
-    );
-
-    if (nonNums.isEmpty()) {
-        return powNode;
-    }
-    return new Operator(
-        OperatorSymbol.POW,
-        powNode ? nonNums.concat(powNode).toArray() : nonNums.toArray()
-    );
+function evaluateNumericalOperator(
+    operatorSymbol: OperatorSymbol,
+    commutative: boolean,
+    operation: (left: number, right: number) => number
+): (children: List<Node>) => Node {
+    return (children: List<Node>) => {
+        const toEval: List<Num> = commutative
+            ? children.filter(child => child instanceof Num)
+            : children.takeWhile(child => child instanceof Num);
+        const notToEval: List<Node> = commutative
+            ? children.filter(child => !(child instanceof Num))
+            : children.skipWhile(child => child instanceof Num);
+        const resultNode: Num = toEval.reduce(
+            (existing: Num, num: Num) => new Num(operation(existing.value, num.value))
+        );
+        if (notToEval.isEmpty()) {
+            return resultNode;
+        }
+        return new Operator(
+            operatorSymbol,
+            resultNode ? [resultNode].concat(notToEval.toArray()) : notToEval.toArray()
+        );
+    };
 }
 
 function evaluateDepends(children: List<Node>): Num {
@@ -222,7 +191,7 @@ function evaluateDepends(children: List<Node>): Num {
         const dependent: Node = dependents.first();
         if (dependent instanceof Operator) {
             return dependent.children.some(
-                child => evaluateDepends(List([child, dependency])).value === 1
+                child => evaluateDepends(List([child, dependency])) === TRUE
             )
                 ? TRUE
                 : FALSE;
@@ -232,7 +201,9 @@ function evaluateDepends(children: List<Node>): Num {
         }
         return TRUE;
     }
-    return dependents.every(dependent => evaluateDepends(List([dependent, dependency])).value === 1)
+    return dependents.every(dependent =>
+        evaluateDepends(List([dependent, dependency])).equals(TRUE)
+    )
         ? TRUE
         : FALSE;
 }
@@ -245,11 +216,11 @@ function evaluateFlag(children: List<Node>): Num {
 }
 
 function evaluateLogicalAnd(children: List<Node>): Num {
-    return children.every(child => child.evaluate().value > 0) ? TRUE : FALSE;
+    return children.every(child => child.evaluate().equals(TRUE)) ? TRUE : FALSE;
 }
 
 function evaluateLogicalOr(children: List<Node>): Num {
-    return children.some(child => child.evaluate().value > 0) ? TRUE : FALSE;
+    return children.some(child => child.evaluate().equals(TRUE)) ? TRUE : FALSE;
 }
 
 function evaluateEquals(children: List<Node>): Num {
@@ -260,26 +231,201 @@ function evaluateNegation(children: List<Node>): Num {
     if (children.size !== 1) {
         throw Error(`Cannot do negation evaluation on ${children.size} childen`);
     }
-    return children.first<Node>().evaluate().value === 1 ? FALSE : TRUE;
+    return children
+        .first<Node>()
+        .evaluate()
+        .equals(TRUE)
+        ? FALSE
+        : TRUE;
 }
 
-type EvaluateFunction = (children: List<Node>) => Node;
-
 type Evaluator = {
-    f: EvaluateFunction;
-    recursive: boolean;
+    f: (children: List<Node>) => Node;
+    recursive?: boolean;
+};
+type Stringifier = {
+    f: (child: Operator, index: number) => string;
+    infix?: boolean;
 };
 
-const evaluators: Map<OperatorSymbol, Evaluator> = Map<OperatorSymbol, Evaluator>([
-    [OperatorSymbol.PLUS, { f: evaluatePlus, recursive: false }],
-    [OperatorSymbol.MINUS, { f: evaluateMinus, recursive: false }],
-    [OperatorSymbol.MUL, { f: evaluateMul, recursive: false }],
-    [OperatorSymbol.DIV, { f: evaluateDiv, recursive: false }],
-    [OperatorSymbol.POW, { f: evaluatePow, recursive: false }],
-    [OperatorSymbol.DEPENDS, { f: evaluateDepends, recursive: true }],
-    [OperatorSymbol.AND, { f: evaluateLogicalAnd, recursive: false }],
-    [OperatorSymbol.OR, { f: evaluateLogicalOr, recursive: false }],
-    [OperatorSymbol.NOT, { f: evaluateNegation, recursive: false }],
-    [OperatorSymbol.FLAG, { f: evaluateFlag, recursive: false }],
-    [OperatorSymbol.EQUALS, { f: evaluateEquals, recursive: false }],
+type Handlers = {
+    evaluator: Evaluator;
+    stringifier: Stringifier;
+};
+
+const operatorSymbolHandlers: Map<OperatorSymbol, Handlers> = Map<OperatorSymbol, Handlers>([
+    [
+        OperatorSymbol.PLUS,
+        {
+            evaluator: {
+                f: evaluateNumericalOperator(
+                    OperatorSymbol.PLUS,
+                    true,
+                    (left, right) => left + right
+                ),
+                recursive: false,
+            },
+            stringifier: { f: stringifyChildPlus, infix: true },
+        },
+    ],
+    [
+        OperatorSymbol.MINUS,
+        {
+            evaluator: {
+                f: evaluateNumericalOperator(
+                    OperatorSymbol.MINUS,
+                    false,
+                    (left, right) => left - right
+                ),
+                recursive: false,
+            },
+            stringifier: { f: stringifyChildMinus, infix: true },
+        },
+    ],
+    [
+        OperatorSymbol.MUL,
+        {
+            evaluator: {
+                f: evaluateNumericalOperator(
+                    OperatorSymbol.MUL,
+                    true,
+                    (left, right) => left * right
+                ),
+                recursive: false,
+            },
+            stringifier: {
+                f: stringifyChild(
+                    List<OperatorSymbol>([OperatorSymbol.PLUS, OperatorSymbol.MINUS])
+                ),
+                infix: true,
+            },
+        },
+    ],
+    [
+        OperatorSymbol.DIV,
+        {
+            evaluator: {
+                f: evaluateNumericalOperator(
+                    OperatorSymbol.DIV,
+                    false,
+                    (left, right) => left / right
+                ),
+                recursive: false,
+            },
+            stringifier: {
+                f: stringifyChild(
+                    List<OperatorSymbol>([OperatorSymbol.PLUS, OperatorSymbol.MINUS])
+                ),
+                infix: true,
+            },
+        },
+    ],
+    [
+        OperatorSymbol.POW,
+        {
+            evaluator: {
+                f: evaluateNumericalOperator(
+                    OperatorSymbol.POW,
+                    true,
+                    (left, right) => left ** right
+                ),
+                recursive: false,
+            },
+            stringifier: {
+                f: stringifyChild(
+                    List<OperatorSymbol>([
+                        OperatorSymbol.PLUS,
+                        OperatorSymbol.MINUS,
+                        OperatorSymbol.MUL,
+                        OperatorSymbol.DIV,
+                    ])
+                ),
+                infix: true,
+            },
+        },
+    ],
+    [
+        OperatorSymbol.DEPENDS,
+        {
+            evaluator: { f: evaluateDepends, recursive: true },
+            stringifier: { f: stringifyChildPlus },
+        },
+    ],
+    [
+        OperatorSymbol.AND,
+        {
+            evaluator: { f: evaluateLogicalAnd, recursive: false },
+            stringifier: { f: stringifyChildPlus },
+        },
+    ],
+    [
+        OperatorSymbol.OR,
+        {
+            evaluator: { f: evaluateLogicalOr, recursive: false },
+            stringifier: { f: stringifyChildPlus },
+        },
+    ],
+    [
+        OperatorSymbol.NOT,
+        {
+            evaluator: { f: evaluateNegation, recursive: false },
+            stringifier: { f: stringifyChildPlus },
+        },
+    ],
+    [
+        OperatorSymbol.FLAG,
+        {
+            evaluator: { f: evaluateFlag, recursive: false },
+            stringifier: { f: stringifyChildPlus },
+        },
+    ],
+    [
+        OperatorSymbol.EQUALS,
+        {
+            evaluator: { f: evaluateEquals, recursive: false },
+            stringifier: { f: stringifyChildPlus },
+        },
+    ],
 ]);
+
+function infix(operatorSymbol: string, children: List<string>): string {
+    return children.size > 1
+        ? children.join(operatorSymbol)
+        : `${operatorSymbol}${children.first()}`;
+}
+
+function prefix(operatorSymbol: string, children: List<string>): string {
+    return [
+        operatorSymbol,
+        ExpressionSymbol.LPARENS,
+        children.join(children.size > 1 ? ExpressionSymbol.COMMA : ExpressionSymbol.NONE),
+        ExpressionSymbol.RAPRENS,
+    ].join(ExpressionSymbol.NONE);
+}
+
+function parenthesize(child: Node): string {
+    return [ExpressionSymbol.LPARENS, child, ExpressionSymbol.RAPRENS].join(ExpressionSymbol.NONE);
+}
+
+function stringifyChildPlus(child: Operator, index: number): string {
+    return index !== 0 && child.value === OperatorSymbol.MINUS && child.children.size === 1
+        ? parenthesize(child)
+        : child.toString();
+}
+
+function stringifyChildMinus(child: Operator, index: number): string {
+    return index !== 0 &&
+        (child.value === OperatorSymbol.PLUS ||
+            (child.value === OperatorSymbol.MINUS && child.children.size === 1))
+        ? parenthesize(child)
+        : child.toString();
+}
+
+function stringifyChild(
+    parenthesized: List<OperatorSymbol>
+): (child: Operator, index: number) => string {
+    return (child: Operator, index: number) =>
+        parenthesized.includes(child.value as OperatorSymbol)
+            ? parenthesize(child)
+            : child.toString();
+}

@@ -34,7 +34,7 @@ const cases = [
         'depends on true',
         new Operator(OperatorSymbol.DEPENDS, [
             new Operator(OperatorSymbol.MUL, [
-                new Symbol('5'),
+                new Num(5),
                 new Operator(OperatorSymbol.DIV, [new Symbol('x'), new Num(10)]),
             ]),
             new Symbol('x'),
@@ -129,7 +129,7 @@ const cases = [
 
 describe('Node evaluation', () => {
     test.each(cases)('Evaluating case %p', (title, node, evaluatedNode) => {
-        expect(node.evaluate()).toEqual(evaluatedNode);
+        expect(node.evaluate().canonical()).toEqual(evaluatedNode.canonical());
     });
 });
 
@@ -155,7 +155,44 @@ const cannonicalCases = [
 
 describe('Cannonical form', () => {
     test.each(cannonicalCases)('Formatting case %p', (title, node, formattedNode) => {
-        expect(node.cannonical()).toEqual(formattedNode);
+        expect(node.canonical()).toEqual(formattedNode);
+    });
+});
+
+const toStringCases = [
+    ['x', new Symbol('x')],
+    ['6', new Num(6)],
+    ['$u', new Rewritable('u')],
+    ['3+x', new Operator(OperatorSymbol.PLUS, [new Num(3), new Symbol('x')])],
+    [
+        '(2+5)*x',
+        new Operator(OperatorSymbol.MUL, [
+            new Operator(OperatorSymbol.PLUS, [new Num(2), new Num(5)]),
+            new Symbol('x'),
+        ]),
+    ],
+    ['2^(3+1)/2*x+5*3', Algebrain.parse('2^(3+1)/2*x+5*3')],
+    [
+        '-4+x',
+        new Operator(OperatorSymbol.PLUS, [
+            new Operator(OperatorSymbol.MINUS, [new Num(3), new Num(7)]),
+            new Symbol('x'),
+        ]).evaluate(),
+    ],
+    [
+        '-4-(-x)',
+        new Operator(OperatorSymbol.MINUS, [
+            new Operator(OperatorSymbol.MINUS, [new Num(4)]),
+            new Operator(OperatorSymbol.MINUS, [new Symbol('x')]),
+        ]),
+    ],
+    ['-10', new Operator(OperatorSymbol.MINUS, [new Num(10)])],
+    ['(6+5)*4/(2-x)-3', Algebrain.parse('(6+5)*4/(2-x)-3')],
+];
+
+describe('Stringification', () => {
+    test.each(toStringCases)('Formatting case %p', (stringified, node) => {
+        expect(node.toString()).toEqual(stringified);
     });
 });
 
