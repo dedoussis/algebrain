@@ -1,128 +1,209 @@
+import { List, Map } from 'immutable';
 import { Node, Operator, Num, Symbol, OperatorSymbol, TRUE, FALSE, Rewritable } from '../src/nodes';
 import Algebrain from '../src/algebrain';
 
 const cases = [
-    ['flat addition', new Operator(OperatorSymbol.PLUS, [new Num(1), new Num(3)]), new Num(4)],
-    ['flat substraction', new Operator(OperatorSymbol.MINUS, [new Num(6), new Num(5)]), new Num(1)],
+    [
+        'flat addition',
+        new Operator(OperatorSymbol.PLUS, List([new Num(1), new Num(3)])),
+        new Num(4),
+    ],
+    [
+        'flat substraction',
+        new Operator(OperatorSymbol.MINUS, List([new Num(6), new Num(5)])),
+        new Num(1),
+    ],
     [
         'flat multiplication',
-        new Operator(OperatorSymbol.MUL, [new Num(8), new Num(3)]),
+        new Operator(OperatorSymbol.MUL, List([new Num(8), new Num(3)])),
         new Num(24),
     ],
     [
         'flat division (3 children)',
-        new Operator(OperatorSymbol.DIV, [new Num(20), new Num(5), new Num(2)]),
+        new Operator(OperatorSymbol.DIV, List([new Num(20), new Num(5), new Num(2)])),
         new Num(2),
     ],
-    ['equals true', new Operator(OperatorSymbol.EQUALS, [new Symbol('x'), new Symbol('x')]), TRUE],
-    ['equals false', new Operator(OperatorSymbol.EQUALS, [new Num(5), new Num(33)]), FALSE],
+    [
+        'equals true',
+        new Operator(OperatorSymbol.EQUALS, List([new Symbol('x'), new Symbol('x')])),
+        TRUE,
+    ],
+    ['equals false', new Operator(OperatorSymbol.EQUALS, List([new Num(5), new Num(33)])), FALSE],
     [
         'flag true',
-        new Operator(OperatorSymbol.FLAG, [
-            new Operator(OperatorSymbol.EQUALS, [new Num(5), new Num(5)]),
-        ]),
+        new Operator(
+            OperatorSymbol.FLAG,
+            List([new Operator(OperatorSymbol.EQUALS, List([new Num(5), new Num(5)]))])
+        ),
         TRUE,
     ],
     [
         'flag false',
-        new Operator(OperatorSymbol.FLAG, [
-            new Operator(OperatorSymbol.EQUALS, [new Num(8), new Num(10)]),
-        ]),
+        new Operator(
+            OperatorSymbol.FLAG,
+            List([new Operator(OperatorSymbol.EQUALS, List([new Num(8), new Num(10)]))])
+        ),
         FALSE,
     ],
     [
         'depends on true',
-        new Operator(OperatorSymbol.DEPENDS, [
-            new Operator(OperatorSymbol.MUL, [
-                new Num(5),
-                new Operator(OperatorSymbol.DIV, [new Symbol('x'), new Num(10)]),
-            ]),
-            new Symbol('x'),
-        ]),
+        new Operator(
+            OperatorSymbol.DEPENDS,
+            List([
+                new Operator(
+                    OperatorSymbol.MUL,
+                    List([
+                        new Num(5),
+                        new Operator(OperatorSymbol.DIV, List([new Symbol('x'), new Num(10)])),
+                    ])
+                ),
+                new Symbol('x'),
+            ])
+        ),
         TRUE,
     ],
     [
         'depends on false',
-        new Operator(OperatorSymbol.DEPENDS, [
-            new Operator(OperatorSymbol.MINUS, [new Symbol('x'), new Num(10)]),
-            new Symbol('y'),
-        ]),
+        new Operator(
+            OperatorSymbol.DEPENDS,
+            List([
+                new Operator(OperatorSymbol.MINUS, List([new Symbol('x'), new Num(10)])),
+                new Symbol('y'),
+            ])
+        ),
         FALSE,
     ],
 
     [
         'depends on true',
-        new Operator(OperatorSymbol.DEPENDS, [
-            new Operator(OperatorSymbol.MUL, [
-                new Symbol('5'),
-                new Operator(OperatorSymbol.DIV, [new Symbol('x'), new Num(10)]),
-            ]),
-            new Symbol('x'),
-        ]),
+        new Operator(
+            OperatorSymbol.DEPENDS,
+            List([
+                new Operator(
+                    OperatorSymbol.MUL,
+                    List([
+                        new Symbol('5'),
+                        new Operator(OperatorSymbol.DIV, List([new Symbol('x'), new Num(10)])),
+                    ])
+                ),
+                new Symbol('x'),
+            ])
+        ),
         TRUE,
     ],
     [
         'logical AND true',
-        new Operator(OperatorSymbol.AND, [
-            new Operator(OperatorSymbol.EQUALS, [new Rewritable('v'), new Rewritable('v')]),
-            new Operator(OperatorSymbol.NOT, [
-                new Operator(OperatorSymbol.DEPENDS, [new Symbol('y'), new Symbol('x')]),
-            ]),
-            TRUE,
-        ]),
+        new Operator(
+            OperatorSymbol.AND,
+            List([
+                new Operator(
+                    OperatorSymbol.EQUALS,
+                    List([new Rewritable('v'), new Rewritable('v')])
+                ),
+                new Operator(
+                    OperatorSymbol.NOT,
+                    List([
+                        new Operator(
+                            OperatorSymbol.DEPENDS,
+                            List([new Symbol('y'), new Symbol('x')])
+                        ),
+                    ])
+                ),
+                TRUE,
+            ])
+        ),
         TRUE,
     ],
     [
         'logical AND false',
-        new Operator(OperatorSymbol.AND, [
-            new Operator(OperatorSymbol.EQUALS, [new Rewritable('v'), new Rewritable('v')]),
-            new Operator(OperatorSymbol.NOT, [
-                new Operator(OperatorSymbol.DEPENDS, [new Symbol('y'), new Symbol('y')]),
-            ]),
-            TRUE,
-        ]),
+        new Operator(
+            OperatorSymbol.AND,
+            List([
+                new Operator(
+                    OperatorSymbol.EQUALS,
+                    List([new Rewritable('v'), new Rewritable('v')])
+                ),
+                new Operator(
+                    OperatorSymbol.NOT,
+                    List([
+                        new Operator(
+                            OperatorSymbol.DEPENDS,
+                            List([new Symbol('y'), new Symbol('y')])
+                        ),
+                    ])
+                ),
+                TRUE,
+            ])
+        ),
         FALSE,
     ],
     [
         'logical OR true',
-        new Operator(OperatorSymbol.OR, [
-            new Operator(OperatorSymbol.EQUALS, [new Num(2), new Rewritable('v')]),
-            new Operator(OperatorSymbol.NOT, [
-                new Operator(OperatorSymbol.DEPENDS, [new Symbol('y'), new Symbol('x')]),
-            ]),
-            FALSE,
-        ]),
+        new Operator(
+            OperatorSymbol.OR,
+            List([
+                new Operator(OperatorSymbol.EQUALS, List([new Num(2), new Rewritable('v')])),
+                new Operator(
+                    OperatorSymbol.NOT,
+                    List([
+                        new Operator(
+                            OperatorSymbol.DEPENDS,
+                            List([new Symbol('y'), new Symbol('x')])
+                        ),
+                    ])
+                ),
+                FALSE,
+            ])
+        ),
         TRUE,
     ],
     [
         'logical OR false',
-        new Operator(OperatorSymbol.OR, [
-            new Operator(OperatorSymbol.EQUALS, [new Rewritable('u'), new Rewritable('v')]),
-            new Operator(OperatorSymbol.NOT, [
-                new Operator(OperatorSymbol.DEPENDS, [new Symbol('x'), new Symbol('x')]),
-            ]),
-            FALSE,
-        ]),
+        new Operator(
+            OperatorSymbol.OR,
+            List([
+                new Operator(
+                    OperatorSymbol.EQUALS,
+                    List([new Rewritable('u'), new Rewritable('v')])
+                ),
+                new Operator(
+                    OperatorSymbol.NOT,
+                    List([
+                        new Operator(
+                            OperatorSymbol.DEPENDS,
+                            List([new Symbol('x'), new Symbol('x')])
+                        ),
+                    ])
+                ),
+                FALSE,
+            ])
+        ),
         FALSE,
     ],
     [
         '5 - 4 / 2',
-        new Operator(OperatorSymbol.MINUS, [
-            new Num(5),
-            new Operator(OperatorSymbol.DIV, [new Num(4), new Num(2)]),
-        ]),
+        new Operator(
+            OperatorSymbol.MINUS,
+            List([new Num(5), new Operator(OperatorSymbol.DIV, List([new Num(4), new Num(2)]))])
+        ),
         new Num(3),
     ],
     [
         'x ^ 5 / 2 should remain the same',
-        new Operator(OperatorSymbol.DIV, [
-            new Operator(OperatorSymbol.POW, [new Symbol('x'), new Num(5)]),
-            new Num(2),
-        ]),
-        new Operator(OperatorSymbol.DIV, [
-            new Operator(OperatorSymbol.POW, [new Symbol('x'), new Num(5)]),
-            new Num(2),
-        ]),
+        new Operator(
+            OperatorSymbol.DIV,
+            List([
+                new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(5)])),
+                new Num(2),
+            ])
+        ),
+        new Operator(
+            OperatorSymbol.DIV,
+            List([
+                new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(5)])),
+                new Num(2),
+            ])
+        ),
     ],
     ['2^4/2*x+5*3', Algebrain.parse('2^4/2*x+5*3'), Algebrain.parse('x*8+15')],
 ];
@@ -137,19 +218,25 @@ const cannonicalCases = [
     ['symbol', new Symbol('x'), new Symbol('x')],
     [
         '3+x',
-        new Operator(OperatorSymbol.PLUS, [new Num(3), new Symbol('x')]),
-        new Operator(OperatorSymbol.PLUS, [new Symbol('x'), new Num(3)]),
+        new Operator(OperatorSymbol.PLUS, List([new Num(3), new Symbol('x')])),
+        new Operator(OperatorSymbol.PLUS, List([new Symbol('x'), new Num(3)])),
     ],
     [
         'x*(5+2)',
-        new Operator(OperatorSymbol.MUL, [
-            new Symbol('x'),
-            new Operator(OperatorSymbol.PLUS, [new Num(5), new Num(2)]),
-        ]),
-        new Operator(OperatorSymbol.MUL, [
-            new Operator(OperatorSymbol.PLUS, [new Num(2), new Num(5)]),
-            new Symbol('x'),
-        ]),
+        new Operator(
+            OperatorSymbol.MUL,
+            List([
+                new Symbol('x'),
+                new Operator(OperatorSymbol.PLUS, List([new Num(5), new Num(2)])),
+            ])
+        ),
+        new Operator(
+            OperatorSymbol.MUL,
+            List([
+                new Operator(OperatorSymbol.PLUS, List([new Num(2), new Num(5)])),
+                new Symbol('x'),
+            ])
+        ),
     ],
 ];
 
@@ -163,36 +250,114 @@ const toStringCases = [
     ['x', new Symbol('x')],
     ['6', new Num(6)],
     ['$u', new Rewritable('u')],
-    ['3+x', new Operator(OperatorSymbol.PLUS, [new Num(3), new Symbol('x')])],
+    ['3+x', new Operator(OperatorSymbol.PLUS, List([new Num(3), new Symbol('x')]))],
     [
         '(2+5)*x',
-        new Operator(OperatorSymbol.MUL, [
-            new Operator(OperatorSymbol.PLUS, [new Num(2), new Num(5)]),
-            new Symbol('x'),
-        ]),
+        new Operator(
+            OperatorSymbol.MUL,
+            List([
+                new Operator(OperatorSymbol.PLUS, List([new Num(2), new Num(5)])),
+                new Symbol('x'),
+            ])
+        ),
     ],
     ['2^(3+1)/2*x+5*3', Algebrain.parse('2^(3+1)/2*x+5*3')],
     [
         '-4+x',
-        new Operator(OperatorSymbol.PLUS, [
-            new Operator(OperatorSymbol.MINUS, [new Num(3), new Num(7)]),
-            new Symbol('x'),
-        ]).evaluate(),
+        new Operator(
+            OperatorSymbol.PLUS,
+            List([
+                new Operator(OperatorSymbol.MINUS, List([new Num(3), new Num(7)])),
+                new Symbol('x'),
+            ])
+        ).evaluate(),
     ],
     [
         '-4-(-x)',
-        new Operator(OperatorSymbol.MINUS, [
-            new Operator(OperatorSymbol.MINUS, [new Num(4)]),
-            new Operator(OperatorSymbol.MINUS, [new Symbol('x')]),
-        ]),
+        new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Operator(OperatorSymbol.MINUS, List([new Num(4)])),
+                new Operator(OperatorSymbol.MINUS, List([new Symbol('x')])),
+            ])
+        ),
     ],
-    ['-10', new Operator(OperatorSymbol.MINUS, [new Num(10)])],
+    ['-10', new Operator(OperatorSymbol.MINUS, List([new Num(10)]))],
     ['(6+5)*4/(2-x)-3', Algebrain.parse('(6+5)*4/(2-x)-3')],
 ];
 
 describe('Stringification', () => {
     test.each(toStringCases)('Formatting case %p', (stringified, node) => {
         expect(node.toString()).toEqual(stringified);
+    });
+});
+
+const rewriteCases = [
+    [
+        new Num(5),
+        Map<string, Node>([
+            ['$u', new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)]))],
+            ['$v', new Operator(OperatorSymbol.MINUS, List([new Num(5)]))],
+        ]),
+        new Num(5),
+    ],
+    [
+        new Rewritable('u'),
+        Map<string, Node>([
+            ['$u', new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)]))],
+            ['$v', new Operator(OperatorSymbol.MINUS, List([new Num(5)]))],
+        ]),
+        new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)])),
+    ],
+    [
+        new Operator(OperatorSymbol.PLUS, List([new Rewritable('u'), new Rewritable('v')])),
+        Map<string, Node>([
+            ['$u', new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)]))],
+            ['$v', new Operator(OperatorSymbol.MINUS, List([new Num(5)]))],
+        ]),
+        new Operator(
+            OperatorSymbol.PLUS,
+            List([
+                new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)])),
+                new Operator(OperatorSymbol.MINUS, List([new Num(5)])),
+            ])
+        ),
+    ],
+    [
+        new Operator(
+            OperatorSymbol.PLUS,
+            List([
+                new Rewritable('u'),
+                new Operator(
+                    OperatorSymbol.DIV,
+                    List([new Rewritable('v'), new Symbol('k'), new Rewritable('u')])
+                ),
+            ])
+        ),
+        Map<string, Node>([
+            ['$u', new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)]))],
+            ['$v', new Operator(OperatorSymbol.MINUS, List([new Num(5)]))],
+        ]),
+        new Operator(
+            OperatorSymbol.PLUS,
+            List([
+                new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)])),
+                new Operator(
+                    OperatorSymbol.DIV,
+                    List([
+                        new Operator(OperatorSymbol.MINUS, List([new Num(5)])),
+                        new Symbol('k'),
+                        new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(3)])),
+                    ])
+                ),
+            ])
+        ),
+    ],
+];
+
+describe('Rewriting', () => {
+    test.each(rewriteCases)('Rewriting case %p with %p', (rhs, matches, rewritten) => {
+        expect(rhs.rewrite(matches)).toEqual(rewritten);
     });
 });
 
@@ -210,18 +375,18 @@ describe('Operator', () => {
     });
 
     it('is flat', () => {
-        const operatorNode: Operator = new Operator(OperatorSymbol.PLUS, [
-            new Num(2),
-            new Rewritable('u'),
-        ]);
+        const operatorNode: Operator = new Operator(
+            OperatorSymbol.PLUS,
+            List([new Num(2), new Rewritable('u')])
+        );
         expect(operatorNode.isFlat()).toBeTruthy();
     });
 
     it('is not flat', () => {
-        const operatorNode: Operator = new Operator(OperatorSymbol.PLUS, [
-            new Num(2),
-            new Operator(OperatorSymbol.FLAG, [new Num(0)]),
-        ]);
+        const operatorNode: Operator = new Operator(
+            OperatorSymbol.PLUS,
+            List([new Num(2), new Operator(OperatorSymbol.FLAG, List([FALSE]))])
+        );
         expect(operatorNode.isFlat()).toBeFalsy();
     });
 });

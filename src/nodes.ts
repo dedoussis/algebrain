@@ -24,6 +24,10 @@ export class Node implements Parsable {
         return new Node(this.value);
     }
 
+    rewrite(matches: Map<string, Node>): Node {
+        return new Node(this.value);
+    }
+
     public static compare(one: Node, other: Node, precedence: List<Function>): number {
         if (one.constructor === other.constructor) {
             return one.value - other.value;
@@ -43,7 +47,7 @@ export class Num extends Node {
 
     evaluate(): Node {
         if (this.value < 0) {
-            return new Operator(OperatorSymbol.MINUS, [new Num(this.value * -1)]);
+            return new Operator(OperatorSymbol.MINUS, List<Node>([new Num(this.value * -1)]));
         }
         return new Num(this.value);
     }
@@ -78,12 +82,12 @@ export class Operator extends Node {
     readonly value: string;
     readonly children: List<Node>;
 
-    constructor(value: string, children: Node[] = []) {
+    constructor(value: string, children: List<Node> = List<Node>()) {
         super(value);
-        this.children = List(children);
+        this.children = children;
         const notFoundHandlers: Handlers = {
             evaluator: {
-                f: (children: List<Node>) => new Operator(this.value, children.toArray()),
+                f: (children: List<Node>) => new Operator(this.value, children),
                 recursive: false,
             },
             stringifier: {
@@ -96,8 +100,12 @@ export class Operator extends Node {
         this.stringifier = handlers.stringifier;
     }
 
+    setChildren(childen: List<Node>) {
+        return new Operator(this.value, childen);
+    }
+
     addChild(child: Node): Operator {
-        return new Operator(this.value, this.children.concat([child]).toArray());
+        return new Operator(this.value, this.children.push(child));
     }
 
     toString(): string {
@@ -133,7 +141,11 @@ export class Operator extends Node {
         sortedChildren = sortedChildren.map(child =>
             child instanceof Operator ? child.canonical() : child
         );
-        return new Operator(this.value, sortedChildren.toArray());
+        return new Operator(this.value, sortedChildren);
+    }
+
+    rewrite(matches: Map<string, Node>): Operator {
+        return this.setChildren(this.children.map(child => child.rewrite(matches)));
     }
 }
 
@@ -148,6 +160,10 @@ export class Rewritable extends Node {
     readonly value: string;
     constructor(value: string) {
         super(value);
+    }
+
+    rewrite(matches: Map<string, Node>): Node {
+        return matches.get(this.toString(), new Rewritable(this.value));
     }
 
     toString(): string {
@@ -178,7 +194,7 @@ function evaluateNumericalOperator(
         }
         return new Operator(
             operatorSymbol,
-            resultNode ? [resultNode].concat(notToEval.toArray()) : notToEval.toArray()
+            resultNode ? List<Node>([resultNode]).concat(notToEval) : notToEval
         );
     };
 }

@@ -1,3 +1,4 @@
+import { List } from 'immutable';
 import { AlgebrainVisitor } from './parser/AlgebrainVisitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 import {
@@ -23,7 +24,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Node>
     implements AlgebrainVisitor<Node> {
     private constructOperator(symbol: string, childrenValues: any[]): Operator {
         const children: Node[] = childrenValues.map(value => this.visit(value));
-        return new Operator(symbol, children);
+        return new Operator(symbol, List<Node>(children));
     }
 
     defaultResult(): Node {
@@ -45,7 +46,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Node>
     visitPow(ctx: PowContext): Operator {
         const left: Node = this.visit(ctx.expr(0));
         const right: Node = this.visit(ctx.expr(1));
-        return new Operator(OperatorSymbol.POW, [left, right]);
+        return new Operator(OperatorSymbol.POW, List<Node>([left, right]));
     }
 
     visitAddSub(ctx: AddSubContext): Operator {
