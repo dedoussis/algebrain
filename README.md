@@ -8,6 +8,8 @@ Combuter Algebra System focusing on symbolic transformations.
 
 Parser generated using [ANTLR4](https://www.antlr.org/).
 
+*Note: Algebrain is still at a very early and unstable stage.*
+
 ## Install
 
 ```bash
