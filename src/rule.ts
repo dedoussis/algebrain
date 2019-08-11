@@ -38,7 +38,7 @@ export class Rule implements Parsable {
         return matches;
     }
 
-    match(other: Node): Map<string, Node> {
+    matches(other: Node): Map<string, Node> {
         try {
             const matches = Rule.matchNodes(this.lhs, other);
             if (
@@ -56,6 +56,13 @@ export class Rule implements Parsable {
         }
     }
 
+    mirrors(other: Node): boolean {
+        return (
+            this.lhs.equals(other) &&
+            (this.condition === undefined || this.condition.evaluate().equals(TRUE))
+        );
+    }
+
     equals(other: any): boolean {
         return (
             this.constructor === other.constructor &&
@@ -66,7 +73,7 @@ export class Rule implements Parsable {
     }
 
     toString(): string {
-        const equation: string = `${this.lhs}${OperatorSymbol.EQUALS}${this.rhs}`;
+        const equation: string = `${this.lhs}=${this.rhs}`;
         return this.condition === undefined ? equation : `${equation} if ${this.condition}`;
     }
 }

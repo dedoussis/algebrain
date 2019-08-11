@@ -137,10 +137,47 @@ const matchCases = [
     ],
 ];
 
-describe('match', () => {
+describe('matches', () => {
     test.each(matchCases)('Matching case %p', (title, lhs, other, condition, matches) => {
         const rule = new Rule(lhs, new Node(null), condition);
-        expect(rule.match(other)).toEqual(matches);
+        expect(rule.matches(other)).toEqual(matches);
+    });
+});
+
+const mirrorCases = [
+    [
+        '3-x === 3-x',
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('x')])),
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('x')])),
+        undefined,
+        true,
+    ],
+    [
+        '3-x === 3-x if True',
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('x')])),
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('x')])),
+        new Operator(OperatorSymbol.FLAG, List([TRUE])),
+        true,
+    ],
+    [
+        '3-x === 3-x if False',
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('x')])),
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('x')])),
+        new Operator(OperatorSymbol.FLAG, List([FALSE])),
+        false,
+    ],
+    [
+        '3-$u === 3-y if False',
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Rewritable('u')])),
+        new Operator(OperatorSymbol.MINUS, List([new Num(3), new Symbol('y')])),
+        new Operator(OperatorSymbol.FLAG, List([FALSE])),
+        false,
+    ],
+];
+describe('mirrorCases', () => {
+    test.each(mirrorCases)('Mirror case %p', (title, lhs, other, condition, outcome) => {
+        const rule = new Rule(lhs, new Node(null), condition);
+        expect(rule.mirrors(other)).toBe(outcome);
     });
 });
 

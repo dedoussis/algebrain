@@ -48,6 +48,6 @@ describe('Transformation', () => {
         );
         const fibNum = new Operator('fib', List([new Num(15)]));
         const fibonacci = new Transformation(rules as List<Rule>);
-        expect(fibonacci.transform(fibNum).equals(Algebrain.parse('fib(14)+fib(13)'))).toBeTruthy();
+        expect(fibonacci.transform(fibNum).value).toEqual(610);
     });
 });
