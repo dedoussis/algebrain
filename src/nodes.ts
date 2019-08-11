@@ -140,7 +140,7 @@ export class Operator extends Node {
     equals(other: any): boolean {
         return (
             super.equals(other) &&
-            this.children.size == other.children.size &&
+            this.children.size === other.children.size &&
             this.children.every((child, index) => child.equals(other.children.get(index)))
         );
     }
