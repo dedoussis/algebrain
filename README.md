@@ -68,7 +68,7 @@ const rules = Algebrain.multiParse(`
 
 const fibonacci = new Transformation(rules);
 
-const num = Algebrain.parse("15");
+const term = Algebrain.parse("fib(15)");
 
 console.log(`The ${num}th term of fibonacci is: ${fibonacci.transform(num)}`);
 // > The 15h term of fibonacci is 610

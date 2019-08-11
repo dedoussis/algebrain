@@ -40,8 +40,15 @@ export class Rule implements Parsable {
 
     match(other: Node): Map<string, Node> {
         try {
-            if (this.condition === undefined || this.condition.evaluate().equals(TRUE)) {
-                return Rule.matchNodes(this.lhs, other);
+            const matches = Rule.matchNodes(this.lhs, other);
+            if (
+                this.condition === undefined ||
+                this.condition
+                    .rewrite(matches)
+                    .evaluate()
+                    .equals(TRUE)
+            ) {
+                return matches;
             }
             return Map<string, Node>();
         } catch {

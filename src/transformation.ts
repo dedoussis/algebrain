@@ -16,7 +16,9 @@ export class Transformation {
     transform(expression: Node): Node {
         return this.rules.reduce((transformed: Node, rule: Rule) => {
             const matches = rule.match(transformed);
-            return matches.isEmpty() ? transformed : this.transform(rule.rhs.rewrite(matches));
+            return matches.isEmpty()
+                ? transformed
+                : this.transform(rule.rhs.rewrite(matches).evaluate());
         }, expression);
     }
 }

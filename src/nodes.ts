@@ -16,7 +16,7 @@ export class Node implements Parsable {
     }
 
     evaluate(): Node {
-        return new Node(this.value);
+        return this;
     }
 
     equals(other: any): boolean {
@@ -28,11 +28,11 @@ export class Node implements Parsable {
     }
 
     canonical(): Node {
-        return new Node(this.value);
+        return this;
     }
 
     rewrite(matches: Map<string, Node>): Node {
-        return new Node(this.value);
+        return this;
     }
 
     public static compare(one: Node, other: Node, precedence: List<Function>): number {
@@ -56,7 +56,7 @@ export class Num extends Node {
         if (this.value < 0) {
             return new Operator(OperatorSymbol.MINUS, List<Node>([new Num(this.value * -1)]));
         }
-        return new Num(this.value);
+        return super.evaluate();
     }
 }
 
@@ -79,6 +79,7 @@ export enum OperatorSymbol {
     FLAG = 'IS',
     NOT = 'NOT',
     DEPENDS = 'depends',
+    CONSTANT = 'const',
 }
 
 export class Operator extends Node {
@@ -335,6 +336,20 @@ const operatorSymbolHandlers: Map<OperatorSymbol, Handlers> = Map<OperatorSymbol
                 recursive: false,
             },
             stringifier: (child: Operator, index: number) => child.toString(),
+        },
+    ],
+    [
+        OperatorSymbol.CONSTANT,
+        {
+            evaluator: {
+                f: (children: List<Node>) => {
+                    const evaluatedChild: Node = children.first<Node>().evaluate();
+                    return evaluatedChild instanceof Num || evaluatedChild instanceof Symbol
+                        ? TRUE
+                        : FALSE;
+                },
+                recursive: false,
+            },
         },
     ],
 ]);

@@ -2,7 +2,17 @@
   "name": "algebrain",
   "version": "0.0.1-alpha",
   "description": "Combuter Algebra System focusing on symbolic transformations",
-  "keywords": ["algebra", "CAS", "symbolic", "transformation", "rewriting", "rules", "math", "mathematics", "compiler"],
+  "keywords": [
+    "algebra",
+    "CAS",
+    "symbolic",
+    "transformation",
+    "rewriting",
+    "rules",
+    "math",
+    "mathematics",
+    "compiler"
+  ],
   "main": "dist/lib/algebrain.js",
   "module": "dist/lib/algebrain.js",
   "typings": "dist/types/algebrain.d.ts",

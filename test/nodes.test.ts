@@ -114,6 +114,9 @@ const cases = [
         ),
         TRUE,
     ],
+    ['const of $u', new Operator(OperatorSymbol.CONSTANT, List([new Rewritable('u')])), FALSE],
+    ['const of x', new Operator(OperatorSymbol.CONSTANT, List([new Symbol('x')])), TRUE],
+    ['const of 6', new Operator(OperatorSymbol.CONSTANT, List([new Num(6)])), TRUE],
     [
         'logical AND false',
         new Operator(
