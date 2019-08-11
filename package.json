@@ -1,6 +1,6 @@
 {
   "name": "algebrain",
-  "version": "0.0.0-alpha5",
+  "version": "0.0.1-alpha",
   "description": "Combuter Algebra System focusing on symbolic transformations",
   "keywords": ["algebra", "CAS", "symbolic", "transformation", "rewriting", "rules", "math", "mathematics", "compiler"],
   "main": "dist/lib/algebrain.js",
@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
@@ -32,7 +32,6 @@
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
     "precommit": "lint-staged",
-    "travis-deploy-once": "travis-deploy-once",
     "antlr4": "antlr4ts -visitor src/parser/Algebrain.g4"
   },
   "lint-staged": {
@@ -108,7 +107,6 @@
     "rollup": "^0.67.0",
     "semantic-release": "^15.9.16",
     "shelljs": "^0.8.3",
-    "travis-deploy-once": "^5.0.9",
     "ts-jest": "^23.10.2",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
