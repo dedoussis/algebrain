@@ -182,61 +182,6 @@ export class Rewritable extends Node {
     }
 }
 
-export const TRUE = new Num(1);
-export const FALSE = new Num(0);
-
-function evaluateNumericalOperator(
-    operatorSymbol: OperatorSymbol,
-    commutative: boolean,
-    operation: (left: number, right: number) => number
-): (children: List<Node>) => Node {
-    return (children: List<Node>) => {
-        const toEval: List<Num> = commutative
-            ? children.filter(child => child instanceof Num)
-            : children.takeWhile(child => child instanceof Num);
-        const notToEval: List<Node> = commutative
-            ? children.filter(child => !(child instanceof Num))
-            : children.skipWhile(child => child instanceof Num);
-        const resultNode: Num = toEval.reduce(
-            (existing: Num, num: Num) => new Num(operation(existing.value, num.value))
-        );
-        if (notToEval.isEmpty()) {
-            return resultNode;
-        }
-        return new Operator(
-            operatorSymbol,
-            resultNode ? List<Node>([resultNode]).concat(notToEval) : notToEval
-        );
-    };
-}
-
-function evaluateDepends(children: List<Node>): Num {
-    const dependency: Node = children.last();
-    if (dependency instanceof Num) {
-        throw Error(`No expression can depend on ${dependency}`);
-    }
-    const dependents: List<Node> = children.butLast();
-    if (dependents.size === 1) {
-        const dependent: Node = dependents.first();
-        if (dependent instanceof Operator) {
-            return dependent.children.some(
-                child => evaluateDepends(List([child, dependency])) === TRUE
-            )
-                ? TRUE
-                : FALSE;
-        }
-        if (!dependent.equals(dependency)) {
-            return FALSE;
-        }
-        return TRUE;
-    }
-    return dependents.every(dependent =>
-        evaluateDepends(List([dependent, dependency])).equals(TRUE)
-    )
-        ? TRUE
-        : FALSE;
-}
-
 type Evaluator = {
     f: (children: List<Node>) => Node;
     recursive?: boolean;
@@ -393,6 +338,61 @@ const operatorSymbolHandlers: Map<OperatorSymbol, Handlers> = Map<OperatorSymbol
         },
     ],
 ]);
+
+export const TRUE = new Num(1);
+export const FALSE = new Num(0);
+
+function evaluateNumericalOperator(
+    operatorSymbol: OperatorSymbol,
+    commutative: boolean,
+    operation: (left: number, right: number) => number
+): (children: List<Node>) => Node {
+    return (children: List<Node>) => {
+        const toEval: List<Num> = commutative
+            ? children.filter(child => child instanceof Num)
+            : children.takeWhile(child => child instanceof Num);
+        const notToEval: List<Node> = commutative
+            ? children.filter(child => !(child instanceof Num))
+            : children.skipWhile(child => child instanceof Num);
+        const resultNode: Num = toEval.reduce(
+            (existing: Num, num: Num) => new Num(operation(existing.value, num.value))
+        );
+        if (notToEval.isEmpty()) {
+            return resultNode;
+        }
+        return new Operator(
+            operatorSymbol,
+            resultNode ? List<Node>([resultNode]).concat(notToEval) : notToEval
+        );
+    };
+}
+
+function evaluateDepends(children: List<Node>): Num {
+    const dependency: Node = children.last();
+    if (dependency instanceof Num) {
+        throw Error(`No expression can depend on ${dependency}`);
+    }
+    const dependents: List<Node> = children.butLast();
+    if (dependents.size === 1) {
+        const dependent: Node = dependents.first();
+        if (dependent instanceof Operator) {
+            return dependent.children.some(
+                child => evaluateDepends(List([child, dependency])) === TRUE
+            )
+                ? TRUE
+                : FALSE;
+        }
+        if (!dependent.equals(dependency)) {
+            return FALSE;
+        }
+        return TRUE;
+    }
+    return dependents.every(dependent =>
+        evaluateDepends(List([dependent, dependency])).equals(TRUE)
+    )
+        ? TRUE
+        : FALSE;
+}
 
 function infix(operatorSymbol: string, children: List<string>): string {
     return children.size > 1
