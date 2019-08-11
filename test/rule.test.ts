@@ -143,3 +143,45 @@ describe('match', () => {
         expect(rule.match(other)).toEqual(matches);
     });
 });
+
+const equalsCases = [
+    [
+        'Equal rules',
+        Algebrain.parse('diff(2*x)=ndiff(x) if x==0'),
+        Algebrain.parse('diff(2*x)=ndiff(x) if x==0'),
+        true,
+    ],
+    [
+        'Equal rules with undefined conditions',
+        Algebrain.parse('diff(2*x)=ndiff(x)'),
+        Algebrain.parse('diff(2*x)=ndiff(x)'),
+        true,
+    ],
+    [
+        'Different rhs',
+        Algebrain.parse('diff(2*x)=ndiff(y) if x==0'),
+        Algebrain.parse('diff(2*x)=ndiff(x) if x==0'),
+        false,
+    ],
+    [
+        'Different condition',
+        Algebrain.parse('diff(2*x)=ndiff(y) if x==1'),
+        Algebrain.parse('diff(2*x)=ndiff(x) if x==0'),
+        false,
+    ],
+    [
+        'Undefined condition',
+        Algebrain.parse('diff(2*x)=ndiff(y) if x==1'),
+        Algebrain.parse('diff(2*x)=ndiff(x)'),
+        false,
+    ],
+];
+describe('equals', () => {
+    test.each(equalsCases)('Equals case %p', (title, one, other, equality) => {
+        if (equality) {
+            expect(one.equals(other)).toBeTruthy();
+        } else {
+            expect(one.equals(other)).toBeFalsy();
+        }
+    });
+});

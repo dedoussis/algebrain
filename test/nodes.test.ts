@@ -389,4 +389,64 @@ describe('Operator', () => {
         );
         expect(operatorNode.isFlat()).toBeFalsy();
     });
+
+    it('is equal with another Operator when all children are equal', () => {
+        const one: Operator = new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
+            ])
+        );
+        const another: Operator = new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
+            ])
+        );
+        expect(one.equals(another)).toBeTruthy();
+    });
+
+    it('it is not equal with another Operator that has more children', () => {
+        const one: Operator = new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
+            ])
+        );
+        const another: Operator = new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Operator('ndiff', List([new Rewritable('u'), new Rewritable('y'), new Num(2)])),
+            ])
+        );
+        expect(one.equals(another)).toBeFalsy();
+    });
+
+    it('it is not equal with another Operator that has different children', () => {
+        const one: Operator = new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
+            ])
+        );
+        const another: Operator = new Operator(
+            OperatorSymbol.MINUS,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Operator('ndiff', List([new Rewritable('u'), new Rewritable('z')])),
+            ])
+        );
+        expect(one.equals(another)).toBeFalsy();
+    });
 });

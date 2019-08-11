@@ -1,6 +1,7 @@
 import Algebrain from '../src/algebrain';
 import { List } from 'immutable';
 import { Operator, Num, Symbol, OperatorSymbol } from '../src/nodes';
+import { Rule } from '../src/rule';
 
 const cases = [
     ['1+3', new Operator(OperatorSymbol.PLUS, List([new Num(1), new Num(3)]))],
@@ -33,8 +34,39 @@ const cases = [
     ],
 ];
 
-describe('Algebrain parsing', () => {
-    test.each(cases)('Parsing case: %p', (freeText, expectedRootNode) => {
-        expect(Algebrain.parse(freeText)).toEqual(expectedRootNode);
+describe('parsing', () => {
+    test.each(cases)('Parsing case: %p', (freeText, expected) => {
+        expect(Algebrain.parse(freeText)).toEqual(expected);
+    });
+});
+
+const multilineCases = [
+    [
+        `diff(x)=diff(y) if 3==5
+    diff(2*x)=diff(y)
+    3`,
+        List([
+            new Rule(
+                new Operator('diff', List([new Symbol('x')])),
+                new Operator('diff', List([new Symbol('y')])),
+                new Operator(OperatorSymbol.EQUALS, List([new Num(3), new Num(5)]))
+            ),
+            new Rule(
+                new Operator(
+                    'diff',
+                    List([new Operator(OperatorSymbol.MUL, List([new Num(2), new Symbol('x')]))])
+                ),
+                new Operator('diff', List([new Symbol('y')]))
+            ),
+            new Num(3),
+        ]),
+    ],
+];
+
+describe('multiline parsing', () => {
+    test.each(multilineCases)('Parsing case: %p', (freeText, expected) => {
+        expect(
+            Algebrain.multiParse(freeText).every((item, index) => item.equals(expected.get(index)))
+        ).toBeTruthy();
     });
 });

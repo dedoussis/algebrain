@@ -1,12 +1,12 @@
 import { Map, List } from 'immutable';
-import { Node, Operator, Parsable, Rewritable, TRUE } from './nodes';
+import { Node, Operator, Parsable, Rewritable, TRUE, OperatorSymbol } from './nodes';
 
 export class Rule implements Parsable {
     readonly lhs: Node;
     readonly rhs: Node;
-    readonly condition: Operator | undefined;
+    readonly condition: Node | undefined;
 
-    constructor(lhs: Node, rhs: Node, condition?: Operator) {
+    constructor(lhs: Node, rhs: Node, condition?: Node) {
         this.lhs = lhs;
         this.rhs = rhs;
         this.condition = condition;
@@ -47,5 +47,19 @@ export class Rule implements Parsable {
         } catch {
             return Map<string, Node>();
         }
+    }
+
+    equals(other: any): boolean {
+        return (
+            this.constructor === other.constructor &&
+            Object.entries(this).every(([key, value]: [string, any]) =>
+                value instanceof Node ? value.equals(other[key]) : value === other[key]
+            )
+        );
+    }
+
+    toString(): string {
+        const equation: string = `${this.lhs}${OperatorSymbol.EQUALS}${this.rhs}`;
+        return this.condition === undefined ? equation : `${equation} if ${this.condition}`;
     }
 }

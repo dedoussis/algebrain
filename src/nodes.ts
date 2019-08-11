@@ -1,6 +1,9 @@
 import { List, Map } from 'immutable';
 
-export abstract class Parsable {}
+export abstract class Parsable {
+    abstract equals(other: any): boolean;
+    abstract toString(): string;
+}
 
 export class Node implements Parsable {
     readonly value: any;
@@ -17,7 +20,11 @@ export class Node implements Parsable {
     }
 
     equals(other: any): boolean {
-        return this.constructor === other.constructor && this.value === other.value;
+        return (
+            other !== undefined &&
+            this.constructor === other.constructor &&
+            this.value === other.value
+        );
     }
 
     canonical(): Node {
@@ -132,6 +139,14 @@ export class Operator extends Node {
             });
         }
         return this.evaluator.f(evaluatedChildren);
+    }
+
+    equals(other: any): boolean {
+        return (
+            super.equals(other) &&
+            this.children.size == other.children.size &&
+            this.children.every((child, index) => child.equals(other.children.get(index)))
+        );
     }
 
     canonical(): Operator {
@@ -401,7 +416,7 @@ const operatorSymbolHandlers: Map<OperatorSymbol, Handlers> = Map<OperatorSymbol
         OperatorSymbol.EQUALS,
         {
             evaluator: { f: evaluateEquals, recursive: false },
-            stringifier: { f: stringifyChildPlus },
+            stringifier: { f: stringifyChildPlus, infix: true },
         },
     ],
 ]);

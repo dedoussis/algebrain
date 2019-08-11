@@ -32,12 +32,12 @@ describe('Transformation', () => {
     });
     it('transforms', () => {
         const rules = List([
-            new Rule(Algebrain.parse('diff(tan($v),$v)'), Algebrain.parse('1+tan($v)^2')),
-            new Rule(Algebrain.parse('diff(sin($v),$v)'), Algebrain.parse('cos($v)')),
-            new Rule(Algebrain.parse('diff(cos($v),$v)'), Algebrain.parse('0-sin($v)')),
+            Algebrain.parse('diff(tan($v),$v)=1+tan($v)^2'),
+            Algebrain.parse('diff(sin($v),$v)=cos($v)'),
+            Algebrain.parse('diff(cos($v),$v)=0-sin($v)'),
         ]);
-        const transformation = new Transformation(rules);
-        const expression = Algebrain.parse('diff(sin(x),x)');
+        const transformation = new Transformation(rules as List<Rule>);
+        const expression = Algebrain.parse('diff(sin(x),x)') as Node;
         expect(transformation.transform(expression).equals(Algebrain.parse('cos(x)'))).toBeTruthy();
     });
 });
