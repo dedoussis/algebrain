@@ -20,13 +20,13 @@ $ npm install algebrain
 
 ### Expressions
 ```javascript
-import Algebrain from 'algebrain';
+import Algebrain from "algebrain";
 
-const expr = Algebrain.parse("(3^2)*x+5/(y-12)");
+const expr = Algebrain.parse("(3^2)*1.6+5/(y-12.34)");
 // Your string expression is now a tree of nodes:
 //  +
 //  ├── *
-//  │   ├── x
+//  │   ├── 1.6
 //  │   └── ^
 //  │       ├── 3
 //  │       └── 2
@@ -34,22 +34,20 @@ const expr = Algebrain.parse("(3^2)*x+5/(y-12)");
 //      ├── 5
 //      └── -
 //          ├── y
-//          └── 12
+//          └── 12.34
 
 const evaluated = expr.evaluate();
 // Evaluated tree of the following form:
 // +
-// ├── *
-// │   ├── 9
-// │   └── x
+// ├── 14.4
 // └── /
 //     ├── 5
 //     └── -
 //         ├── y
-//         └── 12
+//         └── 12.34
 
 console.log(`My evaluated expression is: ${evaluated}`);
-// > My evaluated expression is: 9*x+5/(y-12)
+// > My evaluated expression is: 14.4+5/(y-12.34)
 ```
 
 ### Transformations
@@ -57,8 +55,8 @@ console.log(`My evaluated expression is: ${evaluated}`);
 By exploiting the concept of [rewriting rules](https://en.wikipedia.org/wiki/Rewriting), Algebrain enables the use of custom transformations, that can be entirely developed and compiled within its environment.
 
 ```javascript
-import Algebrain from 'algebrain';
-import { Transformation } from 'algebrain/transformation'
+import Algebrain from "algebrain";
+import { Transformation } from "algebrain/transformation";
 
 const rules = Algebrain.multiParse(`
     fib(0)=0
@@ -78,7 +76,7 @@ console.log(`The ${num}th term of fibonacci is: ${fibonacci.transform(num)}`);
 
 
 ```bash
-# linting
+# Linting
 npm run lint
 
 # Unit tests w/ coverage thresholds
