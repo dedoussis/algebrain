@@ -16,10 +16,10 @@ expr
 	| expr op=(PLUS|MINUS) expr # AddSub
   | expr EQUALS expr ( IF bexp )? # RewritingRule
 	| LPARENS expr RPARENS # Parens
-	| MINUS val=(ID|INT|REWRITABLE) # Unary
+	| MINUS val=(ID|NUMBER|REWRITABLE) # Unary
 	| ID LPARENS expr (COMMA expr)* RPARENS # Operator
 	| REWRITABLE # Rewritable
-	| INT # Int
+	| NUMBER # Number
 	| ID # Id
 	;
 
@@ -34,8 +34,7 @@ bexp
 
 
 ID  : [a-zA-Z_]+ ; // match identifiers
-INT : [0-9]+ ; // match integers
-
+NUMBER: [0-9]+ (POINT [0-9]+)? ; // match numbers
 
 REWRITABLE: DOLLAR ID;
 POW : '^' ;
@@ -55,6 +54,7 @@ IF: ' if ';
 AND: 'and';
 NOT: 'not';
 OR: 'or';
+POINT: '.';
 
 
 NEWLINE:'\r'? '\n' ; // return newlines to parser (is end-statement signal)

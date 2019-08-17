@@ -192,6 +192,14 @@ const cases = [
         new Num(3),
     ],
     [
+        '5 + 4 / 1.25',
+        new Operator(
+            OperatorSymbol.PLUS,
+            List([new Num(5), new Operator(OperatorSymbol.DIV, List([new Num(4), new Num(1.25)]))])
+        ),
+        new Num(8.2),
+    ],
+    [
         'x ^ 5 / 2 should remain the same',
         new Operator(
             OperatorSymbol.DIV,

@@ -17,7 +17,7 @@ import { ParensContext } from './AlgebrainParser';
 import { UnaryContext } from './AlgebrainParser';
 import { OperatorContext } from './AlgebrainParser';
 import { RewritableContext } from './AlgebrainParser';
-import { IntContext } from './AlgebrainParser';
+import { NumberContext } from './AlgebrainParser';
 import { IdContext } from './AlgebrainParser';
 import { ProgContext } from './AlgebrainParser';
 import { StatContext } from './AlgebrainParser';
@@ -153,12 +153,12 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitRewritable?: (ctx: RewritableContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `Int`
+     * Visit a parse tree produced by the `Number`
      * labeled alternative in `AlgebrainParser.expr`.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    visitInt?: (ctx: IntContext) => Result;
+    visitNumber?: (ctx: NumberContext) => Result;
 
     /**
      * Visit a parse tree produced by the `Id`

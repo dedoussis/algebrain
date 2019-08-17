@@ -27,7 +27,7 @@ import { AlgebrainVisitor } from './AlgebrainVisitor';
 
 export class AlgebrainParser extends Parser {
     public static readonly ID = 1;
-    public static readonly INT = 2;
+    public static readonly NUMBER = 2;
     public static readonly REWRITABLE = 3;
     public static readonly POW = 4;
     public static readonly MUL = 5;
@@ -46,8 +46,9 @@ export class AlgebrainParser extends Parser {
     public static readonly AND = 18;
     public static readonly NOT = 19;
     public static readonly OR = 20;
-    public static readonly NEWLINE = 21;
-    public static readonly WS = 22;
+    public static readonly POINT = 21;
+    public static readonly NEWLINE = 22;
+    public static readonly WS = 23;
     public static readonly RULE_prog = 0;
     public static readonly RULE_stat = 1;
     public static readonly RULE_expr = 2;
@@ -77,11 +78,12 @@ export class AlgebrainParser extends Parser {
         "'and'",
         "'not'",
         "'or'",
+        "'.'",
     ];
     private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
         undefined,
         'ID',
-        'INT',
+        'NUMBER',
         'REWRITABLE',
         'POW',
         'MUL',
@@ -100,6 +102,7 @@ export class AlgebrainParser extends Parser {
         'AND',
         'NOT',
         'OR',
+        'POINT',
         'NEWLINE',
         'WS',
     ];
@@ -160,7 +163,7 @@ export class AlgebrainParser extends Parser {
                     (_la & ~0x1f) === 0 &&
                     ((1 << _la) &
                         ((1 << AlgebrainParser.ID) |
-                            (1 << AlgebrainParser.INT) |
+                            (1 << AlgebrainParser.NUMBER) |
                             (1 << AlgebrainParser.REWRITABLE) |
                             (1 << AlgebrainParser.MINUS) |
                             (1 << AlgebrainParser.LPARENS) |
@@ -190,7 +193,7 @@ export class AlgebrainParser extends Parser {
             this._errHandler.sync(this);
             switch (this._input.LA(1)) {
                 case AlgebrainParser.ID:
-                case AlgebrainParser.INT:
+                case AlgebrainParser.NUMBER:
                 case AlgebrainParser.REWRITABLE:
                 case AlgebrainParser.MINUS:
                 case AlgebrainParser.LPARENS:
@@ -280,7 +283,7 @@ export class AlgebrainParser extends Parser {
                                     (_la & ~0x1f) === 0 &&
                                     ((1 << _la) &
                                         ((1 << AlgebrainParser.ID) |
-                                            (1 << AlgebrainParser.INT) |
+                                            (1 << AlgebrainParser.NUMBER) |
                                             (1 << AlgebrainParser.REWRITABLE))) !==
                                         0
                                 )
@@ -343,11 +346,11 @@ export class AlgebrainParser extends Parser {
 
                     case 5:
                         {
-                            _localctx = new IntContext(_localctx);
+                            _localctx = new NumberContext(_localctx);
                             this._ctx = _localctx;
                             _prevctx = _localctx;
                             this.state = 39;
-                            this.match(AlgebrainParser.INT);
+                            this.match(AlgebrainParser.NUMBER);
                         }
                         break;
 
@@ -763,7 +766,7 @@ export class AlgebrainParser extends Parser {
     }
 
     public static readonly _serializedATN: string =
-        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x18e\x04\x02' +
+        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x19e\x04\x02' +
         '\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x03\x02\x06\x02\f\n\x02' +
         '\r\x02\x0E\x02\r\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03\x14\n\x03\x03' +
         '\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03' +
@@ -780,7 +783,7 @@ export class AlgebrainParser extends Parser {
         '\x02\x04\x13\x03\x02\x02\x02\x06+\x03\x02\x02\x02\bZ\x03\x02\x02\x02\n' +
         '\f\x05\x04\x03\x02\v\n\x03\x02\x02\x02\f\r\x03\x02\x02\x02\r\v\x03\x02' +
         '\x02\x02\r\x0E\x03\x02\x02\x02\x0E\x03\x03\x02\x02\x02\x0F\x10\x05\x06' +
-        '\x04\x02\x10\x11\x07\x17\x02\x02\x11\x14\x03\x02\x02\x02\x12\x14\x07\x17' +
+        '\x04\x02\x10\x11\x07\x18\x02\x02\x11\x14\x03\x02\x02\x02\x12\x14\x07\x18' +
         '\x02\x02\x13\x0F\x03\x02\x02\x02\x13\x12\x03\x02\x02\x02\x14\x05\x03\x02' +
         '\x02\x02\x15\x16\b\x04\x01\x02\x16\x17\x07\f\x02\x02\x17\x18\x05\x06\x04' +
         '\x02\x18\x19\x07\r\x02\x02\x19,\x03\x02\x02\x02\x1A\x1B\x07\n\x02\x02' +
@@ -1153,8 +1156,8 @@ export class UnaryContext extends ExprContext {
     public ID(): TerminalNode | undefined {
         return this.tryGetToken(AlgebrainParser.ID, 0);
     }
-    public INT(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.INT, 0);
+    public NUMBER(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.NUMBER, 0);
     }
     public REWRITABLE(): TerminalNode | undefined {
         return this.tryGetToken(AlgebrainParser.REWRITABLE, 0);
@@ -1266,9 +1269,9 @@ export class RewritableContext extends ExprContext {
         }
     }
 }
-export class IntContext extends ExprContext {
-    public INT(): TerminalNode {
-        return this.getToken(AlgebrainParser.INT, 0);
+export class NumberContext extends ExprContext {
+    public NUMBER(): TerminalNode {
+        return this.getToken(AlgebrainParser.NUMBER, 0);
     }
     constructor(ctx: ExprContext) {
         super(ctx.parent, ctx.invokingState);
@@ -1276,20 +1279,20 @@ export class IntContext extends ExprContext {
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterInt) {
-            listener.enterInt(this);
+        if (listener.enterNumber) {
+            listener.enterNumber(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitInt) {
-            listener.exitInt(this);
+        if (listener.exitNumber) {
+            listener.exitNumber(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitInt) {
-            return visitor.visitInt(this);
+        if (visitor.visitNumber) {
+            return visitor.visitNumber(this);
         } else {
             return visitor.visitChildren(this);
         }

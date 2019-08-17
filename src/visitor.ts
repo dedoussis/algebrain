@@ -3,7 +3,7 @@ import { AlgebrainVisitor } from './parser/AlgebrainVisitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 import { ParseTree } from 'antlr4ts/tree/ParseTree';
 import {
-    IntContext,
+    NumberContext,
     IdContext,
     PowContext,
     AddSubContext,
@@ -53,8 +53,8 @@ export default class Visitor extends AbstractParseTreeVisitor<Parsable>
         return this.visit(ctx.expr());
     }
 
-    visitInt(ctx: IntContext): Num {
-        return new Num(Number(ctx.INT().text));
+    visitNumber(ctx: NumberContext): Num {
+        return new Num(Number(ctx.NUMBER().text));
     }
 
     visitId(ctx: IdContext): Symbol {

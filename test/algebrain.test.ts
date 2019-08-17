@@ -32,6 +32,16 @@ const cases = [
             ])
         ),
     ],
+    [
+        'x^5.67/(122.31+y)',
+        new Operator(
+            OperatorSymbol.DIV,
+            List([
+                new Operator(OperatorSymbol.POW, List([new Symbol('x'), new Num(5.67)])),
+                new Operator(OperatorSymbol.PLUS, List([new Num(122.31), new Symbol('y')])),
+            ])
+        ),
+    ],
 ];
 
 describe('parsing', () => {

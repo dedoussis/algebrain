@@ -17,7 +17,7 @@ import { ParensContext } from './AlgebrainParser';
 import { UnaryContext } from './AlgebrainParser';
 import { OperatorContext } from './AlgebrainParser';
 import { RewritableContext } from './AlgebrainParser';
-import { IntContext } from './AlgebrainParser';
+import { NumberContext } from './AlgebrainParser';
 import { IdContext } from './AlgebrainParser';
 import { ProgContext } from './AlgebrainParser';
 import { StatContext } from './AlgebrainParser';
@@ -225,17 +225,17 @@ export interface AlgebrainListener extends ParseTreeListener {
     exitRewritable?: (ctx: RewritableContext) => void;
 
     /**
-     * Enter a parse tree produced by the `Int`
+     * Enter a parse tree produced by the `Number`
      * labeled alternative in `AlgebrainParser.expr`.
      * @param ctx the parse tree
      */
-    enterInt?: (ctx: IntContext) => void;
+    enterNumber?: (ctx: NumberContext) => void;
     /**
-     * Exit a parse tree produced by the `Int`
+     * Exit a parse tree produced by the `Number`
      * labeled alternative in `AlgebrainParser.expr`.
      * @param ctx the parse tree
      */
-    exitInt?: (ctx: IntContext) => void;
+    exitNumber?: (ctx: NumberContext) => void;
 
     /**
      * Enter a parse tree produced by the `Id`
