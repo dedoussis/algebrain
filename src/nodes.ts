@@ -1,13 +1,8 @@
 import { List, Map } from 'immutable';
+import { Executable, Namespace, Output } from './executable';
 
-export abstract class Parsable {
-    abstract equals(other: any): boolean;
-    abstract toString(): string;
-}
-
-export class Node implements Parsable {
-    readonly value: any;
-    constructor(value: any) {
+export class Node implements Executable {
+    constructor(readonly value: any) {
         this.value = value;
     }
 
@@ -44,11 +39,18 @@ export class Node implements Parsable {
             precedence.findIndex(instanceType => other instanceof instanceType)
         );
     }
+
+    execute(namespace: Namespace): Output {
+        const evaluated: Node = this.evaluate();
+        return {
+            namespace: { ...namespace, expression: evaluated },
+            stdOut: evaluated.toString(),
+        };
+    }
 }
 
 export class Num extends Node {
-    readonly value: number;
-    constructor(value: number) {
+    constructor(readonly value: number) {
         super(value);
     }
 
@@ -73,11 +75,11 @@ export enum OperatorSymbol {
     MUL = '*',
     DIV = '/',
     POW = '^',
-    AND = 'AND',
-    OR = 'OR',
+    AND = 'and',
+    OR = 'or',
     EQUALS = '==',
-    FLAG = 'IS',
-    NOT = 'NOT',
+    FLAG = 'is',
+    NOT = 'not',
     DEPENDS = 'depends',
     CONSTANT = 'const',
 }
@@ -87,12 +89,8 @@ export class Operator extends Node {
     private readonly evaluator: Evaluator;
     private readonly stringifier: Stringifier | undefined;
 
-    readonly value: string;
-    readonly children: List<Node>;
-
-    constructor(value: string, children: List<Node> = List<Node>()) {
+    constructor(readonly value: string, readonly children: List<Node> = List<Node>()) {
         super(value);
-        this.children = children;
         const notFoundHandlers: Handlers = {
             evaluator: {
                 f: (children: List<Node>) => new Operator(this.value, children),
@@ -162,15 +160,13 @@ export class Operator extends Node {
 }
 
 export class Symbol extends Node {
-    readonly value: string;
-    constructor(value: string) {
+    constructor(readonly value: string) {
         super(value);
     }
 }
 
 export class Rewritable extends Node {
-    readonly value: string;
-    constructor(value: string) {
+    constructor(readonly value: string) {
         super(value);
     }
 
@@ -262,7 +258,7 @@ const operatorSymbolHandlers: Map<OperatorSymbol, Handlers> = Map<OperatorSymbol
             evaluator: {
                 f: evaluateNumericalOperator(
                     OperatorSymbol.POW,
-                    true,
+                    false,
                     (left, right) => left ** right
                 ),
                 recursive: false,

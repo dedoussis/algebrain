@@ -1,21 +1,24 @@
 import { List } from 'immutable';
+import { Executable, Namespace, Output } from './executable';
 import { Rule } from './rule';
 import { Node, Operator } from './nodes';
 
-export class Transformation {
+export class Transformation implements Executable {
+    readonly name: string;
     readonly rules: List<Rule>;
 
-    constructor(rules: List<Rule> = List<Rule>()) {
+    constructor(name: string, rules: List<Rule> = List<Rule>()) {
+        this.name = name;
         this.rules = rules;
     }
 
     addRule(rule: Rule): Transformation {
-        return new Transformation(this.rules.push(rule));
+        return new Transformation(this.name, this.rules.push(rule));
     }
 
     transform(expression: Node, recursive: boolean = true): Node {
         let transformed: Node = expression;
-        const matchFound: boolean = this.rules.some(rule => {
+        this.rules.some(rule => {
             if (rule.mirrors(transformed)) {
                 transformed = rule.rhs;
                 return true;
@@ -27,11 +30,34 @@ export class Transformation {
             }
             return false;
         });
-        if (matchFound && recursive && transformed instanceof Operator) {
+        if (recursive && transformed instanceof Operator) {
             return transformed
                 .setChildren(transformed.children.map(child => this.transform(child)))
                 .evaluate();
         }
         return transformed;
+    }
+
+    toString(): string {
+        return `[ ${this.rules.join(', ')} ]`;
+    }
+
+    equals(other: any): boolean {
+        return (
+            other !== undefined &&
+            this.constructor === other.constructor &&
+            this.rules.every((rule: Rule, index: number) => rule.equals(other.rules.get(index)))
+        );
+    }
+
+    execute(namespace: Namespace): Output {
+        return {
+            namespace: {
+                ...namespace,
+                transformations: namespace.transformations.set(this.name, this),
+                transformationName: this.name,
+            },
+            stdOut: this.toString(),
+        };
     }
 }

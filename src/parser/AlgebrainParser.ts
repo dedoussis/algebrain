@@ -26,83 +26,111 @@ import { AlgebrainListener } from './AlgebrainListener';
 import { AlgebrainVisitor } from './AlgebrainVisitor';
 
 export class AlgebrainParser extends Parser {
-    public static readonly ID = 1;
-    public static readonly NUMBER = 2;
-    public static readonly REWRITABLE = 3;
-    public static readonly POW = 4;
-    public static readonly MUL = 5;
-    public static readonly DIV = 6;
-    public static readonly PLUS = 7;
-    public static readonly MINUS = 8;
-    public static readonly DOLLAR = 9;
-    public static readonly LPARENS = 10;
-    public static readonly RPARENS = 11;
-    public static readonly COMMA = 12;
-    public static readonly EQUALS = 13;
-    public static readonly TRUE = 14;
-    public static readonly FALSE = 15;
-    public static readonly SPACE = 16;
-    public static readonly IF = 17;
-    public static readonly AND = 18;
-    public static readonly NOT = 19;
-    public static readonly OR = 20;
-    public static readonly POINT = 21;
-    public static readonly NEWLINE = 22;
-    public static readonly WS = 23;
-    public static readonly RULE_prog = 0;
-    public static readonly RULE_stat = 1;
-    public static readonly RULE_expr = 2;
-    public static readonly RULE_bexp = 3;
+    public static readonly REWRITABLE_PREFIX = 1;
+    public static readonly SPACE = 2;
+    public static readonly COMMAND = 3;
+    public static readonly TRUE = 4;
+    public static readonly FALSE = 5;
+    public static readonly IF = 6;
+    public static readonly AND = 7;
+    public static readonly OR = 8;
+    public static readonly ID = 9;
+    public static readonly POINT = 10;
+    public static readonly COLON = 11;
+    public static readonly NOT = 12;
+    public static readonly NUMBER = 13;
+    public static readonly POW = 14;
+    public static readonly MUL = 15;
+    public static readonly DIV = 16;
+    public static readonly PLUS = 17;
+    public static readonly MINUS = 18;
+    public static readonly LPAREN = 19;
+    public static readonly RPAREN = 20;
+    public static readonly LSQPAREN = 21;
+    public static readonly RSQPAREN = 22;
+    public static readonly COMMA = 23;
+    public static readonly EQUALS = 24;
+    public static readonly NEWLINE = 25;
+    public static readonly WS = 26;
+    public static readonly RULE_stat = 0;
+    public static readonly RULE_command = 1;
+    public static readonly RULE_transformation = 2;
+    public static readonly RULE_rewriting = 3;
+    public static readonly RULE_booleanExpr = 4;
+    public static readonly RULE_equation = 5;
+    public static readonly RULE_booleanAtom = 6;
+    public static readonly RULE_expr = 7;
+    public static readonly RULE_signedAtom = 8;
+    public static readonly RULE_func = 9;
+    public static readonly RULE_atom = 10;
     // tslint:disable:no-trailing-whitespace
-    public static readonly ruleNames: string[] = ['prog', 'stat', 'expr', 'bexp'];
+    public static readonly ruleNames: string[] = [
+        'stat',
+        'command',
+        'transformation',
+        'rewriting',
+        'booleanExpr',
+        'equation',
+        'booleanAtom',
+        'expr',
+        'signedAtom',
+        'func',
+        'atom',
+    ];
 
     private static readonly _LITERAL_NAMES: Array<string | undefined> = [
         undefined,
+        "'$'",
+        "' '",
         undefined,
+        "'true'",
+        "'false'",
+        "'if'",
+        "'and'",
+        "'or'",
         undefined,
+        "'.'",
+        "':'",
+        "'not'",
         undefined,
         "'^'",
         "'*'",
         "'/'",
         "'+'",
         "'-'",
-        "'$'",
         "'('",
         "')'",
+        "'['",
+        "']'",
         "','",
         "'='",
-        "'True'",
-        "'False'",
-        "' '",
-        "' if '",
-        "'and'",
-        "'not'",
-        "'or'",
-        "'.'",
     ];
     private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
         undefined,
+        'REWRITABLE_PREFIX',
+        'SPACE',
+        'COMMAND',
+        'TRUE',
+        'FALSE',
+        'IF',
+        'AND',
+        'OR',
         'ID',
+        'POINT',
+        'COLON',
+        'NOT',
         'NUMBER',
-        'REWRITABLE',
         'POW',
         'MUL',
         'DIV',
         'PLUS',
         'MINUS',
-        'DOLLAR',
-        'LPARENS',
-        'RPARENS',
+        'LPAREN',
+        'RPAREN',
+        'LSQPAREN',
+        'RSQPAREN',
         'COMMA',
         'EQUALS',
-        'TRUE',
-        'FALSE',
-        'SPACE',
-        'IF',
-        'AND',
-        'NOT',
-        'OR',
-        'POINT',
         'NEWLINE',
         'WS',
     ];
@@ -139,37 +167,52 @@ export class AlgebrainParser extends Parser {
         this._interp = new ParserATNSimulator(AlgebrainParser._ATN, this);
     }
     // @RuleVersion(0)
-    public prog(): ProgContext {
-        let _localctx: ProgContext = new ProgContext(this._ctx, this.state);
-        this.enterRule(_localctx, 0, AlgebrainParser.RULE_prog);
-        let _la: number;
+    public stat(): StatContext {
+        let _localctx: StatContext = new StatContext(this._ctx, this.state);
+        this.enterRule(_localctx, 0, AlgebrainParser.RULE_stat);
         try {
-            this.enterOuterAlt(_localctx, 1);
-            {
-                this.state = 9;
-                this._errHandler.sync(this);
-                _la = this._input.LA(1);
-                do {
+            this.state = 27;
+            this._errHandler.sync(this);
+            switch (this.interpreter.adaptivePredict(this._input, 0, this._ctx)) {
+                case 1:
+                    this.enterOuterAlt(_localctx, 1);
                     {
-                        {
-                            this.state = 8;
-                            this.stat();
-                        }
+                        this.state = 22;
+                        this.command();
                     }
-                    this.state = 11;
-                    this._errHandler.sync(this);
-                    _la = this._input.LA(1);
-                } while (
-                    (_la & ~0x1f) === 0 &&
-                    ((1 << _la) &
-                        ((1 << AlgebrainParser.ID) |
-                            (1 << AlgebrainParser.NUMBER) |
-                            (1 << AlgebrainParser.REWRITABLE) |
-                            (1 << AlgebrainParser.MINUS) |
-                            (1 << AlgebrainParser.LPARENS) |
-                            (1 << AlgebrainParser.NEWLINE))) !==
-                        0
-                );
+                    break;
+
+                case 2:
+                    this.enterOuterAlt(_localctx, 2);
+                    {
+                        this.state = 23;
+                        this.transformation();
+                    }
+                    break;
+
+                case 3:
+                    this.enterOuterAlt(_localctx, 3);
+                    {
+                        this.state = 24;
+                        this.rewriting();
+                    }
+                    break;
+
+                case 4:
+                    this.enterOuterAlt(_localctx, 4);
+                    {
+                        this.state = 25;
+                        this.booleanExpr();
+                    }
+                    break;
+
+                case 5:
+                    this.enterOuterAlt(_localctx, 5);
+                    {
+                        this.state = 26;
+                        this.expr(0);
+                    }
+                    break;
             }
         } catch (re) {
             if (re instanceof RecognitionException) {
@@ -185,37 +228,287 @@ export class AlgebrainParser extends Parser {
         return _localctx;
     }
     // @RuleVersion(0)
-    public stat(): StatContext {
-        let _localctx: StatContext = new StatContext(this._ctx, this.state);
-        this.enterRule(_localctx, 2, AlgebrainParser.RULE_stat);
+    public command(): CommandContext {
+        let _localctx: CommandContext = new CommandContext(this._ctx, this.state);
+        this.enterRule(_localctx, 2, AlgebrainParser.RULE_command);
+        let _la: number;
         try {
-            this.state = 17;
+            this.enterOuterAlt(_localctx, 1);
+            {
+                this.state = 29;
+                this.match(AlgebrainParser.COMMAND);
+                this.state = 39;
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la === AlgebrainParser.COLON) {
+                    {
+                        this.state = 30;
+                        this.match(AlgebrainParser.COLON);
+                        this.state = 31;
+                        this.match(AlgebrainParser.ID);
+                        this.state = 36;
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        while (_la === AlgebrainParser.COMMA) {
+                            {
+                                {
+                                    this.state = 32;
+                                    this.match(AlgebrainParser.COMMA);
+                                    this.state = 33;
+                                    this.match(AlgebrainParser.ID);
+                                }
+                            }
+                            this.state = 38;
+                            this._errHandler.sync(this);
+                            _la = this._input.LA(1);
+                        }
+                    }
+                }
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public transformation(): TransformationContext {
+        let _localctx: TransformationContext = new TransformationContext(this._ctx, this.state);
+        this.enterRule(_localctx, 4, AlgebrainParser.RULE_transformation);
+        let _la: number;
+        try {
+            this.enterOuterAlt(_localctx, 1);
+            {
+                this.state = 41;
+                this.match(AlgebrainParser.ID);
+                this.state = 42;
+                this.match(AlgebrainParser.EQUALS);
+                this.state = 43;
+                this.match(AlgebrainParser.LSQPAREN);
+                this.state = 44;
+                this.rewriting();
+                this.state = 49;
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la === AlgebrainParser.COMMA) {
+                    {
+                        {
+                            this.state = 45;
+                            this.match(AlgebrainParser.COMMA);
+                            this.state = 46;
+                            this.rewriting();
+                        }
+                    }
+                    this.state = 51;
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                }
+                this.state = 52;
+                this.match(AlgebrainParser.RSQPAREN);
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public rewriting(): RewritingContext {
+        let _localctx: RewritingContext = new RewritingContext(this._ctx, this.state);
+        this.enterRule(_localctx, 6, AlgebrainParser.RULE_rewriting);
+        let _la: number;
+        try {
+            this.enterOuterAlt(_localctx, 1);
+            {
+                this.state = 54;
+                this.expr(0);
+                this.state = 55;
+                this.match(AlgebrainParser.EQUALS);
+                this.state = 56;
+                this.expr(0);
+                this.state = 61;
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la === AlgebrainParser.SPACE) {
+                    {
+                        this.state = 57;
+                        this.match(AlgebrainParser.SPACE);
+                        this.state = 58;
+                        this.match(AlgebrainParser.IF);
+                        this.state = 59;
+                        this.match(AlgebrainParser.SPACE);
+                        this.state = 60;
+                        this.booleanExpr();
+                    }
+                }
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public booleanExpr(): BooleanExprContext {
+        let _localctx: BooleanExprContext = new BooleanExprContext(this._ctx, this.state);
+        this.enterRule(_localctx, 8, AlgebrainParser.RULE_booleanExpr);
+        let _la: number;
+        try {
+            this.enterOuterAlt(_localctx, 1);
+            {
+                this.state = 63;
+                this.booleanAtom();
+                this.state = 70;
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la === AlgebrainParser.SPACE) {
+                    {
+                        {
+                            this.state = 64;
+                            this.match(AlgebrainParser.SPACE);
+                            this.state = 65;
+                            _localctx._op = this._input.LT(1);
+                            _la = this._input.LA(1);
+                            if (!(_la === AlgebrainParser.AND || _la === AlgebrainParser.OR)) {
+                                _localctx._op = this._errHandler.recoverInline(this);
+                            } else {
+                                if (this._input.LA(1) === Token.EOF) {
+                                    this.matchedEOF = true;
+                                }
+
+                                this._errHandler.reportMatch(this);
+                                this.consume();
+                            }
+                            this.state = 66;
+                            this.match(AlgebrainParser.SPACE);
+                            this.state = 67;
+                            this.booleanAtom();
+                        }
+                    }
+                    this.state = 72;
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                }
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public equation(): EquationContext {
+        let _localctx: EquationContext = new EquationContext(this._ctx, this.state);
+        this.enterRule(_localctx, 10, AlgebrainParser.RULE_equation);
+        try {
+            this.enterOuterAlt(_localctx, 1);
+            {
+                this.state = 73;
+                this.expr(0);
+                this.state = 74;
+                this.match(AlgebrainParser.EQUALS);
+                this.state = 75;
+                this.match(AlgebrainParser.EQUALS);
+                this.state = 76;
+                this.expr(0);
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public booleanAtom(): BooleanAtomContext {
+        let _localctx: BooleanAtomContext = new BooleanAtomContext(this._ctx, this.state);
+        this.enterRule(_localctx, 12, AlgebrainParser.RULE_booleanAtom);
+        try {
+            this.state = 86;
             this._errHandler.sync(this);
-            switch (this._input.LA(1)) {
-                case AlgebrainParser.ID:
-                case AlgebrainParser.NUMBER:
-                case AlgebrainParser.REWRITABLE:
-                case AlgebrainParser.MINUS:
-                case AlgebrainParser.LPARENS:
-                    _localctx = new PrintExprContext(_localctx);
+            switch (this.interpreter.adaptivePredict(this._input, 6, this._ctx)) {
+                case 1:
+                    _localctx = new OperatorContext(_localctx);
                     this.enterOuterAlt(_localctx, 1);
                     {
-                        this.state = 13;
-                        this.expr(0);
-                        this.state = 14;
-                        this.match(AlgebrainParser.NEWLINE);
+                        this.state = 78;
+                        this.func();
                     }
                     break;
-                case AlgebrainParser.NEWLINE:
-                    _localctx = new BlankContext(_localctx);
+
+                case 2:
+                    _localctx = new TrueContext(_localctx);
                     this.enterOuterAlt(_localctx, 2);
                     {
-                        this.state = 16;
-                        this.match(AlgebrainParser.NEWLINE);
+                        this.state = 79;
+                        this.match(AlgebrainParser.TRUE);
                     }
                     break;
-                default:
-                    throw new NoViableAltException(this);
+
+                case 3:
+                    _localctx = new FalseContext(_localctx);
+                    this.enterOuterAlt(_localctx, 3);
+                    {
+                        this.state = 80;
+                        this.match(AlgebrainParser.FALSE);
+                    }
+                    break;
+
+                case 4:
+                    _localctx = new BooleanAtomEquationContext(_localctx);
+                    this.enterOuterAlt(_localctx, 4);
+                    {
+                        this.state = 81;
+                        this.equation();
+                    }
+                    break;
+
+                case 5:
+                    _localctx = new BooleanExprParensContext(_localctx);
+                    this.enterOuterAlt(_localctx, 5);
+                    {
+                        this.state = 82;
+                        this.match(AlgebrainParser.LPAREN);
+                        this.state = 83;
+                        this.booleanExpr();
+                        this.state = 84;
+                        this.match(AlgebrainParser.RPAREN);
+                    }
+                    break;
             }
         } catch (re) {
             if (re instanceof RecognitionException) {
@@ -243,131 +536,25 @@ export class AlgebrainParser extends Parser {
         let _parentState: number = this.state;
         let _localctx: ExprContext = new ExprContext(this._ctx, _parentState);
         let _prevctx: ExprContext = _localctx;
-        let _startState: number = 4;
-        this.enterRecursionRule(_localctx, 4, AlgebrainParser.RULE_expr, _p);
+        let _startState: number = 14;
+        this.enterRecursionRule(_localctx, 14, AlgebrainParser.RULE_expr, _p);
         let _la: number;
         try {
             let _alt: number;
             this.enterOuterAlt(_localctx, 1);
             {
-                this.state = 41;
-                this._errHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this._input, 3, this._ctx)) {
-                    case 1:
-                        {
-                            _localctx = new ParensContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
+                {
+                    _localctx = new AtomExprContext(_localctx);
+                    this._ctx = _localctx;
+                    _prevctx = _localctx;
 
-                            this.state = 20;
-                            this.match(AlgebrainParser.LPARENS);
-                            this.state = 21;
-                            this.expr(0);
-                            this.state = 22;
-                            this.match(AlgebrainParser.RPARENS);
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            _localctx = new UnaryContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 24;
-                            this.match(AlgebrainParser.MINUS);
-                            this.state = 25;
-                            (_localctx as UnaryContext)._val = this._input.LT(1);
-                            _la = this._input.LA(1);
-                            if (
-                                !(
-                                    (_la & ~0x1f) === 0 &&
-                                    ((1 << _la) &
-                                        ((1 << AlgebrainParser.ID) |
-                                            (1 << AlgebrainParser.NUMBER) |
-                                            (1 << AlgebrainParser.REWRITABLE))) !==
-                                        0
-                                )
-                            ) {
-                                (_localctx as UnaryContext)._val = this._errHandler.recoverInline(
-                                    this
-                                );
-                            } else {
-                                if (this._input.LA(1) === Token.EOF) {
-                                    this.matchedEOF = true;
-                                }
-
-                                this._errHandler.reportMatch(this);
-                                this.consume();
-                            }
-                        }
-                        break;
-
-                    case 3:
-                        {
-                            _localctx = new OperatorContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 26;
-                            this.match(AlgebrainParser.ID);
-                            this.state = 27;
-                            this.match(AlgebrainParser.LPARENS);
-                            this.state = 28;
-                            this.expr(0);
-                            this.state = 33;
-                            this._errHandler.sync(this);
-                            _la = this._input.LA(1);
-                            while (_la === AlgebrainParser.COMMA) {
-                                {
-                                    {
-                                        this.state = 29;
-                                        this.match(AlgebrainParser.COMMA);
-                                        this.state = 30;
-                                        this.expr(0);
-                                    }
-                                }
-                                this.state = 35;
-                                this._errHandler.sync(this);
-                                _la = this._input.LA(1);
-                            }
-                            this.state = 36;
-                            this.match(AlgebrainParser.RPARENS);
-                        }
-                        break;
-
-                    case 4:
-                        {
-                            _localctx = new RewritableContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 38;
-                            this.match(AlgebrainParser.REWRITABLE);
-                        }
-                        break;
-
-                    case 5:
-                        {
-                            _localctx = new NumberContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 39;
-                            this.match(AlgebrainParser.NUMBER);
-                        }
-                        break;
-
-                    case 6:
-                        {
-                            _localctx = new IdContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 40;
-                            this.match(AlgebrainParser.ID);
-                        }
-                        break;
+                    this.state = 89;
+                    this.signedAtom();
                 }
                 this._ctx._stop = this._input.tryLT(-1);
-                this.state = 61;
+                this.state = 102;
                 this._errHandler.sync(this);
-                _alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
+                _alt = this.interpreter.adaptivePredict(this._input, 8, this._ctx);
                 while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
                     if (_alt === 1) {
                         if (this._parseListeners != null) {
@@ -375,12 +562,12 @@ export class AlgebrainParser extends Parser {
                         }
                         _prevctx = _localctx;
                         {
-                            this.state = 59;
+                            this.state = 100;
                             this._errHandler.sync(this);
-                            switch (this.interpreter.adaptivePredict(this._input, 5, this._ctx)) {
+                            switch (this.interpreter.adaptivePredict(this._input, 7, this._ctx)) {
                                 case 1:
                                     {
-                                        _localctx = new PowContext(
+                                        _localctx = new PowExprContext(
                                             new ExprContext(_parentctx, _parentState)
                                         );
                                         this.pushNewRecursionContext(
@@ -388,23 +575,23 @@ export class AlgebrainParser extends Parser {
                                             _startState,
                                             AlgebrainParser.RULE_expr
                                         );
-                                        this.state = 43;
-                                        if (!this.precpred(this._ctx, 10)) {
+                                        this.state = 91;
+                                        if (!this.precpred(this._ctx, 4)) {
                                             throw new FailedPredicateException(
                                                 this,
-                                                'this.precpred(this._ctx, 10)'
+                                                'this.precpred(this._ctx, 4)'
                                             );
                                         }
-                                        this.state = 44;
+                                        this.state = 92;
                                         this.match(AlgebrainParser.POW);
-                                        this.state = 45;
-                                        this.expr(11);
+                                        this.state = 93;
+                                        this.expr(5);
                                     }
                                     break;
 
                                 case 2:
                                     {
-                                        _localctx = new MulDivContext(
+                                        _localctx = new MultiplyingExprContext(
                                             new ExprContext(_parentctx, _parentState)
                                         );
                                         this.pushNewRecursionContext(
@@ -412,15 +599,17 @@ export class AlgebrainParser extends Parser {
                                             _startState,
                                             AlgebrainParser.RULE_expr
                                         );
-                                        this.state = 46;
-                                        if (!this.precpred(this._ctx, 9)) {
+                                        this.state = 94;
+                                        if (!this.precpred(this._ctx, 3)) {
                                             throw new FailedPredicateException(
                                                 this,
-                                                'this.precpred(this._ctx, 9)'
+                                                'this.precpred(this._ctx, 3)'
                                             );
                                         }
-                                        this.state = 47;
-                                        (_localctx as MulDivContext)._op = this._input.LT(1);
+                                        this.state = 95;
+                                        (_localctx as MultiplyingExprContext)._op = this._input.LT(
+                                            1
+                                        );
                                         _la = this._input.LA(1);
                                         if (
                                             !(
@@ -428,7 +617,7 @@ export class AlgebrainParser extends Parser {
                                                 _la === AlgebrainParser.DIV
                                             )
                                         ) {
-                                            (_localctx as MulDivContext)._op = this._errHandler.recoverInline(
+                                            (_localctx as MultiplyingExprContext)._op = this._errHandler.recoverInline(
                                                 this
                                             );
                                         } else {
@@ -439,14 +628,14 @@ export class AlgebrainParser extends Parser {
                                             this._errHandler.reportMatch(this);
                                             this.consume();
                                         }
-                                        this.state = 48;
-                                        this.expr(10);
+                                        this.state = 96;
+                                        this.expr(4);
                                     }
                                     break;
 
                                 case 3:
                                     {
-                                        _localctx = new AddSubContext(
+                                        _localctx = new AdditionExprContext(
                                             new ExprContext(_parentctx, _parentState)
                                         );
                                         this.pushNewRecursionContext(
@@ -454,15 +643,15 @@ export class AlgebrainParser extends Parser {
                                             _startState,
                                             AlgebrainParser.RULE_expr
                                         );
-                                        this.state = 49;
-                                        if (!this.precpred(this._ctx, 8)) {
+                                        this.state = 97;
+                                        if (!this.precpred(this._ctx, 2)) {
                                             throw new FailedPredicateException(
                                                 this,
-                                                'this.precpred(this._ctx, 8)'
+                                                'this.precpred(this._ctx, 2)'
                                             );
                                         }
-                                        this.state = 50;
-                                        (_localctx as AddSubContext)._op = this._input.LT(1);
+                                        this.state = 98;
+                                        (_localctx as AdditionExprContext)._op = this._input.LT(1);
                                         _la = this._input.LA(1);
                                         if (
                                             !(
@@ -470,7 +659,7 @@ export class AlgebrainParser extends Parser {
                                                 _la === AlgebrainParser.MINUS
                                             )
                                         ) {
-                                            (_localctx as AddSubContext)._op = this._errHandler.recoverInline(
+                                            (_localctx as AdditionExprContext)._op = this._errHandler.recoverInline(
                                                 this
                                             );
                                         } else {
@@ -481,58 +670,16 @@ export class AlgebrainParser extends Parser {
                                             this._errHandler.reportMatch(this);
                                             this.consume();
                                         }
-                                        this.state = 51;
-                                        this.expr(9);
-                                    }
-                                    break;
-
-                                case 4:
-                                    {
-                                        _localctx = new RewritingRuleContext(
-                                            new ExprContext(_parentctx, _parentState)
-                                        );
-                                        this.pushNewRecursionContext(
-                                            _localctx,
-                                            _startState,
-                                            AlgebrainParser.RULE_expr
-                                        );
-                                        this.state = 52;
-                                        if (!this.precpred(this._ctx, 7)) {
-                                            throw new FailedPredicateException(
-                                                this,
-                                                'this.precpred(this._ctx, 7)'
-                                            );
-                                        }
-                                        this.state = 53;
-                                        this.match(AlgebrainParser.EQUALS);
-                                        this.state = 54;
-                                        this.expr(0);
-                                        this.state = 57;
-                                        this._errHandler.sync(this);
-                                        switch (
-                                            this.interpreter.adaptivePredict(
-                                                this._input,
-                                                4,
-                                                this._ctx
-                                            )
-                                        ) {
-                                            case 1:
-                                                {
-                                                    this.state = 55;
-                                                    this.match(AlgebrainParser.IF);
-                                                    this.state = 56;
-                                                    this.bexp(0);
-                                                }
-                                                break;
-                                        }
+                                        this.state = 99;
+                                        this.expr(3);
                                     }
                                     break;
                             }
                         }
                     }
-                    this.state = 63;
+                    this.state = 104;
                     this._errHandler.sync(this);
-                    _alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
+                    _alt = this.interpreter.adaptivePredict(this._input, 8, this._ctx);
                 }
             }
         } catch (re) {
@@ -548,174 +695,39 @@ export class AlgebrainParser extends Parser {
         }
         return _localctx;
     }
-
-    public bexp(): BexpContext;
-    public bexp(_p: number): BexpContext;
     // @RuleVersion(0)
-    public bexp(_p?: number): BexpContext {
-        if (_p === undefined) {
-            _p = 0;
-        }
-
-        let _parentctx: ParserRuleContext = this._ctx;
-        let _parentState: number = this.state;
-        let _localctx: BexpContext = new BexpContext(this._ctx, _parentState);
-        let _prevctx: BexpContext = _localctx;
-        let _startState: number = 6;
-        this.enterRecursionRule(_localctx, 6, AlgebrainParser.RULE_bexp, _p);
-        let _la: number;
+    public signedAtom(): SignedAtomContext {
+        let _localctx: SignedAtomContext = new SignedAtomContext(this._ctx, this.state);
+        this.enterRule(_localctx, 16, AlgebrainParser.RULE_signedAtom);
         try {
-            let _alt: number;
-            this.enterOuterAlt(_localctx, 1);
-            {
-                this.state = 88;
-                this._errHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this._input, 8, this._ctx)) {
-                    case 1:
-                        {
-                            _localctx = new BooleanOperatorContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-
-                            this.state = 65;
-                            this.match(AlgebrainParser.ID);
-                            this.state = 66;
-                            this.match(AlgebrainParser.LPARENS);
-                            this.state = 67;
-                            this.expr(0);
-                            this.state = 72;
-                            this._errHandler.sync(this);
-                            _la = this._input.LA(1);
-                            while (_la === AlgebrainParser.COMMA) {
-                                {
-                                    {
-                                        this.state = 68;
-                                        this.match(AlgebrainParser.COMMA);
-                                        this.state = 69;
-                                        this.expr(0);
-                                    }
-                                }
-                                this.state = 74;
-                                this._errHandler.sync(this);
-                                _la = this._input.LA(1);
-                            }
-                            this.state = 75;
-                            this.match(AlgebrainParser.RPARENS);
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            _localctx = new NegationContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 77;
-                            this.match(AlgebrainParser.NOT);
-                            this.state = 78;
-                            this.match(AlgebrainParser.LPARENS);
-                            this.state = 79;
-                            this.bexp(0);
-                            this.state = 80;
-                            this.match(AlgebrainParser.RPARENS);
-                        }
-                        break;
-
-                    case 3:
-                        {
-                            _localctx = new EqualityContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 82;
-                            this.expr(0);
-                            this.state = 83;
-                            this.match(AlgebrainParser.EQUALS);
-                            this.state = 84;
-                            this.match(AlgebrainParser.EQUALS);
-                            this.state = 85;
-                            this.expr(0);
-                        }
-                        break;
-
-                    case 4:
-                        {
-                            _localctx = new FlagContext(_localctx);
-                            this._ctx = _localctx;
-                            _prevctx = _localctx;
-                            this.state = 87;
-                            _la = this._input.LA(1);
-                            if (!(_la === AlgebrainParser.TRUE || _la === AlgebrainParser.FALSE)) {
-                                this._errHandler.recoverInline(this);
-                            } else {
-                                if (this._input.LA(1) === Token.EOF) {
-                                    this.matchedEOF = true;
-                                }
-
-                                this._errHandler.reportMatch(this);
-                                this.consume();
-                            }
-                        }
-                        break;
-                }
-                this._ctx._stop = this._input.tryLT(-1);
-                this.state = 95;
-                this._errHandler.sync(this);
-                _alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
-                while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
-                    if (_alt === 1) {
-                        if (this._parseListeners != null) {
-                            this.triggerExitRuleEvent();
-                        }
-                        _prevctx = _localctx;
-                        {
-                            {
-                                _localctx = new LogicalContext(
-                                    new BexpContext(_parentctx, _parentState)
-                                );
-                                this.pushNewRecursionContext(
-                                    _localctx,
-                                    _startState,
-                                    AlgebrainParser.RULE_bexp
-                                );
-                                this.state = 90;
-                                if (!this.precpred(this._ctx, 5)) {
-                                    throw new FailedPredicateException(
-                                        this,
-                                        'this.precpred(this._ctx, 5)'
-                                    );
-                                }
-                                this.state = 91;
-                                (_localctx as LogicalContext)._op = this._input.LT(1);
-                                _la = this._input.LA(1);
-                                if (
-                                    !(
-                                        (_la & ~0x1f) === 0 &&
-                                        ((1 << _la) &
-                                            ((1 << AlgebrainParser.AND) |
-                                                (1 << AlgebrainParser.NOT) |
-                                                (1 << AlgebrainParser.OR))) !==
-                                            0
-                                    )
-                                ) {
-                                    (_localctx as LogicalContext)._op = this._errHandler.recoverInline(
-                                        this
-                                    );
-                                } else {
-                                    if (this._input.LA(1) === Token.EOF) {
-                                        this.matchedEOF = true;
-                                    }
-
-                                    this._errHandler.reportMatch(this);
-                                    this.consume();
-                                }
-                                this.state = 92;
-                                this.bexp(6);
-                            }
-                        }
+            this.state = 109;
+            this._errHandler.sync(this);
+            switch (this.interpreter.adaptivePredict(this._input, 9, this._ctx)) {
+                case 1:
+                    this.enterOuterAlt(_localctx, 1);
+                    {
+                        this.state = 105;
+                        this.match(AlgebrainParser.MINUS);
+                        this.state = 106;
+                        this.signedAtom();
                     }
-                    this.state = 97;
-                    this._errHandler.sync(this);
-                    _alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
-                }
+                    break;
+
+                case 2:
+                    this.enterOuterAlt(_localctx, 2);
+                    {
+                        this.state = 107;
+                        this.func();
+                    }
+                    break;
+
+                case 3:
+                    this.enterOuterAlt(_localctx, 3);
+                    {
+                        this.state = 108;
+                        this.atom();
+                    }
+                    break;
             }
         } catch (re) {
             if (re instanceof RecognitionException) {
@@ -726,90 +738,196 @@ export class AlgebrainParser extends Parser {
                 throw re;
             }
         } finally {
-            this.unrollRecursionContexts(_parentctx);
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public func(): FuncContext {
+        let _localctx: FuncContext = new FuncContext(this._ctx, this.state);
+        this.enterRule(_localctx, 18, AlgebrainParser.RULE_func);
+        let _la: number;
+        try {
+            this.enterOuterAlt(_localctx, 1);
+            {
+                this.state = 111;
+                this.match(AlgebrainParser.ID);
+                this.state = 112;
+                this.match(AlgebrainParser.LPAREN);
+                this.state = 113;
+                this.expr(0);
+                this.state = 118;
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la === AlgebrainParser.COMMA) {
+                    {
+                        {
+                            this.state = 114;
+                            this.match(AlgebrainParser.COMMA);
+                            this.state = 115;
+                            this.expr(0);
+                        }
+                    }
+                    this.state = 120;
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                }
+                this.state = 121;
+                this.match(AlgebrainParser.RPAREN);
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
+        }
+        return _localctx;
+    }
+    // @RuleVersion(0)
+    public atom(): AtomContext {
+        let _localctx: AtomContext = new AtomContext(this._ctx, this.state);
+        this.enterRule(_localctx, 20, AlgebrainParser.RULE_atom);
+        try {
+            this.state = 131;
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
+                case AlgebrainParser.REWRITABLE_PREFIX:
+                    _localctx = new RewritableContext(_localctx);
+                    this.enterOuterAlt(_localctx, 1);
+                    {
+                        this.state = 123;
+                        this.match(AlgebrainParser.REWRITABLE_PREFIX);
+                        this.state = 124;
+                        this.match(AlgebrainParser.ID);
+                    }
+                    break;
+                case AlgebrainParser.NUMBER:
+                    _localctx = new NumberContext(_localctx);
+                    this.enterOuterAlt(_localctx, 2);
+                    {
+                        this.state = 125;
+                        this.match(AlgebrainParser.NUMBER);
+                    }
+                    break;
+                case AlgebrainParser.ID:
+                    _localctx = new IdContext(_localctx);
+                    this.enterOuterAlt(_localctx, 3);
+                    {
+                        this.state = 126;
+                        this.match(AlgebrainParser.ID);
+                    }
+                    break;
+                case AlgebrainParser.LPAREN:
+                    _localctx = new ExprParensContext(_localctx);
+                    this.enterOuterAlt(_localctx, 4);
+                    {
+                        this.state = 127;
+                        this.match(AlgebrainParser.LPAREN);
+                        this.state = 128;
+                        this.expr(0);
+                        this.state = 129;
+                        this.match(AlgebrainParser.RPAREN);
+                    }
+                    break;
+                default:
+                    throw new NoViableAltException(this);
+            }
+        } catch (re) {
+            if (re instanceof RecognitionException) {
+                _localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
+            } else {
+                throw re;
+            }
+        } finally {
+            this.exitRule();
         }
         return _localctx;
     }
 
     public sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean {
         switch (ruleIndex) {
-            case 2:
+            case 7:
                 return this.expr_sempred(_localctx as ExprContext, predIndex);
-
-            case 3:
-                return this.bexp_sempred(_localctx as BexpContext, predIndex);
         }
         return true;
     }
     private expr_sempred(_localctx: ExprContext, predIndex: number): boolean {
         switch (predIndex) {
             case 0:
-                return this.precpred(this._ctx, 10);
+                return this.precpred(this._ctx, 4);
 
             case 1:
-                return this.precpred(this._ctx, 9);
+                return this.precpred(this._ctx, 3);
 
             case 2:
-                return this.precpred(this._ctx, 8);
-
-            case 3:
-                return this.precpred(this._ctx, 7);
-        }
-        return true;
-    }
-    private bexp_sempred(_localctx: BexpContext, predIndex: number): boolean {
-        switch (predIndex) {
-            case 4:
-                return this.precpred(this._ctx, 5);
+                return this.precpred(this._ctx, 2);
         }
         return true;
     }
 
     public static readonly _serializedATN: string =
-        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x19e\x04\x02' +
-        '\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x03\x02\x06\x02\f\n\x02' +
-        '\r\x02\x0E\x02\r\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03\x14\n\x03\x03' +
-        '\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03' +
-        '\x04\x03\x04\x03\x04\x07\x04"\n\x04\f\x04\x0E\x04%\v\x04\x03\x04\x03' +
-        '\x04\x03\x04\x03\x04\x03\x04\x05\x04,\n\x04\x03\x04\x03\x04\x03\x04\x03' +
-        '\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03' +
-        '\x04\x03\x04\x05\x04<\n\x04\x07\x04>\n\x04\f\x04\x0E\x04A\v\x04\x03\x05' +
-        '\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x07\x05I\n\x05\f\x05\x0E\x05' +
-        'L\v\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05' +
-        '\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x05\x05[\n\x05\x03\x05\x03\x05' +
-        '\x03\x05\x07\x05`\n\x05\f\x05\x0E\x05c\v\x05\x03\x05\x02\x02\x04\x06\b' +
-        '\x06\x02\x02\x04\x02\x06\x02\b\x02\x02\x07\x03\x02\x03\x05\x03\x02\x07' +
-        '\b\x03\x02\t\n\x03\x02\x10\x11\x03\x02\x14\x16\x02r\x02\v\x03\x02\x02' +
-        '\x02\x04\x13\x03\x02\x02\x02\x06+\x03\x02\x02\x02\bZ\x03\x02\x02\x02\n' +
-        '\f\x05\x04\x03\x02\v\n\x03\x02\x02\x02\f\r\x03\x02\x02\x02\r\v\x03\x02' +
-        '\x02\x02\r\x0E\x03\x02\x02\x02\x0E\x03\x03\x02\x02\x02\x0F\x10\x05\x06' +
-        '\x04\x02\x10\x11\x07\x18\x02\x02\x11\x14\x03\x02\x02\x02\x12\x14\x07\x18' +
-        '\x02\x02\x13\x0F\x03\x02\x02\x02\x13\x12\x03\x02\x02\x02\x14\x05\x03\x02' +
-        '\x02\x02\x15\x16\b\x04\x01\x02\x16\x17\x07\f\x02\x02\x17\x18\x05\x06\x04' +
-        '\x02\x18\x19\x07\r\x02\x02\x19,\x03\x02\x02\x02\x1A\x1B\x07\n\x02\x02' +
-        '\x1B,\t\x02\x02\x02\x1C\x1D\x07\x03\x02\x02\x1D\x1E\x07\f\x02\x02\x1E' +
-        '#\x05\x06\x04\x02\x1F \x07\x0E\x02\x02 "\x05\x06\x04\x02!\x1F\x03\x02' +
-        '\x02\x02"%\x03\x02\x02\x02#!\x03\x02\x02\x02#$\x03\x02\x02\x02$&\x03' +
-        "\x02\x02\x02%#\x03\x02\x02\x02&'\x07\r\x02\x02',\x03\x02\x02\x02(,\x07" +
-        '\x05\x02\x02),\x07\x04\x02\x02*,\x07\x03\x02\x02+\x15\x03\x02\x02\x02' +
-        '+\x1A\x03\x02\x02\x02+\x1C\x03\x02\x02\x02+(\x03\x02\x02\x02+)\x03\x02' +
-        '\x02\x02+*\x03\x02\x02\x02,?\x03\x02\x02\x02-.\f\f\x02\x02./\x07\x06\x02' +
-        '\x02/>\x05\x06\x04\r01\f\v\x02\x0212\t\x03\x02\x022>\x05\x06\x04\f34\f' +
-        '\n\x02\x0245\t\x04\x02\x025>\x05\x06\x04\v67\f\t\x02\x0278\x07\x0F\x02' +
-        '\x028;\x05\x06\x04\x029:\x07\x13\x02\x02:<\x05\b\x05\x02;9\x03\x02\x02' +
-        '\x02;<\x03\x02\x02\x02<>\x03\x02\x02\x02=-\x03\x02\x02\x02=0\x03\x02\x02' +
-        '\x02=3\x03\x02\x02\x02=6\x03\x02\x02\x02>A\x03\x02\x02\x02?=\x03\x02\x02' +
-        '\x02?@\x03\x02\x02\x02@\x07\x03\x02\x02\x02A?\x03\x02\x02\x02BC\b\x05' +
-        '\x01\x02CD\x07\x03\x02\x02DE\x07\f\x02\x02EJ\x05\x06\x04\x02FG\x07\x0E' +
-        '\x02\x02GI\x05\x06\x04\x02HF\x03\x02\x02\x02IL\x03\x02\x02\x02JH\x03\x02' +
-        '\x02\x02JK\x03\x02\x02\x02KM\x03\x02\x02\x02LJ\x03\x02\x02\x02MN\x07\r' +
-        '\x02\x02N[\x03\x02\x02\x02OP\x07\x15\x02\x02PQ\x07\f\x02\x02QR\x05\b\x05' +
-        '\x02RS\x07\r\x02\x02S[\x03\x02\x02\x02TU\x05\x06\x04\x02UV\x07\x0F\x02' +
-        '\x02VW\x07\x0F\x02\x02WX\x05\x06\x04\x02X[\x03\x02\x02\x02Y[\t\x05\x02' +
-        '\x02ZB\x03\x02\x02\x02ZO\x03\x02\x02\x02ZT\x03\x02\x02\x02ZY\x03\x02\x02' +
-        '\x02[a\x03\x02\x02\x02\\]\f\x07\x02\x02]^\t\x06\x02\x02^`\x05\b\x05\b' +
-        '_\\\x03\x02\x02\x02`c\x03\x02\x02\x02a_\x03\x02\x02\x02ab\x03\x02\x02' +
-        '\x02b\t\x03\x02\x02\x02ca\x03\x02\x02\x02\f\r\x13#+;=?JZa';
+        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x1C\x88\x04\x02' +
+        '\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07' +
+        '\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x03\x02\x03\x02' +
+        '\x03\x02\x03\x02\x03\x02\x05\x02\x1E\n\x02\x03\x03\x03\x03\x03\x03\x03' +
+        '\x03\x03\x03\x07\x03%\n\x03\f\x03\x0E\x03(\v\x03\x05\x03*\n\x03\x03\x04' +
+        '\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x07\x042\n\x04\f\x04\x0E\x04' +
+        '5\v\x04\x03\x04\x03\x04\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05' +
+        '\x03\x05\x05\x05@\n\x05\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x07\x06' +
+        'G\n\x06\f\x06\x0E\x06J\v\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\x03' +
+        '\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x05\bY\n\b\x03\t\x03\t\x03' +
+        '\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07\tg\n\t\f' +
+        '\t\x0E\tj\v\t\x03\n\x03\n\x03\n\x03\n\x05\np\n\n\x03\v\x03\v\x03\v\x03' +
+        '\v\x03\v\x07\vw\n\v\f\v\x0E\vz\v\v\x03\v\x03\v\x03\f\x03\f\x03\f\x03\f' +
+        '\x03\f\x03\f\x03\f\x03\f\x05\f\x86\n\f\x03\f\x02\x02\x03\x10\r\x02\x02' +
+        '\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16' +
+        '\x02\x02\x05\x03\x02\t\n\x03\x02\x11\x12\x03\x02\x13\x14\x02\x92\x02\x1D' +
+        '\x03\x02\x02\x02\x04\x1F\x03\x02\x02\x02\x06+\x03\x02\x02\x02\b8\x03\x02' +
+        '\x02\x02\nA\x03\x02\x02\x02\fK\x03\x02\x02\x02\x0EX\x03\x02\x02\x02\x10' +
+        'Z\x03\x02\x02\x02\x12o\x03\x02\x02\x02\x14q\x03\x02\x02\x02\x16\x85\x03' +
+        '\x02\x02\x02\x18\x1E\x05\x04\x03\x02\x19\x1E\x05\x06\x04\x02\x1A\x1E\x05' +
+        '\b\x05\x02\x1B\x1E\x05\n\x06\x02\x1C\x1E\x05\x10\t\x02\x1D\x18\x03\x02' +
+        '\x02\x02\x1D\x19\x03\x02\x02\x02\x1D\x1A\x03\x02\x02\x02\x1D\x1B\x03\x02' +
+        '\x02\x02\x1D\x1C\x03\x02\x02\x02\x1E\x03\x03\x02\x02\x02\x1F)\x07\x05' +
+        '\x02\x02 !\x07\r\x02\x02!&\x07\v\x02\x02"#\x07\x19\x02\x02#%\x07\v\x02' +
+        '\x02$"\x03\x02\x02\x02%(\x03\x02\x02\x02&$\x03\x02\x02\x02&\'\x03\x02' +
+        "\x02\x02'*\x03\x02\x02\x02(&\x03\x02\x02\x02) \x03\x02\x02\x02)*\x03" +
+        '\x02\x02\x02*\x05\x03\x02\x02\x02+,\x07\v\x02\x02,-\x07\x1A\x02\x02-.' +
+        '\x07\x17\x02\x02.3\x05\b\x05\x02/0\x07\x19\x02\x0202\x05\b\x05\x021/\x03' +
+        '\x02\x02\x0225\x03\x02\x02\x0231\x03\x02\x02\x0234\x03\x02\x02\x0246\x03' +
+        '\x02\x02\x0253\x03\x02\x02\x0267\x07\x18\x02\x027\x07\x03\x02\x02\x02' +
+        '89\x05\x10\t\x029:\x07\x1A\x02\x02:?\x05\x10\t\x02;<\x07\x04\x02\x02<' +
+        '=\x07\b\x02\x02=>\x07\x04\x02\x02>@\x05\n\x06\x02?;\x03\x02\x02\x02?@' +
+        '\x03\x02\x02\x02@\t\x03\x02\x02\x02AH\x05\x0E\b\x02BC\x07\x04\x02\x02' +
+        'CD\t\x02\x02\x02DE\x07\x04\x02\x02EG\x05\x0E\b\x02FB\x03\x02\x02\x02G' +
+        'J\x03\x02\x02\x02HF\x03\x02\x02\x02HI\x03\x02\x02\x02I\v\x03\x02\x02\x02' +
+        'JH\x03\x02\x02\x02KL\x05\x10\t\x02LM\x07\x1A\x02\x02MN\x07\x1A\x02\x02' +
+        'NO\x05\x10\t\x02O\r\x03\x02\x02\x02PY\x05\x14\v\x02QY\x07\x06\x02\x02' +
+        'RY\x07\x07\x02\x02SY\x05\f\x07\x02TU\x07\x15\x02\x02UV\x05\n\x06\x02V' +
+        'W\x07\x16\x02\x02WY\x03\x02\x02\x02XP\x03\x02\x02\x02XQ\x03\x02\x02\x02' +
+        'XR\x03\x02\x02\x02XS\x03\x02\x02\x02XT\x03\x02\x02\x02Y\x0F\x03\x02\x02' +
+        '\x02Z[\b\t\x01\x02[\\\x05\x12\n\x02\\h\x03\x02\x02\x02]^\f\x06\x02\x02' +
+        '^_\x07\x10\x02\x02_g\x05\x10\t\x07`a\f\x05\x02\x02ab\t\x03\x02\x02bg\x05' +
+        '\x10\t\x06cd\f\x04\x02\x02de\t\x04\x02\x02eg\x05\x10\t\x05f]\x03\x02\x02' +
+        '\x02f`\x03\x02\x02\x02fc\x03\x02\x02\x02gj\x03\x02\x02\x02hf\x03\x02\x02' +
+        '\x02hi\x03\x02\x02\x02i\x11\x03\x02\x02\x02jh\x03\x02\x02\x02kl\x07\x14' +
+        '\x02\x02lp\x05\x12\n\x02mp\x05\x14\v\x02np\x05\x16\f\x02ok\x03\x02\x02' +
+        '\x02om\x03\x02\x02\x02on\x03\x02\x02\x02p\x13\x03\x02\x02\x02qr\x07\v' +
+        '\x02\x02rs\x07\x15\x02\x02sx\x05\x10\t\x02tu\x07\x19\x02\x02uw\x05\x10' +
+        '\t\x02vt\x03\x02\x02\x02wz\x03\x02\x02\x02xv\x03\x02\x02\x02xy\x03\x02' +
+        '\x02\x02y{\x03\x02\x02\x02zx\x03\x02\x02\x02{|\x07\x16\x02\x02|\x15\x03' +
+        '\x02\x02\x02}~\x07\x03\x02\x02~\x86\x07\v\x02\x02\x7F\x86\x07\x0F\x02' +
+        '\x02\x80\x86\x07\v\x02\x02\x81\x82\x07\x15\x02\x02\x82\x83\x05\x10\t\x02' +
+        '\x83\x84\x07\x16\x02\x02\x84\x86\x03\x02\x02\x02\x85}\x03\x02\x02\x02' +
+        '\x85\x7F\x03\x02\x02\x02\x85\x80\x03\x02\x02\x02\x85\x81\x03\x02\x02\x02' +
+        '\x86\x17\x03\x02\x02\x02\x0E\x1D&)3?HXfhox\x85';
     public static __ATN: ATN;
     public static get _ATN(): ATN {
         if (!AlgebrainParser.__ATN) {
@@ -822,46 +940,22 @@ export class AlgebrainParser extends Parser {
     }
 }
 
-export class ProgContext extends ParserRuleContext {
-    public stat(): StatContext[];
-    public stat(i: number): StatContext;
-    public stat(i?: number): StatContext | StatContext[] {
-        if (i === undefined) {
-            return this.getRuleContexts(StatContext);
-        } else {
-            return this.getRuleContext(i, StatContext);
-        }
-    }
-    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-        super(parent, invokingState);
-    }
-    // @Override
-    public get ruleIndex(): number {
-        return AlgebrainParser.RULE_prog;
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterProg) {
-            listener.enterProg(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitProg) {
-            listener.exitProg(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitProg) {
-            return visitor.visitProg(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-
 export class StatContext extends ParserRuleContext {
+    public command(): CommandContext | undefined {
+        return this.tryGetRuleContext(0, CommandContext);
+    }
+    public transformation(): TransformationContext | undefined {
+        return this.tryGetRuleContext(0, TransformationContext);
+    }
+    public rewriting(): RewritingContext | undefined {
+        return this.tryGetRuleContext(0, RewritingContext);
+    }
+    public booleanExpr(): BooleanExprContext | undefined {
+        return this.tryGetRuleContext(0, BooleanExprContext);
+    }
+    public expr(): ExprContext | undefined {
+        return this.tryGetRuleContext(0, ExprContext);
+    }
     constructor(parent: ParserRuleContext | undefined, invokingState: number) {
         super(parent, invokingState);
     }
@@ -869,207 +963,143 @@ export class StatContext extends ParserRuleContext {
     public get ruleIndex(): number {
         return AlgebrainParser.RULE_stat;
     }
-    public copyFrom(ctx: StatContext): void {
-        super.copyFrom(ctx);
-    }
-}
-export class PrintExprContext extends StatContext {
-    public expr(): ExprContext {
-        return this.getRuleContext(0, ExprContext);
-    }
-    public NEWLINE(): TerminalNode {
-        return this.getToken(AlgebrainParser.NEWLINE, 0);
-    }
-    constructor(ctx: StatContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterPrintExpr) {
-            listener.enterPrintExpr(this);
+        if (listener.enterStat) {
+            listener.enterStat(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitPrintExpr) {
-            listener.exitPrintExpr(this);
+        if (listener.exitStat) {
+            listener.exitStat(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitPrintExpr) {
-            return visitor.visitPrintExpr(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class BlankContext extends StatContext {
-    public NEWLINE(): TerminalNode {
-        return this.getToken(AlgebrainParser.NEWLINE, 0);
-    }
-    constructor(ctx: StatContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterBlank) {
-            listener.enterBlank(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitBlank) {
-            listener.exitBlank(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitBlank) {
-            return visitor.visitBlank(this);
+        if (visitor.visitStat) {
+            return visitor.visitStat(this);
         } else {
             return visitor.visitChildren(this);
         }
     }
 }
 
-export class ExprContext extends ParserRuleContext {
+export class CommandContext extends ParserRuleContext {
+    public COMMAND(): TerminalNode {
+        return this.getToken(AlgebrainParser.COMMAND, 0);
+    }
+    public COLON(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.COLON, 0);
+    }
+    public ID(): TerminalNode[];
+    public ID(i: number): TerminalNode;
+    public ID(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.ID);
+        } else {
+            return this.getToken(AlgebrainParser.ID, i);
+        }
+    }
+    public COMMA(): TerminalNode[];
+    public COMMA(i: number): TerminalNode;
+    public COMMA(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.COMMA);
+        } else {
+            return this.getToken(AlgebrainParser.COMMA, i);
+        }
+    }
     constructor(parent: ParserRuleContext | undefined, invokingState: number) {
         super(parent, invokingState);
     }
     // @Override
     public get ruleIndex(): number {
-        return AlgebrainParser.RULE_expr;
-    }
-    public copyFrom(ctx: ExprContext): void {
-        super.copyFrom(ctx);
-    }
-}
-export class PowContext extends ExprContext {
-    public expr(): ExprContext[];
-    public expr(i: number): ExprContext;
-    public expr(i?: number): ExprContext | ExprContext[] {
-        if (i === undefined) {
-            return this.getRuleContexts(ExprContext);
-        } else {
-            return this.getRuleContext(i, ExprContext);
-        }
-    }
-    public POW(): TerminalNode {
-        return this.getToken(AlgebrainParser.POW, 0);
-    }
-    constructor(ctx: ExprContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
+        return AlgebrainParser.RULE_command;
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterPow) {
-            listener.enterPow(this);
+        if (listener.enterCommand) {
+            listener.enterCommand(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitPow) {
-            listener.exitPow(this);
+        if (listener.exitCommand) {
+            listener.exitCommand(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitPow) {
-            return visitor.visitPow(this);
+        if (visitor.visitCommand) {
+            return visitor.visitCommand(this);
         } else {
             return visitor.visitChildren(this);
         }
     }
 }
-export class MulDivContext extends ExprContext {
-    public _op: Token;
-    public expr(): ExprContext[];
-    public expr(i: number): ExprContext;
-    public expr(i?: number): ExprContext | ExprContext[] {
+
+export class TransformationContext extends ParserRuleContext {
+    public ID(): TerminalNode {
+        return this.getToken(AlgebrainParser.ID, 0);
+    }
+    public EQUALS(): TerminalNode {
+        return this.getToken(AlgebrainParser.EQUALS, 0);
+    }
+    public LSQPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.LSQPAREN, 0);
+    }
+    public rewriting(): RewritingContext[];
+    public rewriting(i: number): RewritingContext;
+    public rewriting(i?: number): RewritingContext | RewritingContext[] {
         if (i === undefined) {
-            return this.getRuleContexts(ExprContext);
+            return this.getRuleContexts(RewritingContext);
         } else {
-            return this.getRuleContext(i, ExprContext);
+            return this.getRuleContext(i, RewritingContext);
         }
     }
-    public MUL(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.MUL, 0);
+    public RSQPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.RSQPAREN, 0);
     }
-    public DIV(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.DIV, 0);
+    public COMMA(): TerminalNode[];
+    public COMMA(i: number): TerminalNode;
+    public COMMA(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.COMMA);
+        } else {
+            return this.getToken(AlgebrainParser.COMMA, i);
+        }
     }
-    constructor(ctx: ExprContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_transformation;
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterMulDiv) {
-            listener.enterMulDiv(this);
+        if (listener.enterTransformation) {
+            listener.enterTransformation(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitMulDiv) {
-            listener.exitMulDiv(this);
+        if (listener.exitTransformation) {
+            listener.exitTransformation(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitMulDiv) {
-            return visitor.visitMulDiv(this);
+        if (visitor.visitTransformation) {
+            return visitor.visitTransformation(this);
         } else {
             return visitor.visitChildren(this);
         }
     }
 }
-export class AddSubContext extends ExprContext {
-    public _op: Token;
-    public expr(): ExprContext[];
-    public expr(i: number): ExprContext;
-    public expr(i?: number): ExprContext | ExprContext[] {
-        if (i === undefined) {
-            return this.getRuleContexts(ExprContext);
-        } else {
-            return this.getRuleContext(i, ExprContext);
-        }
-    }
-    public PLUS(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.PLUS, 0);
-    }
-    public MINUS(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.MINUS, 0);
-    }
-    constructor(ctx: ExprContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterAddSub) {
-            listener.enterAddSub(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitAddSub) {
-            listener.exitAddSub(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitAddSub) {
-            return visitor.visitAddSub(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class RewritingRuleContext extends ExprContext {
+
+export class RewritingContext extends ParserRuleContext {
     public expr(): ExprContext[];
     public expr(i: number): ExprContext;
     public expr(i?: number): ExprContext | ExprContext[] {
@@ -1082,118 +1112,118 @@ export class RewritingRuleContext extends ExprContext {
     public EQUALS(): TerminalNode {
         return this.getToken(AlgebrainParser.EQUALS, 0);
     }
+    public SPACE(): TerminalNode[];
+    public SPACE(i: number): TerminalNode;
+    public SPACE(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.SPACE);
+        } else {
+            return this.getToken(AlgebrainParser.SPACE, i);
+        }
+    }
     public IF(): TerminalNode | undefined {
         return this.tryGetToken(AlgebrainParser.IF, 0);
     }
-    public bexp(): BexpContext | undefined {
-        return this.tryGetRuleContext(0, BexpContext);
+    public booleanExpr(): BooleanExprContext | undefined {
+        return this.tryGetRuleContext(0, BooleanExprContext);
     }
-    constructor(ctx: ExprContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_rewriting;
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterRewritingRule) {
-            listener.enterRewritingRule(this);
+        if (listener.enterRewriting) {
+            listener.enterRewriting(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitRewritingRule) {
-            listener.exitRewritingRule(this);
+        if (listener.exitRewriting) {
+            listener.exitRewriting(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitRewritingRule) {
-            return visitor.visitRewritingRule(this);
+        if (visitor.visitRewriting) {
+            return visitor.visitRewriting(this);
         } else {
             return visitor.visitChildren(this);
         }
     }
 }
-export class ParensContext extends ExprContext {
-    public LPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.LPARENS, 0);
+
+export class BooleanExprContext extends ParserRuleContext {
+    public _op: Token;
+    public booleanAtom(): BooleanAtomContext[];
+    public booleanAtom(i: number): BooleanAtomContext;
+    public booleanAtom(i?: number): BooleanAtomContext | BooleanAtomContext[] {
+        if (i === undefined) {
+            return this.getRuleContexts(BooleanAtomContext);
+        } else {
+            return this.getRuleContext(i, BooleanAtomContext);
+        }
     }
-    public expr(): ExprContext {
-        return this.getRuleContext(0, ExprContext);
+    public SPACE(): TerminalNode[];
+    public SPACE(i: number): TerminalNode;
+    public SPACE(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.SPACE);
+        } else {
+            return this.getToken(AlgebrainParser.SPACE, i);
+        }
     }
-    public RPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.RPARENS, 0);
+    public AND(): TerminalNode[];
+    public AND(i: number): TerminalNode;
+    public AND(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.AND);
+        } else {
+            return this.getToken(AlgebrainParser.AND, i);
+        }
     }
-    constructor(ctx: ExprContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
+    public OR(): TerminalNode[];
+    public OR(i: number): TerminalNode;
+    public OR(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.OR);
+        } else {
+            return this.getToken(AlgebrainParser.OR, i);
+        }
+    }
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_booleanExpr;
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterParens) {
-            listener.enterParens(this);
+        if (listener.enterBooleanExpr) {
+            listener.enterBooleanExpr(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitParens) {
-            listener.exitParens(this);
+        if (listener.exitBooleanExpr) {
+            listener.exitBooleanExpr(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitParens) {
-            return visitor.visitParens(this);
+        if (visitor.visitBooleanExpr) {
+            return visitor.visitBooleanExpr(this);
         } else {
             return visitor.visitChildren(this);
         }
     }
 }
-export class UnaryContext extends ExprContext {
-    public _val: Token;
-    public MINUS(): TerminalNode {
-        return this.getToken(AlgebrainParser.MINUS, 0);
-    }
-    public ID(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.ID, 0);
-    }
-    public NUMBER(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.NUMBER, 0);
-    }
-    public REWRITABLE(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.REWRITABLE, 0);
-    }
-    constructor(ctx: ExprContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterUnary) {
-            listener.enterUnary(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitUnary) {
-            listener.exitUnary(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitUnary) {
-            return visitor.visitUnary(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class OperatorContext extends ExprContext {
-    public ID(): TerminalNode {
-        return this.getToken(AlgebrainParser.ID, 0);
-    }
-    public LPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.LPARENS, 0);
-    }
+
+export class EquationContext extends ParserRuleContext {
     public expr(): ExprContext[];
     public expr(i: number): ExprContext;
     public expr(i?: number): ExprContext | ExprContext[] {
@@ -1203,19 +1233,61 @@ export class OperatorContext extends ExprContext {
             return this.getRuleContext(i, ExprContext);
         }
     }
-    public RPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.RPARENS, 0);
-    }
-    public COMMA(): TerminalNode[];
-    public COMMA(i: number): TerminalNode;
-    public COMMA(i?: number): TerminalNode | TerminalNode[] {
+    public EQUALS(): TerminalNode[];
+    public EQUALS(i: number): TerminalNode;
+    public EQUALS(i?: number): TerminalNode | TerminalNode[] {
         if (i === undefined) {
-            return this.getTokens(AlgebrainParser.COMMA);
+            return this.getTokens(AlgebrainParser.EQUALS);
         } else {
-            return this.getToken(AlgebrainParser.COMMA, i);
+            return this.getToken(AlgebrainParser.EQUALS, i);
         }
     }
-    constructor(ctx: ExprContext) {
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_equation;
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterEquation) {
+            listener.enterEquation(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitEquation) {
+            listener.exitEquation(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitEquation) {
+            return visitor.visitEquation(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+
+export class BooleanAtomContext extends ParserRuleContext {
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_booleanAtom;
+    }
+    public copyFrom(ctx: BooleanAtomContext): void {
+        super.copyFrom(ctx);
+    }
+}
+export class OperatorContext extends BooleanAtomContext {
+    public func(): FuncContext {
+        return this.getRuleContext(0, FuncContext);
+    }
+    constructor(ctx: BooleanAtomContext) {
         super(ctx.parent, ctx.invokingState);
         this.copyFrom(ctx);
     }
@@ -1240,11 +1312,412 @@ export class OperatorContext extends ExprContext {
         }
     }
 }
-export class RewritableContext extends ExprContext {
-    public REWRITABLE(): TerminalNode {
-        return this.getToken(AlgebrainParser.REWRITABLE, 0);
+export class TrueContext extends BooleanAtomContext {
+    public TRUE(): TerminalNode {
+        return this.getToken(AlgebrainParser.TRUE, 0);
+    }
+    constructor(ctx: BooleanAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterTrue) {
+            listener.enterTrue(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitTrue) {
+            listener.exitTrue(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitTrue) {
+            return visitor.visitTrue(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class FalseContext extends BooleanAtomContext {
+    public FALSE(): TerminalNode {
+        return this.getToken(AlgebrainParser.FALSE, 0);
+    }
+    constructor(ctx: BooleanAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterFalse) {
+            listener.enterFalse(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitFalse) {
+            listener.exitFalse(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitFalse) {
+            return visitor.visitFalse(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class BooleanAtomEquationContext extends BooleanAtomContext {
+    public equation(): EquationContext {
+        return this.getRuleContext(0, EquationContext);
+    }
+    constructor(ctx: BooleanAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterBooleanAtomEquation) {
+            listener.enterBooleanAtomEquation(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitBooleanAtomEquation) {
+            listener.exitBooleanAtomEquation(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitBooleanAtomEquation) {
+            return visitor.visitBooleanAtomEquation(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class BooleanExprParensContext extends BooleanAtomContext {
+    public LPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.LPAREN, 0);
+    }
+    public booleanExpr(): BooleanExprContext {
+        return this.getRuleContext(0, BooleanExprContext);
+    }
+    public RPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.RPAREN, 0);
+    }
+    constructor(ctx: BooleanAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterBooleanExprParens) {
+            listener.enterBooleanExprParens(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitBooleanExprParens) {
+            listener.exitBooleanExprParens(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitBooleanExprParens) {
+            return visitor.visitBooleanExprParens(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+
+export class ExprContext extends ParserRuleContext {
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_expr;
+    }
+    public copyFrom(ctx: ExprContext): void {
+        super.copyFrom(ctx);
+    }
+}
+export class PowExprContext extends ExprContext {
+    public expr(): ExprContext[];
+    public expr(i: number): ExprContext;
+    public expr(i?: number): ExprContext | ExprContext[] {
+        if (i === undefined) {
+            return this.getRuleContexts(ExprContext);
+        } else {
+            return this.getRuleContext(i, ExprContext);
+        }
+    }
+    public POW(): TerminalNode {
+        return this.getToken(AlgebrainParser.POW, 0);
     }
     constructor(ctx: ExprContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterPowExpr) {
+            listener.enterPowExpr(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitPowExpr) {
+            listener.exitPowExpr(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitPowExpr) {
+            return visitor.visitPowExpr(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class MultiplyingExprContext extends ExprContext {
+    public _op: Token;
+    public expr(): ExprContext[];
+    public expr(i: number): ExprContext;
+    public expr(i?: number): ExprContext | ExprContext[] {
+        if (i === undefined) {
+            return this.getRuleContexts(ExprContext);
+        } else {
+            return this.getRuleContext(i, ExprContext);
+        }
+    }
+    public MUL(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.MUL, 0);
+    }
+    public DIV(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.DIV, 0);
+    }
+    constructor(ctx: ExprContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterMultiplyingExpr) {
+            listener.enterMultiplyingExpr(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitMultiplyingExpr) {
+            listener.exitMultiplyingExpr(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitMultiplyingExpr) {
+            return visitor.visitMultiplyingExpr(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class AdditionExprContext extends ExprContext {
+    public _op: Token;
+    public expr(): ExprContext[];
+    public expr(i: number): ExprContext;
+    public expr(i?: number): ExprContext | ExprContext[] {
+        if (i === undefined) {
+            return this.getRuleContexts(ExprContext);
+        } else {
+            return this.getRuleContext(i, ExprContext);
+        }
+    }
+    public PLUS(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.PLUS, 0);
+    }
+    public MINUS(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.MINUS, 0);
+    }
+    constructor(ctx: ExprContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterAdditionExpr) {
+            listener.enterAdditionExpr(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitAdditionExpr) {
+            listener.exitAdditionExpr(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitAdditionExpr) {
+            return visitor.visitAdditionExpr(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class AtomExprContext extends ExprContext {
+    public signedAtom(): SignedAtomContext {
+        return this.getRuleContext(0, SignedAtomContext);
+    }
+    constructor(ctx: ExprContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterAtomExpr) {
+            listener.enterAtomExpr(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitAtomExpr) {
+            listener.exitAtomExpr(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitAtomExpr) {
+            return visitor.visitAtomExpr(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+
+export class SignedAtomContext extends ParserRuleContext {
+    public MINUS(): TerminalNode | undefined {
+        return this.tryGetToken(AlgebrainParser.MINUS, 0);
+    }
+    public signedAtom(): SignedAtomContext | undefined {
+        return this.tryGetRuleContext(0, SignedAtomContext);
+    }
+    public func(): FuncContext | undefined {
+        return this.tryGetRuleContext(0, FuncContext);
+    }
+    public atom(): AtomContext | undefined {
+        return this.tryGetRuleContext(0, AtomContext);
+    }
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_signedAtom;
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterSignedAtom) {
+            listener.enterSignedAtom(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitSignedAtom) {
+            listener.exitSignedAtom(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitSignedAtom) {
+            return visitor.visitSignedAtom(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+
+export class FuncContext extends ParserRuleContext {
+    public ID(): TerminalNode {
+        return this.getToken(AlgebrainParser.ID, 0);
+    }
+    public LPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.LPAREN, 0);
+    }
+    public expr(): ExprContext[];
+    public expr(i: number): ExprContext;
+    public expr(i?: number): ExprContext | ExprContext[] {
+        if (i === undefined) {
+            return this.getRuleContexts(ExprContext);
+        } else {
+            return this.getRuleContext(i, ExprContext);
+        }
+    }
+    public RPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.RPAREN, 0);
+    }
+    public COMMA(): TerminalNode[];
+    public COMMA(i: number): TerminalNode;
+    public COMMA(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.COMMA);
+        } else {
+            return this.getToken(AlgebrainParser.COMMA, i);
+        }
+    }
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_func;
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterFunc) {
+            listener.enterFunc(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitFunc) {
+            listener.exitFunc(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitFunc) {
+            return visitor.visitFunc(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+
+export class AtomContext extends ParserRuleContext {
+    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+        super(parent, invokingState);
+    }
+    // @Override
+    public get ruleIndex(): number {
+        return AlgebrainParser.RULE_atom;
+    }
+    public copyFrom(ctx: AtomContext): void {
+        super.copyFrom(ctx);
+    }
+}
+export class RewritableContext extends AtomContext {
+    public REWRITABLE_PREFIX(): TerminalNode {
+        return this.getToken(AlgebrainParser.REWRITABLE_PREFIX, 0);
+    }
+    public ID(): TerminalNode {
+        return this.getToken(AlgebrainParser.ID, 0);
+    }
+    constructor(ctx: AtomContext) {
         super(ctx.parent, ctx.invokingState);
         this.copyFrom(ctx);
     }
@@ -1269,11 +1742,11 @@ export class RewritableContext extends ExprContext {
         }
     }
 }
-export class NumberContext extends ExprContext {
+export class NumberContext extends AtomContext {
     public NUMBER(): TerminalNode {
         return this.getToken(AlgebrainParser.NUMBER, 0);
     }
-    constructor(ctx: ExprContext) {
+    constructor(ctx: AtomContext) {
         super(ctx.parent, ctx.invokingState);
         this.copyFrom(ctx);
     }
@@ -1298,11 +1771,11 @@ export class NumberContext extends ExprContext {
         }
     }
 }
-export class IdContext extends ExprContext {
+export class IdContext extends AtomContext {
     public ID(): TerminalNode {
         return this.getToken(AlgebrainParser.ID, 0);
     }
-    constructor(ctx: ExprContext) {
+    constructor(ctx: AtomContext) {
         super(ctx.parent, ctx.invokingState);
         this.copyFrom(ctx);
     }
@@ -1327,226 +1800,36 @@ export class IdContext extends ExprContext {
         }
     }
 }
-
-export class BexpContext extends ParserRuleContext {
-    constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-        super(parent, invokingState);
+export class ExprParensContext extends AtomContext {
+    public LPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.LPAREN, 0);
     }
-    // @Override
-    public get ruleIndex(): number {
-        return AlgebrainParser.RULE_bexp;
+    public expr(): ExprContext {
+        return this.getRuleContext(0, ExprContext);
     }
-    public copyFrom(ctx: BexpContext): void {
-        super.copyFrom(ctx);
+    public RPAREN(): TerminalNode {
+        return this.getToken(AlgebrainParser.RPAREN, 0);
     }
-}
-export class LogicalContext extends BexpContext {
-    public _op: Token;
-    public bexp(): BexpContext[];
-    public bexp(i: number): BexpContext;
-    public bexp(i?: number): BexpContext | BexpContext[] {
-        if (i === undefined) {
-            return this.getRuleContexts(BexpContext);
-        } else {
-            return this.getRuleContext(i, BexpContext);
-        }
-    }
-    public AND(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.AND, 0);
-    }
-    public OR(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.OR, 0);
-    }
-    public NOT(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.NOT, 0);
-    }
-    constructor(ctx: BexpContext) {
+    constructor(ctx: AtomContext) {
         super(ctx.parent, ctx.invokingState);
         this.copyFrom(ctx);
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterLogical) {
-            listener.enterLogical(this);
+        if (listener.enterExprParens) {
+            listener.enterExprParens(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitLogical) {
-            listener.exitLogical(this);
+        if (listener.exitExprParens) {
+            listener.exitExprParens(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitLogical) {
-            return visitor.visitLogical(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class BooleanOperatorContext extends BexpContext {
-    public ID(): TerminalNode {
-        return this.getToken(AlgebrainParser.ID, 0);
-    }
-    public LPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.LPARENS, 0);
-    }
-    public expr(): ExprContext[];
-    public expr(i: number): ExprContext;
-    public expr(i?: number): ExprContext | ExprContext[] {
-        if (i === undefined) {
-            return this.getRuleContexts(ExprContext);
-        } else {
-            return this.getRuleContext(i, ExprContext);
-        }
-    }
-    public RPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.RPARENS, 0);
-    }
-    public COMMA(): TerminalNode[];
-    public COMMA(i: number): TerminalNode;
-    public COMMA(i?: number): TerminalNode | TerminalNode[] {
-        if (i === undefined) {
-            return this.getTokens(AlgebrainParser.COMMA);
-        } else {
-            return this.getToken(AlgebrainParser.COMMA, i);
-        }
-    }
-    constructor(ctx: BexpContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterBooleanOperator) {
-            listener.enterBooleanOperator(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitBooleanOperator) {
-            listener.exitBooleanOperator(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitBooleanOperator) {
-            return visitor.visitBooleanOperator(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class NegationContext extends BexpContext {
-    public NOT(): TerminalNode {
-        return this.getToken(AlgebrainParser.NOT, 0);
-    }
-    public LPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.LPARENS, 0);
-    }
-    public bexp(): BexpContext {
-        return this.getRuleContext(0, BexpContext);
-    }
-    public RPARENS(): TerminalNode {
-        return this.getToken(AlgebrainParser.RPARENS, 0);
-    }
-    constructor(ctx: BexpContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterNegation) {
-            listener.enterNegation(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitNegation) {
-            listener.exitNegation(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitNegation) {
-            return visitor.visitNegation(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class EqualityContext extends BexpContext {
-    public expr(): ExprContext[];
-    public expr(i: number): ExprContext;
-    public expr(i?: number): ExprContext | ExprContext[] {
-        if (i === undefined) {
-            return this.getRuleContexts(ExprContext);
-        } else {
-            return this.getRuleContext(i, ExprContext);
-        }
-    }
-    public EQUALS(): TerminalNode[];
-    public EQUALS(i: number): TerminalNode;
-    public EQUALS(i?: number): TerminalNode | TerminalNode[] {
-        if (i === undefined) {
-            return this.getTokens(AlgebrainParser.EQUALS);
-        } else {
-            return this.getToken(AlgebrainParser.EQUALS, i);
-        }
-    }
-    constructor(ctx: BexpContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterEquality) {
-            listener.enterEquality(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitEquality) {
-            listener.exitEquality(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitEquality) {
-            return visitor.visitEquality(this);
-        } else {
-            return visitor.visitChildren(this);
-        }
-    }
-}
-export class FlagContext extends BexpContext {
-    public TRUE(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.TRUE, 0);
-    }
-    public FALSE(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.FALSE, 0);
-    }
-    constructor(ctx: BexpContext) {
-        super(ctx.parent, ctx.invokingState);
-        this.copyFrom(ctx);
-    }
-    // @Override
-    public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterFlag) {
-            listener.enterFlag(this);
-        }
-    }
-    // @Override
-    public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitFlag) {
-            listener.exitFlag(this);
-        }
-    }
-    // @Override
-    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitFlag) {
-            return visitor.visitFlag(this);
+        if (visitor.visitExprParens) {
+            return visitor.visitExprParens(this);
         } else {
             return visitor.visitChildren(this);
         }

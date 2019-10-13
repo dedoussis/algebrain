@@ -1,7 +1,8 @@
-import { Map, List } from 'immutable';
-import { Node, Operator, Parsable, Rewritable, TRUE, OperatorSymbol } from './nodes';
+import { Map } from 'immutable';
+import { Executable, Namespace, Output } from './executable';
+import { Node, Operator, Rewritable, TRUE } from './nodes';
 
-export class Rule implements Parsable {
+export class Rule implements Executable {
     readonly lhs: Node;
     readonly rhs: Node;
     readonly condition: Node | undefined;
@@ -33,7 +34,7 @@ export class Rule implements Parsable {
         ) {
             one.children.forEach((child, index) => {
                 matches = Rule.matchNodes(child, other.children.get(index, child), matches);
-            });
+            }); // to be reduced
         }
         return matches;
     }
@@ -75,5 +76,12 @@ export class Rule implements Parsable {
     toString(): string {
         const equation: string = `${this.lhs}=${this.rhs}`;
         return this.condition === undefined ? equation : `${equation} if ${this.condition}`;
+    }
+
+    execute(namespace: Namespace): Output {
+        return {
+            namespace: namespace,
+            stdOut: this.toString(),
+        };
     }
 }

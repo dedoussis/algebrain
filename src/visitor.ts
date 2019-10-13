@@ -3,29 +3,35 @@ import { AlgebrainVisitor } from './parser/AlgebrainVisitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 import { ParseTree } from 'antlr4ts/tree/ParseTree';
 import {
-    NumberContext,
     IdContext,
-    PowContext,
-    AddSubContext,
-    MulDivContext,
-    ParensContext,
-    EqualityContext,
     RewritableContext,
-    LogicalContext,
-    NegationContext,
-    FlagContext,
-    BooleanOperatorContext,
+    NumberContext,
+    ExprParensContext,
+    CommandContext,
+    TransformationContext,
+    RewritingContext,
+    BooleanExprContext,
+    FuncContext,
     OperatorContext,
-    UnaryContext,
-    PrintExprContext,
-    RewritingRuleContext,
-    BexpContext,
+    TrueContext,
+    FalseContext,
+    BooleanExprParensContext,
+    EquationContext,
+    BooleanAtomEquationContext,
+    ExprContext,
+    MultiplyingExprContext,
+    PowExprContext,
+    AdditionExprContext,
+    AtomExprContext,
 } from './parser/AlgebrainParser';
-import { Parsable, Node, Num, Symbol, Rewritable, Operator, OperatorSymbol } from './nodes';
+import { Executable } from './executable';
+import { Node, Num, Symbol, Rewritable, Operator, OperatorSymbol, TRUE, FALSE } from './nodes';
 import { Rule } from './rule';
+import { Transformation } from './transformation';
+import { Command, CommandName } from './commands';
 
-export default class Visitor extends AbstractParseTreeVisitor<Parsable>
-    implements AlgebrainVisitor<Parsable> {
+export default class Visitor extends AbstractParseTreeVisitor<Executable>
+    implements AlgebrainVisitor<Executable> {
     private constructOperator(symbol: string, childrenValues: List<any>): Operator {
         const children: List<Node> = childrenValues.map(value => this.visitNodeCtx(value));
         return new Operator(symbol, children);
@@ -38,7 +44,8 @@ export default class Visitor extends AbstractParseTreeVisitor<Parsable>
         this.visitTypeCtx(Operator, tree);
 
     private visitTypeCtx(type: any, tree: ParseTree): any {
-        const result: Parsable = this.visit(tree);
+        // TODO generic type
+        const result: Executable = this.visit(tree);
         if (!(result instanceof type)) {
             throw Error(`Parsed tree should be of ${type.constructor.name} type`);
         }
@@ -49,10 +56,6 @@ export default class Visitor extends AbstractParseTreeVisitor<Parsable>
         return new Node(null);
     }
 
-    visitPrintExpr(ctx: PrintExprContext): Parsable {
-        return this.visit(ctx.expr());
-    }
-
     visitNumber(ctx: NumberContext): Num {
         return new Num(Number(ctx.NUMBER().text));
     }
@@ -61,60 +64,84 @@ export default class Visitor extends AbstractParseTreeVisitor<Parsable>
         return new Symbol(ctx.ID().text);
     }
 
-    visitPow(ctx: PowContext): Operator {
-        return this.constructOperator(OperatorSymbol.POW, List([ctx.expr(0), ctx.expr(1)]));
+    visitRewritable(ctx: RewritableContext): Rewritable {
+        return new Rewritable(ctx.ID().text);
     }
 
-    visitAddSub(ctx: AddSubContext): Operator {
-        return this.constructOperator(ctx._op.text as string, List([ctx.expr(0), ctx.expr(1)]));
-    }
-
-    visitMulDiv(ctx: MulDivContext): Operator {
-        return this.constructOperator(ctx._op.text as string, List([ctx.expr(0), ctx.expr(1)]));
-    }
-
-    visitParens(ctx: ParensContext): Node {
+    visitExprParens(ctx: ExprParensContext): Node {
         return this.visitNodeCtx(ctx.expr());
     }
 
-    visitOperator(ctx: OperatorContext): Node {
+    visitFunc(ctx: FuncContext): Operator {
         return this.constructOperator(ctx.ID().text, List(ctx.expr()));
     }
 
-    visitRewritable(ctx: RewritableContext): Rewritable {
-        return new Rewritable(ctx.REWRITABLE().text.substring(1)); // removes $
+    visitOperator(ctx: OperatorContext): Operator {
+        return this.visitOperatorCtx(ctx.func());
     }
 
-    visitLogical(ctx: LogicalContext): Operator {
-        return this.constructOperator(ctx._op.text as string, List([ctx.bexp(0), ctx.bexp(1)]));
+    visitTrue(_: TrueContext): Num {
+        return TRUE;
     }
 
-    visitEquality(ctx: EqualityContext): Operator {
-        return this.constructOperator(OperatorSymbol.EQUALS, List([ctx.expr(0), ctx.expr(1)]));
+    visitFalse(_: FalseContext): Num {
+        return FALSE;
     }
 
-    visitFlag(ctx: FlagContext): Operator {
-        return this.constructOperator(OperatorSymbol.FLAG, List([ctx.TRUE() ? '1' : '0']));
+    visitBooleanExprParens(ctx: BooleanExprParensContext): Node {
+        return this.visitNodeCtx(ctx.booleanExpr());
     }
 
-    visitNegation(ctx: NegationContext): Operator {
-        return this.constructOperator(OperatorSymbol.NOT, List([ctx.bexp().text]));
+    visitBooleanAtomEquation(ctx: BooleanAtomEquationContext): Operator {
+        return this.visitEquation(ctx.equation());
     }
 
-    visitBooleanOperator(ctx: BooleanOperatorContext): Operator {
-        return this.constructOperator(ctx.ID().text, List(ctx.expr()));
+    visitEquation(ctx: EquationContext): Operator {
+        return this.constructOperator(OperatorSymbol.EQUALS, List(ctx.expr()));
     }
 
-    visitUnary(ctx: UnaryContext): Operator {
-        return this.constructOperator(OperatorSymbol.MINUS, List([ctx._val.text]));
+    visitBooleanExpr(ctx: BooleanExprContext): Node {
+        if (ctx._op === undefined) {
+            return this.visitNodeCtx(ctx.booleanAtom(0));
+        }
+        return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.booleanAtom()));
     }
 
-    visitRewritingRule(ctx: RewritingRuleContext): Rule {
+    visitAdditionExpr(ctx: AdditionExprContext): Node {
+        return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.expr()));
+    }
+
+    visitMultiplyingExpr(ctx: MultiplyingExprContext): Node {
+        return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.expr()));
+    }
+
+    visitPowExpr(ctx: PowExprContext): Node {
+        return this.constructOperator(OperatorSymbol.POW, List(ctx.expr()));
+    }
+
+    visitAtomExpr(ctx: AtomExprContext): Node {
+        return this.visitNodeCtx(ctx.signedAtom());
+    }
+
+    visitRewriting(ctx: RewritingContext): Rule {
         const lhs: Node = this.visitNodeCtx(ctx.expr(0));
         const rhs: Node = this.visitNodeCtx(ctx.expr(1));
-        const bexpCtx: BexpContext | undefined = ctx.bexp();
+        const bexpCtx: BooleanExprContext | undefined = ctx.booleanExpr();
         const condition: Node | undefined =
             bexpCtx !== undefined ? this.visitNodeCtx(bexpCtx) : bexpCtx;
         return new Rule(lhs, rhs, condition);
+    }
+
+    visitCommand(ctx: CommandContext): Command | Symbol | Operator {
+        const params: List<string> = List(ctx.ID().map(id => id.text));
+        const cmd: CommandName = ctx.COMMAND().text as CommandName;
+        return new Command(cmd, params);
+    }
+
+    visitTransformation(ctx: TransformationContext): Transformation {
+        return new Transformation(
+            ctx.ID().text,
+            List<Rule>(ctx.rewriting().map(ruleCtx => this.visitTypeCtx(Rule, ruleCtx)))
+        );
     }
 }

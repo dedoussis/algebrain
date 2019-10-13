@@ -225,7 +225,7 @@ describe('Node evaluation', () => {
     });
 });
 
-const cannonicalCases = [
+const canonicalCases = [
     ['symbol', new Symbol('x'), new Symbol('x')],
     [
         '3+x',
@@ -251,8 +251,8 @@ const cannonicalCases = [
     ],
 ];
 
-describe('Cannonical form', () => {
-    test.each(cannonicalCases)('Formatting case %p', (title, node, formattedNode) => {
+describe('Canonical form', () => {
+    test.each(canonicalCases)('Formatting case %p', (title, node, formattedNode) => {
         expect(node.canonical()).toEqual(formattedNode);
     });
 });

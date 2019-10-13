@@ -4,6 +4,7 @@ import { Operator, Num, Symbol, OperatorSymbol } from '../src/nodes';
 import { Rule } from '../src/rule';
 
 const cases = [
+    ['x', new Symbol('x')],
     ['1+3', new Operator(OperatorSymbol.PLUS, List([new Num(1), new Num(3)]))],
     [
         '1-3/2',
