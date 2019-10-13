@@ -18,7 +18,6 @@ import {
     BooleanExprParensContext,
     EquationContext,
     BooleanAtomEquationContext,
-    ExprContext,
     MultiplyingExprContext,
     PowExprContext,
     AdditionExprContext,
@@ -101,7 +100,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     visitBooleanExpr(ctx: BooleanExprContext): Node {
-        if (ctx._op === undefined) {
+        if (ctx._op.text === undefined) {
             return this.visitNodeCtx(ctx.booleanAtom(0));
         }
         return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.booleanAtom()));
