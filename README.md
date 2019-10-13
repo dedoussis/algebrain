@@ -23,7 +23,7 @@ $ npm install algebrain
 import Algebrain from "algebrain";
 
 const expr = Algebrain.parse("(3^2)*1.6+5/(y-12.34)");
-// Your string expression is now a tree of nodes: 
+// Your string expression is now a tree of nodes:
 //  +
 //  ├── *
 //  │   ├── 1.6
