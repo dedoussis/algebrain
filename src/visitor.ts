@@ -28,6 +28,7 @@ import { Node, Num, Symbol, Rewritable, Operator, OperatorSymbol, TRUE, FALSE } 
 import { Rule } from './rule';
 import { Transformation } from './transformation';
 import { Command, CommandName } from './commands';
+import { Token } from 'antlr4ts/Token';
 
 export default class Visitor extends AbstractParseTreeVisitor<Executable>
     implements AlgebrainVisitor<Executable> {
@@ -100,7 +101,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     visitBooleanExpr(ctx: BooleanExprContext): Node {
-        if (ctx._op.text === undefined) {
+        if ((ctx._op as Token | undefined) === undefined) {
             return this.visitNodeCtx(ctx.booleanAtom(0));
         }
         return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.booleanAtom()));
