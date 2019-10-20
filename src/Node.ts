@@ -359,22 +359,30 @@ function evaluateNumericalOperator(
     operation: (left: number, right: number) => number
 ): (children: List<Node>) => Node {
     return (children: List<Node>) => {
+        if (children.size === 1) {
+            return new Operator(operatorSymbol, children);
+        }
         const toEval: List<Num> = commutative
             ? children.filter(child => child instanceof Num)
             : children.takeWhile(child => child instanceof Num);
+        if (toEval.isEmpty()) {
+            return new Operator(operatorSymbol, children);
+        }
         const notToEval: List<Node> = commutative
             ? children.filter(child => !(child instanceof Num))
             : children.skipWhile(child => child instanceof Num);
-        const resultNode: Num = toEval.reduce(
+        const resultNum: Num = toEval.reduce(
             (existing: Num, num: Num) => new Num(operation(existing.value, num.value))
         );
+        const resultNode: Node =
+            resultNum.value < 0
+                ? new Operator(OperatorSymbol.MINUS, List([new Num(resultNum.value * -1)]))
+                : resultNum;
+
         if (notToEval.isEmpty()) {
             return resultNode;
         }
-        return new Operator(
-            operatorSymbol,
-            resultNode ? List<Node>([resultNode]).concat(notToEval) : notToEval
-        );
+        return new Operator(operatorSymbol, resultNode ? notToEval.push(resultNode) : notToEval);
     };
 }
 
@@ -431,9 +439,8 @@ function stringifyChildPlus(child: Operator, index: number): string {
 }
 
 function stringifyChildMinus(child: Operator, index: number): string {
-    return index !== 0 &&
-        (child.value === OperatorSymbol.PLUS ||
-            (child.value === OperatorSymbol.MINUS && child.children.size === 1))
+    return !(index === 0 && child.children.size === 1) &&
+        List<string>([OperatorSymbol.PLUS, OperatorSymbol.MINUS]).includes(child.value)
         ? parenthesize(child)
         : child.toString();
 }

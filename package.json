@@ -13,9 +13,9 @@
     "mathematics",
     "compiler"
   ],
-  "main": "dist/lib/algebrain.js",
-  "module": "dist/lib/algebrain.js",
-  "typings": "dist/types/algebrain.d.ts",
+  "main": "dist/lib/Algebrain.js",
+  "module": "dist/lib/Algebrain.js",
+  "typings": "dist/types/Algebrain.d.ts",
   "files": [
     "dist"
   ],

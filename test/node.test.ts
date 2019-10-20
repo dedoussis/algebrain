@@ -4,6 +4,11 @@ import Algebrain from '../src/Algebrain';
 
 const cases = [
     [
+        'unary should stay the same',
+        new Operator(OperatorSymbol.MINUS, List([new Num(3)])),
+        new Operator(OperatorSymbol.MINUS, List([new Num(3)])),
+    ],
+    [
         'flat addition',
         new Operator(OperatorSymbol.PLUS, List([new Num(1), new Num(3)])),
         new Num(4),
@@ -282,6 +287,13 @@ const toStringCases = [
                 new Symbol('x'),
             ])
         ).evaluate(),
+    ],
+    [
+        '-(x-5)',
+        new Operator(
+            OperatorSymbol.MINUS,
+            List([new Operator(OperatorSymbol.MINUS, List([new Symbol('x'), new Num(5)]))])
+        ),
     ],
     [
         '-4-(-x)',

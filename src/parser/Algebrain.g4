@@ -31,24 +31,24 @@ equation
   ;
 
 booleanAtom
-   : func # Operator
-   | TRUE # True
-   | FALSE # False
-   | equation # BooleanAtomEquation
-   | LPAREN booleanExpr RPAREN # BooleanExprParens
+   : func # booleanAtomFunc_
+   | TRUE # true
+   | FALSE # false
+   | equation # booleanAtomEquation_
+   | LPAREN booleanExpr RPAREN # booleanExprParens
    ;
 
 expr
   : expr POW expr # powExpr
 	| expr op=(MUL|DIV) expr # multiplyingExpr
 	| expr op=(PLUS|MINUS) expr # additionExpr
-	| signedAtom # atomExpr
+	| signedAtom # exprSignedAtom_
   ;
 
 signedAtom
-   : MINUS signedAtom
-   | func
-   | atom
+   : MINUS signedAtom # unary
+   | func # signedAtomFunc_
+   | atom # signedAtomAtom_
    ;
 
 func
@@ -56,10 +56,10 @@ func
   ;
 
 atom
-  : REWRITABLE_PREFIX ID # Rewritable
-	| NUMBER # Number
-	| ID # Id
-  | LPAREN expr RPAREN # ExprParens
+  : REWRITABLE_PREFIX ID # rewritable
+	| NUMBER # number
+	| ID # id
+  | LPAREN expr RPAREN # exprParens
   ;
 
 

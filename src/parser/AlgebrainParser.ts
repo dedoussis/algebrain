@@ -462,7 +462,7 @@ export class AlgebrainParser extends Parser {
             this._errHandler.sync(this);
             switch (this.interpreter.adaptivePredict(this._input, 6, this._ctx)) {
                 case 1:
-                    _localctx = new OperatorContext(_localctx);
+                    _localctx = new BooleanAtomFunc_Context(_localctx);
                     this.enterOuterAlt(_localctx, 1);
                     {
                         this.state = 78;
@@ -489,7 +489,7 @@ export class AlgebrainParser extends Parser {
                     break;
 
                 case 4:
-                    _localctx = new BooleanAtomEquationContext(_localctx);
+                    _localctx = new BooleanAtomEquation_Context(_localctx);
                     this.enterOuterAlt(_localctx, 4);
                     {
                         this.state = 81;
@@ -544,7 +544,7 @@ export class AlgebrainParser extends Parser {
             this.enterOuterAlt(_localctx, 1);
             {
                 {
-                    _localctx = new AtomExprContext(_localctx);
+                    _localctx = new ExprSignedAtom_Context(_localctx);
                     this._ctx = _localctx;
                     _prevctx = _localctx;
 
@@ -704,6 +704,7 @@ export class AlgebrainParser extends Parser {
             this._errHandler.sync(this);
             switch (this.interpreter.adaptivePredict(this._input, 9, this._ctx)) {
                 case 1:
+                    _localctx = new UnaryContext(_localctx);
                     this.enterOuterAlt(_localctx, 1);
                     {
                         this.state = 105;
@@ -714,6 +715,7 @@ export class AlgebrainParser extends Parser {
                     break;
 
                 case 2:
+                    _localctx = new SignedAtomFunc_Context(_localctx);
                     this.enterOuterAlt(_localctx, 2);
                     {
                         this.state = 107;
@@ -722,6 +724,7 @@ export class AlgebrainParser extends Parser {
                     break;
 
                 case 3:
+                    _localctx = new SignedAtomAtom_Context(_localctx);
                     this.enterOuterAlt(_localctx, 3);
                     {
                         this.state = 108;
@@ -1283,7 +1286,7 @@ export class BooleanAtomContext extends ParserRuleContext {
         super.copyFrom(ctx);
     }
 }
-export class OperatorContext extends BooleanAtomContext {
+export class BooleanAtomFunc_Context extends BooleanAtomContext {
     public func(): FuncContext {
         return this.getRuleContext(0, FuncContext);
     }
@@ -1293,20 +1296,20 @@ export class OperatorContext extends BooleanAtomContext {
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterOperator) {
-            listener.enterOperator(this);
+        if (listener.enterBooleanAtomFunc_) {
+            listener.enterBooleanAtomFunc_(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitOperator) {
-            listener.exitOperator(this);
+        if (listener.exitBooleanAtomFunc_) {
+            listener.exitBooleanAtomFunc_(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitOperator) {
-            return visitor.visitOperator(this);
+        if (visitor.visitBooleanAtomFunc_) {
+            return visitor.visitBooleanAtomFunc_(this);
         } else {
             return visitor.visitChildren(this);
         }
@@ -1370,7 +1373,7 @@ export class FalseContext extends BooleanAtomContext {
         }
     }
 }
-export class BooleanAtomEquationContext extends BooleanAtomContext {
+export class BooleanAtomEquation_Context extends BooleanAtomContext {
     public equation(): EquationContext {
         return this.getRuleContext(0, EquationContext);
     }
@@ -1380,20 +1383,20 @@ export class BooleanAtomEquationContext extends BooleanAtomContext {
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterBooleanAtomEquation) {
-            listener.enterBooleanAtomEquation(this);
+        if (listener.enterBooleanAtomEquation_) {
+            listener.enterBooleanAtomEquation_(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitBooleanAtomEquation) {
-            listener.exitBooleanAtomEquation(this);
+        if (listener.exitBooleanAtomEquation_) {
+            listener.exitBooleanAtomEquation_(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitBooleanAtomEquation) {
-            return visitor.visitBooleanAtomEquation(this);
+        if (visitor.visitBooleanAtomEquation_) {
+            return visitor.visitBooleanAtomEquation_(this);
         } else {
             return visitor.visitChildren(this);
         }
@@ -1569,7 +1572,7 @@ export class AdditionExprContext extends ExprContext {
         }
     }
 }
-export class AtomExprContext extends ExprContext {
+export class ExprSignedAtom_Context extends ExprContext {
     public signedAtom(): SignedAtomContext {
         return this.getRuleContext(0, SignedAtomContext);
     }
@@ -1579,20 +1582,20 @@ export class AtomExprContext extends ExprContext {
     }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterAtomExpr) {
-            listener.enterAtomExpr(this);
+        if (listener.enterExprSignedAtom_) {
+            listener.enterExprSignedAtom_(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitAtomExpr) {
-            listener.exitAtomExpr(this);
+        if (listener.exitExprSignedAtom_) {
+            listener.exitExprSignedAtom_(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitAtomExpr) {
-            return visitor.visitAtomExpr(this);
+        if (visitor.visitExprSignedAtom_) {
+            return visitor.visitExprSignedAtom_(this);
         } else {
             return visitor.visitChildren(this);
         }
@@ -1600,18 +1603,6 @@ export class AtomExprContext extends ExprContext {
 }
 
 export class SignedAtomContext extends ParserRuleContext {
-    public MINUS(): TerminalNode | undefined {
-        return this.tryGetToken(AlgebrainParser.MINUS, 0);
-    }
-    public signedAtom(): SignedAtomContext | undefined {
-        return this.tryGetRuleContext(0, SignedAtomContext);
-    }
-    public func(): FuncContext | undefined {
-        return this.tryGetRuleContext(0, FuncContext);
-    }
-    public atom(): AtomContext | undefined {
-        return this.tryGetRuleContext(0, AtomContext);
-    }
     constructor(parent: ParserRuleContext | undefined, invokingState: number) {
         super(parent, invokingState);
     }
@@ -1619,22 +1610,95 @@ export class SignedAtomContext extends ParserRuleContext {
     public get ruleIndex(): number {
         return AlgebrainParser.RULE_signedAtom;
     }
+    public copyFrom(ctx: SignedAtomContext): void {
+        super.copyFrom(ctx);
+    }
+}
+export class UnaryContext extends SignedAtomContext {
+    public MINUS(): TerminalNode {
+        return this.getToken(AlgebrainParser.MINUS, 0);
+    }
+    public signedAtom(): SignedAtomContext {
+        return this.getRuleContext(0, SignedAtomContext);
+    }
+    constructor(ctx: SignedAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
     // @Override
     public enterRule(listener: AlgebrainListener): void {
-        if (listener.enterSignedAtom) {
-            listener.enterSignedAtom(this);
+        if (listener.enterUnary) {
+            listener.enterUnary(this);
         }
     }
     // @Override
     public exitRule(listener: AlgebrainListener): void {
-        if (listener.exitSignedAtom) {
-            listener.exitSignedAtom(this);
+        if (listener.exitUnary) {
+            listener.exitUnary(this);
         }
     }
     // @Override
     public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
-        if (visitor.visitSignedAtom) {
-            return visitor.visitSignedAtom(this);
+        if (visitor.visitUnary) {
+            return visitor.visitUnary(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class SignedAtomFunc_Context extends SignedAtomContext {
+    public func(): FuncContext {
+        return this.getRuleContext(0, FuncContext);
+    }
+    constructor(ctx: SignedAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterSignedAtomFunc_) {
+            listener.enterSignedAtomFunc_(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitSignedAtomFunc_) {
+            listener.exitSignedAtomFunc_(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitSignedAtomFunc_) {
+            return visitor.visitSignedAtomFunc_(this);
+        } else {
+            return visitor.visitChildren(this);
+        }
+    }
+}
+export class SignedAtomAtom_Context extends SignedAtomContext {
+    public atom(): AtomContext {
+        return this.getRuleContext(0, AtomContext);
+    }
+    constructor(ctx: SignedAtomContext) {
+        super(ctx.parent, ctx.invokingState);
+        this.copyFrom(ctx);
+    }
+    // @Override
+    public enterRule(listener: AlgebrainListener): void {
+        if (listener.enterSignedAtomAtom_) {
+            listener.enterSignedAtomAtom_(this);
+        }
+    }
+    // @Override
+    public exitRule(listener: AlgebrainListener): void {
+        if (listener.exitSignedAtomAtom_) {
+            listener.exitSignedAtomAtom_(this);
+        }
+    }
+    // @Override
+    public accept<Result>(visitor: AlgebrainVisitor<Result>): Result {
+        if (visitor.visitSignedAtomAtom_) {
+            return visitor.visitSignedAtomAtom_(this);
         } else {
             return visitor.visitChildren(this);
         }

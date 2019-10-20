@@ -12,16 +12,14 @@ import {
     RewritingContext,
     BooleanExprContext,
     FuncContext,
-    OperatorContext,
     TrueContext,
     FalseContext,
     BooleanExprParensContext,
     EquationContext,
-    BooleanAtomEquationContext,
     MultiplyingExprContext,
     PowExprContext,
     AdditionExprContext,
-    AtomExprContext,
+    UnaryContext,
 } from './parser/AlgebrainParser';
 import Executable from './Executable';
 import Node, { Num, Symbol, Rewritable, Operator, OperatorSymbol, TRUE, FALSE } from './Node';
@@ -43,8 +41,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     private visitOperatorCtx: (tree: ParseTree) => Operator = (tree: ParseTree) =>
         this.visitTypeCtx(Operator, tree);
 
-    private visitTypeCtx(type: any, tree: ParseTree): any {
-        // TODO generic type
+    private visitTypeCtx(type: Function, tree: ParseTree): any {
         const result: Executable = this.visit(tree);
         if (!(result instanceof type)) {
             throw Error(`Parsed tree should be of ${type.constructor.name} type`);
@@ -76,10 +73,6 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
         return this.constructOperator(ctx.ID().text, List(ctx.expr()));
     }
 
-    visitOperator(ctx: OperatorContext): Operator {
-        return this.visitOperatorCtx(ctx.func());
-    }
-
     visitTrue(_: TrueContext): Num {
         return TRUE;
     }
@@ -90,10 +83,6 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
 
     visitBooleanExprParens(ctx: BooleanExprParensContext): Node {
         return this.visitNodeCtx(ctx.booleanExpr());
-    }
-
-    visitBooleanAtomEquation(ctx: BooleanAtomEquationContext): Operator {
-        return this.visitEquation(ctx.equation());
     }
 
     visitEquation(ctx: EquationContext): Operator {
@@ -119,8 +108,8 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
         return this.constructOperator(OperatorSymbol.POW, List(ctx.expr()));
     }
 
-    visitAtomExpr(ctx: AtomExprContext): Node {
-        return this.visitNodeCtx(ctx.signedAtom());
+    visitUnary(ctx: UnaryContext): Operator {
+        return this.constructOperator(OperatorSymbol.MINUS, List([ctx.signedAtom()]));
     }
 
     visitRewriting(ctx: RewritingContext): Rule {

@@ -2,15 +2,18 @@
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 
-import { OperatorContext } from './AlgebrainParser';
+import { BooleanAtomFunc_Context } from './AlgebrainParser';
 import { TrueContext } from './AlgebrainParser';
 import { FalseContext } from './AlgebrainParser';
-import { BooleanAtomEquationContext } from './AlgebrainParser';
+import { BooleanAtomEquation_Context } from './AlgebrainParser';
 import { BooleanExprParensContext } from './AlgebrainParser';
+import { UnaryContext } from './AlgebrainParser';
+import { SignedAtomFunc_Context } from './AlgebrainParser';
+import { SignedAtomAtom_Context } from './AlgebrainParser';
 import { PowExprContext } from './AlgebrainParser';
 import { MultiplyingExprContext } from './AlgebrainParser';
 import { AdditionExprContext } from './AlgebrainParser';
-import { AtomExprContext } from './AlgebrainParser';
+import { ExprSignedAtom_Context } from './AlgebrainParser';
 import { RewritableContext } from './AlgebrainParser';
 import { NumberContext } from './AlgebrainParser';
 import { IdContext } from './AlgebrainParser';
@@ -33,69 +36,108 @@ import { AtomContext } from './AlgebrainParser';
  */
 export interface AlgebrainListener extends ParseTreeListener {
     /**
-     * Enter a parse tree produced by the `Operator`
+     * Enter a parse tree produced by the `booleanAtomFunc_`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
-    enterOperator?: (ctx: OperatorContext) => void;
+    enterBooleanAtomFunc_?: (ctx: BooleanAtomFunc_Context) => void;
     /**
-     * Exit a parse tree produced by the `Operator`
+     * Exit a parse tree produced by the `booleanAtomFunc_`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
-    exitOperator?: (ctx: OperatorContext) => void;
+    exitBooleanAtomFunc_?: (ctx: BooleanAtomFunc_Context) => void;
 
     /**
-     * Enter a parse tree produced by the `True`
+     * Enter a parse tree produced by the `true`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
     enterTrue?: (ctx: TrueContext) => void;
     /**
-     * Exit a parse tree produced by the `True`
+     * Exit a parse tree produced by the `true`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
     exitTrue?: (ctx: TrueContext) => void;
 
     /**
-     * Enter a parse tree produced by the `False`
+     * Enter a parse tree produced by the `false`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
     enterFalse?: (ctx: FalseContext) => void;
     /**
-     * Exit a parse tree produced by the `False`
+     * Exit a parse tree produced by the `false`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
     exitFalse?: (ctx: FalseContext) => void;
 
     /**
-     * Enter a parse tree produced by the `BooleanAtomEquation`
+     * Enter a parse tree produced by the `booleanAtomEquation_`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
-    enterBooleanAtomEquation?: (ctx: BooleanAtomEquationContext) => void;
+    enterBooleanAtomEquation_?: (ctx: BooleanAtomEquation_Context) => void;
     /**
-     * Exit a parse tree produced by the `BooleanAtomEquation`
+     * Exit a parse tree produced by the `booleanAtomEquation_`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
-    exitBooleanAtomEquation?: (ctx: BooleanAtomEquationContext) => void;
+    exitBooleanAtomEquation_?: (ctx: BooleanAtomEquation_Context) => void;
 
     /**
-     * Enter a parse tree produced by the `BooleanExprParens`
+     * Enter a parse tree produced by the `booleanExprParens`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
     enterBooleanExprParens?: (ctx: BooleanExprParensContext) => void;
     /**
-     * Exit a parse tree produced by the `BooleanExprParens`
+     * Exit a parse tree produced by the `booleanExprParens`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      */
     exitBooleanExprParens?: (ctx: BooleanExprParensContext) => void;
+
+    /**
+     * Enter a parse tree produced by the `unary`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     */
+    enterUnary?: (ctx: UnaryContext) => void;
+    /**
+     * Exit a parse tree produced by the `unary`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     */
+    exitUnary?: (ctx: UnaryContext) => void;
+
+    /**
+     * Enter a parse tree produced by the `signedAtomFunc_`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     */
+    enterSignedAtomFunc_?: (ctx: SignedAtomFunc_Context) => void;
+    /**
+     * Exit a parse tree produced by the `signedAtomFunc_`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     */
+    exitSignedAtomFunc_?: (ctx: SignedAtomFunc_Context) => void;
+
+    /**
+     * Enter a parse tree produced by the `signedAtomAtom_`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     */
+    enterSignedAtomAtom_?: (ctx: SignedAtomAtom_Context) => void;
+    /**
+     * Exit a parse tree produced by the `signedAtomAtom_`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     */
+    exitSignedAtomAtom_?: (ctx: SignedAtomAtom_Context) => void;
 
     /**
      * Enter a parse tree produced by the `powExpr`
@@ -137,65 +179,65 @@ export interface AlgebrainListener extends ParseTreeListener {
     exitAdditionExpr?: (ctx: AdditionExprContext) => void;
 
     /**
-     * Enter a parse tree produced by the `atomExpr`
+     * Enter a parse tree produced by the `exprSignedAtom_`
      * labeled alternative in `AlgebrainParser.expr`.
      * @param ctx the parse tree
      */
-    enterAtomExpr?: (ctx: AtomExprContext) => void;
+    enterExprSignedAtom_?: (ctx: ExprSignedAtom_Context) => void;
     /**
-     * Exit a parse tree produced by the `atomExpr`
+     * Exit a parse tree produced by the `exprSignedAtom_`
      * labeled alternative in `AlgebrainParser.expr`.
      * @param ctx the parse tree
      */
-    exitAtomExpr?: (ctx: AtomExprContext) => void;
+    exitExprSignedAtom_?: (ctx: ExprSignedAtom_Context) => void;
 
     /**
-     * Enter a parse tree produced by the `Rewritable`
+     * Enter a parse tree produced by the `rewritable`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     enterRewritable?: (ctx: RewritableContext) => void;
     /**
-     * Exit a parse tree produced by the `Rewritable`
+     * Exit a parse tree produced by the `rewritable`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     exitRewritable?: (ctx: RewritableContext) => void;
 
     /**
-     * Enter a parse tree produced by the `Number`
+     * Enter a parse tree produced by the `number`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     enterNumber?: (ctx: NumberContext) => void;
     /**
-     * Exit a parse tree produced by the `Number`
+     * Exit a parse tree produced by the `number`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     exitNumber?: (ctx: NumberContext) => void;
 
     /**
-     * Enter a parse tree produced by the `Id`
+     * Enter a parse tree produced by the `id`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     enterId?: (ctx: IdContext) => void;
     /**
-     * Exit a parse tree produced by the `Id`
+     * Exit a parse tree produced by the `id`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     exitId?: (ctx: IdContext) => void;
 
     /**
-     * Enter a parse tree produced by the `ExprParens`
+     * Enter a parse tree produced by the `exprParens`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */
     enterExprParens?: (ctx: ExprParensContext) => void;
     /**
-     * Exit a parse tree produced by the `ExprParens`
+     * Exit a parse tree produced by the `exprParens`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      */

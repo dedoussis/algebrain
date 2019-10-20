@@ -2,15 +2,18 @@
 
 import { ParseTreeVisitor } from 'antlr4ts/tree/ParseTreeVisitor';
 
-import { OperatorContext } from './AlgebrainParser';
+import { BooleanAtomFunc_Context } from './AlgebrainParser';
 import { TrueContext } from './AlgebrainParser';
 import { FalseContext } from './AlgebrainParser';
-import { BooleanAtomEquationContext } from './AlgebrainParser';
+import { BooleanAtomEquation_Context } from './AlgebrainParser';
 import { BooleanExprParensContext } from './AlgebrainParser';
+import { UnaryContext } from './AlgebrainParser';
+import { SignedAtomFunc_Context } from './AlgebrainParser';
+import { SignedAtomAtom_Context } from './AlgebrainParser';
 import { PowExprContext } from './AlgebrainParser';
 import { MultiplyingExprContext } from './AlgebrainParser';
 import { AdditionExprContext } from './AlgebrainParser';
-import { AtomExprContext } from './AlgebrainParser';
+import { ExprSignedAtom_Context } from './AlgebrainParser';
 import { RewritableContext } from './AlgebrainParser';
 import { NumberContext } from './AlgebrainParser';
 import { IdContext } from './AlgebrainParser';
@@ -36,15 +39,15 @@ import { AtomContext } from './AlgebrainParser';
  */
 export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     /**
-     * Visit a parse tree produced by the `Operator`
+     * Visit a parse tree produced by the `booleanAtomFunc_`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    visitOperator?: (ctx: OperatorContext) => Result;
+    visitBooleanAtomFunc_?: (ctx: BooleanAtomFunc_Context) => Result;
 
     /**
-     * Visit a parse tree produced by the `True`
+     * Visit a parse tree produced by the `true`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -52,7 +55,7 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitTrue?: (ctx: TrueContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `False`
+     * Visit a parse tree produced by the `false`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -60,20 +63,44 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitFalse?: (ctx: FalseContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `BooleanAtomEquation`
+     * Visit a parse tree produced by the `booleanAtomEquation_`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    visitBooleanAtomEquation?: (ctx: BooleanAtomEquationContext) => Result;
+    visitBooleanAtomEquation_?: (ctx: BooleanAtomEquation_Context) => Result;
 
     /**
-     * Visit a parse tree produced by the `BooleanExprParens`
+     * Visit a parse tree produced by the `booleanExprParens`
      * labeled alternative in `AlgebrainParser.booleanAtom`.
      * @param ctx the parse tree
      * @return the visitor result
      */
     visitBooleanExprParens?: (ctx: BooleanExprParensContext) => Result;
+
+    /**
+     * Visit a parse tree produced by the `unary`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitUnary?: (ctx: UnaryContext) => Result;
+
+    /**
+     * Visit a parse tree produced by the `signedAtomFunc_`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitSignedAtomFunc_?: (ctx: SignedAtomFunc_Context) => Result;
+
+    /**
+     * Visit a parse tree produced by the `signedAtomAtom_`
+     * labeled alternative in `AlgebrainParser.signedAtom`.
+     * @param ctx the parse tree
+     * @return the visitor result
+     */
+    visitSignedAtomAtom_?: (ctx: SignedAtomAtom_Context) => Result;
 
     /**
      * Visit a parse tree produced by the `powExpr`
@@ -100,15 +127,15 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitAdditionExpr?: (ctx: AdditionExprContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `atomExpr`
+     * Visit a parse tree produced by the `exprSignedAtom_`
      * labeled alternative in `AlgebrainParser.expr`.
      * @param ctx the parse tree
      * @return the visitor result
      */
-    visitAtomExpr?: (ctx: AtomExprContext) => Result;
+    visitExprSignedAtom_?: (ctx: ExprSignedAtom_Context) => Result;
 
     /**
-     * Visit a parse tree produced by the `Rewritable`
+     * Visit a parse tree produced by the `rewritable`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -116,7 +143,7 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitRewritable?: (ctx: RewritableContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `Number`
+     * Visit a parse tree produced by the `number`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -124,7 +151,7 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitNumber?: (ctx: NumberContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `Id`
+     * Visit a parse tree produced by the `id`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      * @return the visitor result
@@ -132,7 +159,7 @@ export interface AlgebrainVisitor<Result> extends ParseTreeVisitor<Result> {
     visitId?: (ctx: IdContext) => Result;
 
     /**
-     * Visit a parse tree produced by the `ExprParens`
+     * Visit a parse tree produced by the `exprParens`
      * labeled alternative in `AlgebrainParser.atom`.
      * @param ctx the parse tree
      * @return the visitor result
