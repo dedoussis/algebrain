@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 
-export interface Executable {
+export default interface Executable {
     equals(other: any): boolean;
     toString(): string;
     execute(namespace: Namespace): Output;

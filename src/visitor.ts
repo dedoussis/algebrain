@@ -23,11 +23,11 @@ import {
     AdditionExprContext,
     AtomExprContext,
 } from './parser/AlgebrainParser';
-import { Executable } from './executable';
-import { Node, Num, Symbol, Rewritable, Operator, OperatorSymbol, TRUE, FALSE } from './nodes';
-import { Rule } from './rule';
-import { Transformation } from './transformation';
-import { Command, CommandName } from './commands';
+import Executable from './Executable';
+import Node, { Num, Symbol, Rewritable, Operator, OperatorSymbol, TRUE, FALSE } from './Node';
+import Rule from './Rule';
+import Transformation from './Transformation';
+import Command, { CommandName } from './Command';
 import { Token } from 'antlr4ts/Token';
 
 export default class Visitor extends AbstractParseTreeVisitor<Executable>

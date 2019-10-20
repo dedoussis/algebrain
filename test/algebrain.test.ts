@@ -1,7 +1,7 @@
-import Algebrain from '../src/algebrain';
+import Algebrain from '../src/Algebrain';
 import { List } from 'immutable';
-import { Operator, Num, Symbol, OperatorSymbol } from '../src/nodes';
-import { Rule } from '../src/rule';
+import { Operator, Num, Symbol, OperatorSymbol } from '../src/Node';
+import Rule from '../src/Rule';
 
 const cases = [
     ['x', new Symbol('x')],

@@ -1,8 +1,8 @@
 import { Map } from 'immutable';
-import { Executable, Namespace, Output } from './executable';
-import { Node, Operator, Rewritable, TRUE } from './nodes';
+import Executable, { Namespace, Output } from './Executable';
+import Node, { Operator, Rewritable, TRUE } from './Node';
 
-export class Rule implements Executable {
+export default class Rule implements Executable {
     readonly lhs: Node;
     readonly rhs: Node;
     readonly condition: Node | undefined;

@@ -1,10 +1,10 @@
+import { List } from 'immutable';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { CharStreams } from 'antlr4ts/CharStreams';
 import { AlgebrainLexer } from './parser/AlgebrainLexer';
 import { AlgebrainParser } from './parser/AlgebrainParser';
-import Visitor from './visitor';
-import { Executable } from './executable';
-import { List } from 'immutable';
+import Visitor from './Visitor';
+import Executable from './Executable';
 
 export default class Algebrain {
     private static retrieveTree(freeText: string) {

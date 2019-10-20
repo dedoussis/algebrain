@@ -1,6 +1,6 @@
 import { List, Map } from 'immutable';
-import { Node, Operator, Num, Symbol, OperatorSymbol, TRUE, FALSE, Rewritable } from '../src/nodes';
-import Algebrain from '../src/algebrain';
+import Node, { Operator, Num, Symbol, OperatorSymbol, TRUE, FALSE, Rewritable } from '../src/Node';
+import Algebrain from '../src/Algebrain';
 
 const cases = [
     [

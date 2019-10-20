@@ -1,8 +1,8 @@
 import { List } from 'immutable';
-import { Transformation } from '../src/transformation';
-import { Rule } from '../src/rule';
-import { Node, Num, Operator, OperatorSymbol, Rewritable } from '../src/nodes';
-import Algebrain from '../src/algebrain';
+import Transformation from '../src/Transformation';
+import Rule from '../src/Rule';
+import Node, { Num, Operator, OperatorSymbol, Rewritable } from '../src/Node';
+import Algebrain from '../src/Algebrain';
 
 describe('Transformation', () => {
     it('constructs', () => {

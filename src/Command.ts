@@ -1,9 +1,9 @@
-import { Executable, Namespace, Output } from './executable';
-import { Node } from './nodes';
 import { List, Map } from 'immutable';
-import { Transformation } from './transformation';
+import Executable, { Namespace, Output } from './Executable';
+import Node from './Node';
+import Transformation from './Transformation';
 
-export class Command implements Executable {
+export default class Command implements Executable {
     readonly execute: ExecuteFunc;
 
     constructor(readonly name: CommandName, readonly parameters: List<string> = List<string>()) {

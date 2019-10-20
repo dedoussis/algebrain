@@ -1,8 +1,8 @@
-import { Command, CommandName } from '../src/commands';
 import { Map, List } from 'immutable';
-import Algebrain from '../src/algebrain';
-import { Num, Operator, OperatorSymbol } from '../src/nodes';
-import { Transformation } from '../src/transformation';
+import Algebrain from '../src/Algebrain';
+import Command, { CommandName } from '../src/Command';
+import { Num, Operator, OperatorSymbol } from '../src/Node';
+import Transformation from '../src/Transformation';
 
 describe('Command', () => {
     it('constructs', () => {

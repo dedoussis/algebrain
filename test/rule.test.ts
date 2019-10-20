@@ -1,7 +1,7 @@
-import { Rule } from '../src/rule';
 import { Map, List } from 'immutable';
-import { Operator, OperatorSymbol, Rewritable, Num, Symbol, Node, TRUE, FALSE } from '../src/nodes';
-import Algebrain from '../src/algebrain';
+import Rule from '../src/Rule';
+import Node, { Operator, OperatorSymbol, Rewritable, Num, Symbol, TRUE, FALSE } from '../src/Node';
+import Algebrain from '../src/Algebrain';
 
 describe('Rule', () => {
     it('constructs', () => {
