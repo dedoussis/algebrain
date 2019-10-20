@@ -1,5 +1,5 @@
 import { List, Map } from 'immutable';
-import Executable, { Namespace, Output } from './executable';
+import Executable, { Namespace, Output } from './Executable';
 
 export default class Node implements Executable {
     constructor(readonly value: any) {
