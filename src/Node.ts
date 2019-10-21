@@ -74,7 +74,11 @@ export class Operator extends Node {
     private readonly evaluator: Evaluator;
     private readonly stringifier: Stringifier | undefined;
 
-    constructor(readonly value: string, readonly children: List<Node> = List<Node>()) {
+    constructor(
+        readonly value: string,
+        readonly children: List<Node> = List<Node>(),
+        operatorHandlers: Map<OperatorSymbol, Handlers> = operatorSymbolHandlers
+    ) {
         super(value);
         const notFoundHandlers: Handlers = {
             evaluator: {
@@ -82,7 +86,7 @@ export class Operator extends Node {
                 recursive: false,
             },
         };
-        const handlers = operatorSymbolHandlers.get(this.value as OperatorSymbol, notFoundHandlers);
+        const handlers = operatorHandlers.get(this.value as OperatorSymbol, notFoundHandlers);
         this.evaluator = handlers.evaluator;
         this.stringifier = handlers.stringifier;
     }
