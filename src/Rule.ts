@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
-import Node, { Operator, Rewritable, TRUE } from './Node';
+import Node, { Operator, Rewritable, TRUE, FALSE } from './Node';
 
 export default class Rule implements Executable {
     constructor(readonly lhs: Node, readonly rhs: Node, readonly condition?: Node) {}
@@ -37,15 +37,15 @@ export default class Rule implements Executable {
         try {
             const matches = Rule.matchNodes(this.lhs, other);
             if (
-                this.condition === undefined ||
+                this.condition &&
                 this.condition
                     .rewrite(matches)
                     .evaluate()
-                    .equals(TRUE)
+                    .equals(FALSE)
             ) {
-                return matches;
+                throw Error('No match - false condition');
             }
-            return Map<string, Node>();
+            return matches;
         } catch {
             return Map<string, Node>();
         }

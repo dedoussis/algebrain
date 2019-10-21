@@ -2,9 +2,7 @@ import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 
 export default class Node implements Executable {
-    constructor(readonly value: any) {
-        this.value = value;
-    }
+    constructor(readonly value: any) {}
 
     toString(): string {
         return this.value.toString();
@@ -36,7 +34,7 @@ export default class Node implements Executable {
 }
 
 export class Num extends Node {
-    constructor(readonly value: number) {
+    constructor(value: number) {
         super(value);
     }
 
@@ -75,7 +73,7 @@ export class Operator extends Node {
     private readonly stringifier: Stringifier | undefined;
 
     constructor(
-        readonly value: string,
+        value: string,
         readonly children: List<Node> = List<Node>(),
         operatorHandlers: Map<OperatorSymbol, Handlers> = operatorSymbolHandlers
     ) {
@@ -131,13 +129,13 @@ export class Operator extends Node {
 }
 
 export class Symbol extends Node {
-    constructor(readonly value: string) {
+    constructor(value: string) {
         super(value);
     }
 }
 
 export class Rewritable extends Node {
-    constructor(readonly value: string) {
+    constructor(value: string) {
         super(value);
     }
 
