@@ -98,12 +98,14 @@ export class Operator extends Node {
     }
 
     toString(): string {
-        const stringified: List<string> = this.children.map((child: Node, index: number) =>
-            child instanceof Operator && this.stringifier
-                ? this.stringifier(child, index)
-                : child.toString()
+        const stringifier = this.stringifier;
+        if (!stringifier) {
+            return prefix(this.value, this.children.map(child => child.toString()));
+        }
+        const stringifiedChildren: List<string> = this.children.map((child: Node, index: number) =>
+            child instanceof Operator ? stringifier(child, index) : child.toString()
         );
-        return this.stringifier ? infix(this.value, stringified) : prefix(this.value, stringified);
+        return infix(this.value, stringifiedChildren);
     }
 
     evaluate(): Node {
