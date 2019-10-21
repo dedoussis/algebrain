@@ -26,16 +26,6 @@ export default class Node implements Executable {
         return this;
     }
 
-    public static compare(one: Node, other: Node, precedence: List<Function>): number {
-        if (one.constructor === other.constructor) {
-            return one.value - other.value;
-        }
-        return (
-            precedence.findIndex(instanceType => one instanceof instanceType) -
-            precedence.findIndex(instanceType => other instanceof instanceType)
-        );
-    }
-
     execute(namespace: Namespace): Output {
         const evaluated: Node = this.evaluate();
         return {
