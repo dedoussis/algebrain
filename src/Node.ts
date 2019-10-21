@@ -22,10 +22,6 @@ export default class Node implements Executable {
         );
     }
 
-    canonical(): Node {
-        return this;
-    }
-
     rewrite(matches: Map<string, Node>): Node {
         return this;
     }
@@ -56,7 +52,7 @@ export class Num extends Node {
 
     evaluate(): Node {
         if (this.value < 0) {
-            return new Operator(OperatorSymbol.MINUS, List<Node>([new Num(this.value * -1)]));
+            return new Operator(OperatorSymbol.MINUS, List([new Num(this.value * -1)]));
         }
         return super.evaluate();
     }
@@ -85,7 +81,6 @@ export enum OperatorSymbol {
 }
 
 export class Operator extends Node {
-    private readonly handlers: Map<OperatorSymbol, Handlers> = operatorSymbolHandlers;
     private readonly evaluator: Evaluator;
     private readonly stringifier: Stringifier | undefined;
 
@@ -97,7 +92,7 @@ export class Operator extends Node {
                 recursive: false,
             },
         };
-        const handlers = this.handlers.get(this.value as OperatorSymbol, notFoundHandlers);
+        const handlers = operatorSymbolHandlers.get(this.value as OperatorSymbol, notFoundHandlers);
         this.evaluator = handlers.evaluator;
         this.stringifier = handlers.stringifier;
     }
@@ -119,20 +114,12 @@ export class Operator extends Node {
         return this.stringifier ? infix(this.value, stringified) : prefix(this.value, stringified);
     }
 
-    isFlat(): boolean {
-        return this.children.every(child => !(child instanceof Operator));
-    }
-
     evaluate(): Node {
-        let evaluatedChildren: List<Node> = this.children;
-
-        if (!(this.evaluator.recursive || this.isFlat())) {
-            this.children.forEach((child: Node, index: number) => {
-                if (child instanceof Operator) {
-                    evaluatedChildren = evaluatedChildren.set(index, child.evaluate());
-                }
-            });
-        }
+        const evaluatedChildren: List<Node> = this.evaluator.recursive
+            ? this.children
+            : this.children.map((child: Node) => {
+                  return child instanceof Operator ? child.evaluate() : child;
+              });
         return this.evaluator.f(evaluatedChildren);
     }
 
@@ -142,16 +129,6 @@ export class Operator extends Node {
             this.children.size === other.children.size &&
             this.children.every((child, index) => child.equals(other.children.get(index)))
         );
-    }
-
-    canonical(): Operator {
-        let sortedChildren: List<Node> = this.children.sort((one, other) =>
-            Node.compare(one, other, List<Function>([Operator, Rewritable, Symbol, Num]))
-        );
-        sortedChildren = sortedChildren.map(child =>
-            child instanceof Operator ? child.canonical() : child
-        );
-        return new Operator(this.value, sortedChildren);
     }
 
     rewrite(matches: Map<string, Node>): Operator {
@@ -371,18 +348,14 @@ function evaluateNumericalOperator(
         const notToEval: List<Node> = commutative
             ? children.filter(child => !(child instanceof Num))
             : children.skipWhile(child => child instanceof Num);
-        const resultNum: Num = toEval.reduce(
-            (existing: Num, num: Num) => new Num(operation(existing.value, num.value))
-        );
-        const resultNode: Node =
-            resultNum.value < 0
-                ? new Operator(OperatorSymbol.MINUS, List([new Num(resultNum.value * -1)]))
-                : resultNum;
+        const resultNum: Num = toEval
+            .reduce((existing: Num, num: Num) => new Num(operation(existing.value, num.value)))
+            .evaluate();
 
         if (notToEval.isEmpty()) {
-            return resultNode;
+            return resultNum;
         }
-        return new Operator(operatorSymbol, resultNode ? notToEval.push(resultNode) : notToEval);
+        return new Operator(operatorSymbol, resultNum ? notToEval.push(resultNum) : notToEval);
     };
 }
 

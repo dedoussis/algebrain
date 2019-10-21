@@ -226,39 +226,7 @@ const cases = [
 
 describe('Node evaluation', () => {
     test.each(cases)('Evaluating case %p', (title, node, evaluatedNode) => {
-        expect(node.evaluate().canonical()).toEqual(evaluatedNode.canonical());
-    });
-});
-
-const canonicalCases = [
-    ['symbol', new Symbol('x'), new Symbol('x')],
-    [
-        '3+x',
-        new Operator(OperatorSymbol.PLUS, List([new Num(3), new Symbol('x')])),
-        new Operator(OperatorSymbol.PLUS, List([new Symbol('x'), new Num(3)])),
-    ],
-    [
-        'x*(5+2)',
-        new Operator(
-            OperatorSymbol.MUL,
-            List([
-                new Symbol('x'),
-                new Operator(OperatorSymbol.PLUS, List([new Num(5), new Num(2)])),
-            ])
-        ),
-        new Operator(
-            OperatorSymbol.MUL,
-            List([
-                new Operator(OperatorSymbol.PLUS, List([new Num(2), new Num(5)])),
-                new Symbol('x'),
-            ])
-        ),
-    ],
-];
-
-describe('Canonical form', () => {
-    test.each(canonicalCases)('Formatting case %p', (title, node, formattedNode) => {
-        expect(node.canonical()).toEqual(formattedNode);
+        expect(node.evaluate()).toEqual(evaluatedNode);
     });
 });
 
@@ -395,22 +363,6 @@ describe('Operator', () => {
     it('constructs', () => {
         const value: OperatorSymbol = OperatorSymbol.PLUS;
         expect(new Operator(value).value).toEqual(value);
-    });
-
-    it('is flat', () => {
-        const operatorNode: Operator = new Operator(
-            OperatorSymbol.PLUS,
-            List([new Num(2), new Rewritable('u')])
-        );
-        expect(operatorNode.isFlat()).toBeTruthy();
-    });
-
-    it('is not flat', () => {
-        const operatorNode: Operator = new Operator(
-            OperatorSymbol.PLUS,
-            List([new Num(2), new Operator(OperatorSymbol.FLAG, List([FALSE]))])
-        );
-        expect(operatorNode.isFlat()).toBeFalsy();
     });
 
     it('is equal with another Operator when all children are equal', () => {
