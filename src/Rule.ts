@@ -3,15 +3,7 @@ import Executable, { Namespace, Output } from './Executable';
 import Node, { Operator, Rewritable, TRUE } from './Node';
 
 export default class Rule implements Executable {
-    readonly lhs: Node;
-    readonly rhs: Node;
-    readonly condition: Node | undefined;
-
-    constructor(lhs: Node, rhs: Node, condition?: Node) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-        this.condition = condition;
-    }
+    constructor(readonly lhs: Node, readonly rhs: Node, readonly condition?: Node) {}
 
     private static matchNodes(
         one: Node,
@@ -32,9 +24,11 @@ export default class Rule implements Executable {
             other instanceof Operator &&
             one.children.size === other.children.size
         ) {
-            one.children.forEach((child, index) => {
-                matches = Rule.matchNodes(child, other.children.get(index, child), matches);
-            }); // to be reduced
+            return one.children.reduce(
+                (matches: Map<string, Node>, child: Node, index: number) =>
+                    Rule.matchNodes(child, other.children.get(index, child), matches),
+                matches
+            );
         }
         return matches;
     }
