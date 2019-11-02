@@ -54,7 +54,7 @@ Under the hood, the above parsing uses an extensive API for structuring algebrai
 ```javascript
 // Algebrain heavily relies on the immutable package for persistent data structures
 import { List } from "immutable";
-import { Operator, Num, Symbol } from "algebrain/Node";
+import { Operator, Num, Symbol } from "algebrain";
 
 // The above expression: 14.4+5/(y-12.34), is constructed as:
 const expr = new Operator("+", List([
@@ -77,8 +77,7 @@ console.log(expr.toString());
 By exploiting the concept of [rewriting rules](https://en.wikipedia.org/wiki/Rewriting), Algebrain enables the use of custom transformations, that can be entirely developed and compiled within its environment.
 
 ```javascript
-import Algebrain from "algebrain";
-import Transformation from "algebrain/Transformation";
+import Algebrain, { Transformation } from "algebrain";
 
 const rules = Algebrain.multiParse(`
     fib(0)=0
