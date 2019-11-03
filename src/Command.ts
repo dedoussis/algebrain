@@ -23,6 +23,7 @@ export enum CommandName {
     TRANFORM = 'transform',
     EVALUATE = 'evaluate',
     RULES = 'rules',
+    HELP = 'help',
 }
 
 type ExecuteFunc = (namespace: Namespace) => Output;
@@ -68,6 +69,17 @@ const commandRegistry: Map<CommandName, (command: Command) => ExecuteFunc> = Map
             return {
                 namespace: namespace,
                 stdOut: transformation.toString(),
+            };
+        },
+    ],
+    [
+        CommandName.HELP,
+        (_: Command): ExecuteFunc => (namespace: Namespace) => {
+            return {
+                namespace: namespace,
+                stdOut: `algebrain version 0.0.1 - Available commands: [ ${List(
+                    commandRegistry.keys()
+                ).join(', ')} ]`,
             };
         },
     ],

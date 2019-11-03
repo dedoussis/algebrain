@@ -70,6 +70,7 @@ COMMAND
   : 'transform'
   | 'evaluate'
   | 'rules'
+  | 'help'
   ;
 TRUE: 'true';
 FALSE: 'false';
