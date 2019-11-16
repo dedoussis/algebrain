@@ -7,8 +7,8 @@ export default interface Executable {
 }
 
 export type Namespace = {
-    expression: Executable;
-    transformationName: string;
+    expression?: Executable;
+    transformationName?: string;
     transformations: Map<string, Executable>;
 };
 

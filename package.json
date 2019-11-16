@@ -1,6 +1,6 @@
 {
   "name": "algebrain",
-  "version": "0.0.3",
+  "version": "0.0.3b",
   "description": "Combuter Algebra System focusing on symbolic transformations",
   "keywords": [
     "algebra",
@@ -13,9 +13,9 @@
     "mathematics",
     "compiler"
   ],
-  "main": "dist/lib/index.js",
-  "module": "dist/lib/index.js",
-  "typings": "dist/types/index.d.ts",
+  "main": "dist/lib/src/index.js",
+  "module": "dist/lib/src/index.js",
+  "typings": "dist/types/src/index.d.ts",
   "files": [
     "dist"
   ],
@@ -32,15 +32,12 @@
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && typedoc --out docs --target es6 --theme minimal --mode file src",
-    "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
-    "semantic-release": "semantic-release",
-    "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
     "precommit": "lint-staged",
     "antlr4": "antlr4ts -visitor src/parser/Algebrain.g4"
   },

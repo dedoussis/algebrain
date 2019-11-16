@@ -2,12 +2,13 @@ import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
 import Transformation from './Transformation';
+import { version } from '../package.json';
 
 export default class Command implements Executable {
     readonly execute: ExecuteFunc;
 
     constructor(readonly name: CommandName, readonly parameters: List<string> = List<string>()) {
-        this.execute = commandRegistry.get(this.name, commandNotFound)(this);
+        this.execute = commandRegistry.get(this.name, commandNotFound).executeConstructor(this);
     }
 
     toString(): string {
@@ -20,76 +21,119 @@ export default class Command implements Executable {
 }
 
 export enum CommandName {
-    TRANFORM = 'transform',
-    EVALUATE = 'evaluate',
-    RULES = 'rules',
-    HELP = 'help',
+    Transform = 'transform',
+    Evaluate = 'evaluate',
+    Rules = 'rules',
+    Help = 'help',
+}
+
+export enum ExecuteError {
+    UndefinedTransformation = 'No transformation has been set',
+    UndefinedExpression = 'No expression has been set',
 }
 
 type ExecuteFunc = (namespace: Namespace) => Output;
+type CommandSpec = {
+    executeConstructor: (command: Command) => ExecuteFunc;
+    description: string;
+};
 
-const commandRegistry: Map<CommandName, (command: Command) => ExecuteFunc> = Map([
+export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
-        CommandName.TRANFORM,
-        (_: Command): ExecuteFunc => (namespace: Namespace) => {
-            const { expression, transformationName, transformations } = namespace;
-            const transformation: Transformation = transformations.get(
-                transformationName
-            ) as Transformation;
-            const transformed: Node = transformation.transform(expression as Node);
-            return {
-                namespace: {
-                    ...namespace,
-                    expression: transformed,
-                },
-                stdOut: transformed.toString(),
-            };
+        CommandName.Transform,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                const { expression, transformationName, transformations } = namespace;
+                if (transformationName === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.UndefinedTransformation,
+                    };
+                }
+                const transformation: Transformation = transformations.get(
+                    transformationName
+                ) as Transformation;
+                const transformed: Node = transformation.transform(expression as Node);
+                return {
+                    namespace: {
+                        ...namespace,
+                        expression: transformed,
+                    },
+                    stdOut: transformed.toString(),
+                };
+            },
+            description: 'Transform current expression using the active active transformation.',
         },
     ],
     [
-        CommandName.EVALUATE,
-        (_: Command): ExecuteFunc => (namespace: Namespace) => {
-            const evaluated: Node = (namespace.expression as Node).evaluate();
-            return {
-                namespace: {
-                    ...namespace,
-                    expression: evaluated,
-                },
-                stdOut: evaluated.toString(),
-            };
+        CommandName.Evaluate,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                if (namespace.expression === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.UndefinedExpression,
+                    };
+                }
+                const evaluated: Node = (namespace.expression as Node).evaluate();
+                return {
+                    namespace: {
+                        ...namespace,
+                        expression: evaluated,
+                    },
+                    stdOut: evaluated.toString(),
+                };
+            },
+            description: 'Evaluate current expression.',
         },
     ],
     [
-        CommandName.RULES,
-        (_: Command): ExecuteFunc => (namespace: Namespace) => {
-            const { transformationName, transformations } = namespace;
-            const transformation: Transformation = transformations.get(
-                transformationName
-            ) as Transformation;
-            return {
-                namespace: namespace,
-                stdOut: transformation.toString(),
-            };
+        CommandName.Rules,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                const { transformationName, transformations } = namespace;
+                if (transformationName === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.UndefinedTransformation,
+                    };
+                }
+                const transformation: Transformation = transformations.get(
+                    transformationName
+                ) as Transformation;
+                return {
+                    namespace: namespace,
+                    stdOut: transformation.toString(),
+                };
+            },
+            description: 'List rules of active transformation.',
         },
     ],
     [
-        CommandName.HELP,
-        (_: Command): ExecuteFunc => (namespace: Namespace) => {
-            return {
-                namespace: namespace,
-                stdOut: `algebrain version 0.0.1 - Available commands: [ ${List(
-                    commandRegistry.keys()
-                ).join(', ')} ]`,
-            };
+        CommandName.Help,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                return {
+                    namespace: namespace,
+                    stdOut: `--- algebrain version ${version} ---
+          Commands:
+          ${commandRegistry
+              .entrySeq()
+              .map(([name, spec]: [CommandName, CommandSpec]) => `- ${name}: ${spec.description}`)
+              .join('\n')}`,
+                };
+            },
+            description: 'Print this message.',
         },
     ],
 ]);
 
-const commandNotFound: (command: Command) => ExecuteFunc = (command: Command) => (
-    namespace: Namespace
-) => {
-    return {
-        namespace: namespace,
-        stdOut: `Command ${command.name} not found`,
-    };
+const commandNotFound: CommandSpec = {
+    executeConstructor: (command: Command) => (namespace: Namespace) => {
+        return {
+            namespace: namespace,
+            stdOut: `Command ${command.name} not found`,
+        };
+    },
+    description: 'Placeholder command',
 };

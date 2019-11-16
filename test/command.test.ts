@@ -1,12 +1,12 @@
 import { Map, List } from 'immutable';
 import Algebrain from '../src/Algebrain';
-import Command, { CommandName } from '../src/Command';
+import Command, { CommandName, ExecuteError } from '../src/Command';
 import { Num, Operator, OperatorSymbol } from '../src/Node';
 import Transformation from '../src/Transformation';
 
 describe('Command', () => {
     it('constructs', () => {
-        expect(new Command(CommandName.TRANFORM)).toBeInstanceOf(Command);
+        expect(new Command(CommandName.Transform)).toBeInstanceOf(Command);
     });
 });
 
@@ -38,6 +38,21 @@ const exequtionCases = [
         },
     ],
     [
+        'transform with no active transformation',
+        Algebrain.parse('transform'),
+        {
+            expression: new Num(5),
+            transformations: Map(),
+        },
+        {
+            namespace: {
+                expression: new Num(5),
+                transformations: Map(),
+            },
+            stdOut: ExecuteError.UndefinedTransformation,
+        },
+    ],
+    [
         'evaluate',
         Algebrain.parse('evaluate'),
         {
@@ -52,6 +67,21 @@ const exequtionCases = [
                 transformations: transformations,
             },
             stdOut: '16',
+        },
+    ],
+    [
+        'evaluate with no current expression',
+        Algebrain.parse('evaluate'),
+        {
+            transformationName: 'fib',
+            transformations: Map(),
+        },
+        {
+            namespace: {
+                transformationName: 'fib',
+                transformations: Map(),
+            },
+            stdOut: ExecuteError.UndefinedExpression,
         },
     ],
     [
