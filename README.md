@@ -1,4 +1,4 @@
-<center>
+<p align="center">
 
 # Algebrain 🧠
 [![Build Status](https://travis-ci.com/dedoussis/algebrain.svg?branch=master)](https://travis-ci.com/dedoussis/algebrain)
@@ -12,7 +12,7 @@ Parser generated using [ANTLR4](https://www.antlr.org/).
 
 *Note: Algebrain is still at a very early and unstable stage.*
 
-</center>
+</p>
 
 ## Install
 
