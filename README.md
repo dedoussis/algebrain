@@ -1,19 +1,14 @@
-<h1>Algebrain 🧠</h1>
-
+# Algebrain 🧠
 [![Build Status](https://travis-ci.com/dedoussis/algebrain.svg?branch=master)](https://travis-ci.com/dedoussis/algebrain)
 [![Coverage Status](https://coveralls.io/repos/github/dedoussis/algebrain/badge.svg?branch=master)](https://coveralls.io/github/dedoussis/algebrain?branch=master)
-
-<p align="center">
 
 Combuter Algebra System focusing on symbolic transformations.
 
 100% writen in typescript.
 
-<!-- Parser generated using [ANTLR4](https://www.antlr.org/). -->
+Parser generated using [ANTLR4](https://www.antlr.org/).
 
 *Note: Algebrain is still at a very early and unstable stage.*
-
-</p>
 
 ## Install
 
