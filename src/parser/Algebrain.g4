@@ -71,6 +71,7 @@ COMMAND
   | 'evaluate'
   | 'rules'
   | 'help'
+  | 'tree'
   ;
 TRUE: 'true';
 FALSE: 'false';

@@ -3,6 +3,7 @@ import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
 import Transformation from './Transformation';
 import { version } from '../package.json';
+import { asTree } from 'treeify';
 
 export default class Command implements Executable {
     readonly execute: ExecuteFunc;
@@ -25,11 +26,13 @@ export enum CommandName {
     Evaluate = 'evaluate',
     Rules = 'rules',
     Help = 'help',
+    Tree = 'tree',
 }
 
 export enum ExecuteError {
     UndefinedTransformation = 'No transformation has been set',
     UndefinedExpression = 'No expression has been set',
+    CommandNotFound = 'Command not found',
 }
 
 type ExecuteFunc = (namespace: Namespace) => Output;
@@ -62,7 +65,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: transformed.toString(),
                 };
             },
-            description: 'Transform current expression using the active active transformation.',
+            description: 'Transform current expression using the active active transformation',
         },
     ],
     [
@@ -84,7 +87,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: evaluated.toString(),
                 };
             },
-            description: 'Evaluate current expression.',
+            description: 'Evaluate current expression',
         },
     ],
     [
@@ -106,7 +109,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: transformation.toString(),
                 };
             },
-            description: 'List rules of active transformation.',
+            description: 'List rules of active transformation',
         },
     ],
     [
@@ -123,7 +126,25 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
               .join('\n')}`,
                 };
             },
-            description: 'Print this message.',
+            description: 'Print this message',
+        },
+    ],
+    [
+        CommandName.Tree,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                if (namespace.expression === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.UndefinedExpression,
+                    };
+                }
+                return {
+                    namespace: namespace,
+                    stdOut: asTree(namespace.expression as any, true, true),
+                };
+            },
+            description: 'Tree represantion of expression',
         },
     ],
 ]);
@@ -132,7 +153,7 @@ const commandNotFound: CommandSpec = {
     executeConstructor: (command: Command) => (namespace: Namespace) => {
         return {
             namespace: namespace,
-            stdOut: `Command ${command.name} not found`,
+            stdOut: ExecuteError.CommandNotFound,
         };
     },
     description: 'Placeholder command',

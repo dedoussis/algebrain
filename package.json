@@ -117,7 +117,9 @@
   },
   "dependencies": {
     "@types/core-js": "^2.5.2",
+    "@types/treeify": "^1.0.0",
     "antlr4ts": "^0.5.0-alpha.3",
-    "immutable": "^4.0.0-rc.12"
+    "immutable": "^4.0.0-rc.12",
+    "treeify": "^1.1.0"
   }
 }
