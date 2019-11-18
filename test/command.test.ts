@@ -56,7 +56,7 @@ const exequtionCases = [
         'evaluate',
         Algebrain.parse('evaluate'),
         {
-            expression: new Operator(OperatorSymbol.POW, List([new Num(2), new Num(4)])),
+            expression: new Operator(OperatorSymbol.Pow, List([new Num(2), new Num(4)])),
             transformationName: 'fib',
             transformations: transformations,
         },

@@ -86,7 +86,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     visitEquation(ctx: EquationContext): Operator {
-        return this.constructOperator(OperatorSymbol.EQUALS, List(ctx.expr()));
+        return this.constructOperator(OperatorSymbol.Equals, List(ctx.expr()));
     }
 
     visitBooleanExpr(ctx: BooleanExprContext): Node {
@@ -105,11 +105,11 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     visitPowExpr(ctx: PowExprContext): Node {
-        return this.constructOperator(OperatorSymbol.POW, List(ctx.expr()));
+        return this.constructOperator(OperatorSymbol.Pow, List(ctx.expr()));
     }
 
     visitUnary(ctx: UnaryContext): Operator {
-        return this.constructOperator(OperatorSymbol.MINUS, List([ctx.signedAtom()]));
+        return this.constructOperator(OperatorSymbol.Minus, List([ctx.signedAtom()]));
     }
 
     visitRewriting(ctx: RewritingContext): Rule {

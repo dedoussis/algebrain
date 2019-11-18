@@ -62,8 +62,8 @@ const expr = new Operator("+", List([
     new Operator("/", List([
         new Num(5),
         new Operator("-", List([
-          new Symbol("y"),
-          new Num(12.34)
+            new Symbol("y"),
+            new Num(12.34)
         ]))
     ]))
 ]));

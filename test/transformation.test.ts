@@ -7,11 +7,11 @@ import Algebrain from '../src/Algebrain';
 describe('Transformation', () => {
     it('constructs', () => {
         const lhs: Operator = new Operator(
-            OperatorSymbol.MUL,
+            OperatorSymbol.Mul,
             List<Node>([new Num(2), new Rewritable('u')])
         );
         const rhs: Operator = new Operator(
-            OperatorSymbol.PLUS,
+            OperatorSymbol.Plus,
             List<Node>([new Rewritable('u'), new Rewritable('u')])
         );
         const rule = new Rule(lhs, rhs);
@@ -19,11 +19,11 @@ describe('Transformation', () => {
     });
     it('adds rule', () => {
         const lhs: Operator = new Operator(
-            OperatorSymbol.MUL,
+            OperatorSymbol.Mul,
             List<Node>([new Num(2), new Rewritable('u')])
         );
         const rhs: Operator = new Operator(
-            OperatorSymbol.PLUS,
+            OperatorSymbol.Plus,
             List<Node>([new Rewritable('u'), new Rewritable('u')])
         );
         const rule = new Rule(lhs, rhs);
