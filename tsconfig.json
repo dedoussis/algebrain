@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "strictPropertyInitialization": false,
     "moduleResolution": "node",
     "target": "es2017",

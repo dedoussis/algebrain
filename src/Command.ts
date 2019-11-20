@@ -2,8 +2,6 @@ import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
 import Transformation from './Transformation';
-import { version } from '../package.json';
-import { asTree } from 'treeify';
 
 export default class Command implements Executable {
     readonly execute: ExecuteFunc;
@@ -65,7 +63,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: transformed.toString(),
                 };
             },
-            description: 'Transform current expression using the active active transformation',
+            description: 'Transform current expression using the active transformation',
         },
     ],
     [
@@ -118,7 +116,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
                 return {
                     namespace: namespace,
-                    stdOut: `--- algebrain version ${version} ---
+                    stdOut: `--- algebrain version 0.0.3-d ---
           Commands:
           ${commandRegistry
               .entrySeq()
@@ -133,7 +131,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
         CommandName.Tree,
         {
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
-                if (namespace.expression === undefined) {
+                if (!(namespace.expression instanceof Node)) {
                     return {
                         namespace: namespace,
                         stdOut: ExecuteError.UndefinedExpression,
@@ -141,10 +139,10 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 }
                 return {
                     namespace: namespace,
-                    stdOut: asTree(namespace.expression as any, true, true),
+                    stdOut: namespace.expression.treeify(),
                 };
             },
-            description: 'Tree represantion of expression',
+            description: 'Tree representation of expression',
         },
     ],
 ]);

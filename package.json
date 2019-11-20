@@ -1,6 +1,6 @@
 {
   "name": "algebrain",
-  "version": "0.0.3c",
+  "version": "0.0.3e",
   "description": "Combuter Algebra System focusing on symbolic transformations",
   "keywords": [
     "algebra",
@@ -13,9 +13,9 @@
     "mathematics",
     "compiler"
   ],
-  "main": "dist/lib/src/index.js",
-  "module": "dist/lib/src/index.js",
-  "typings": "dist/types/src/index.d.ts",
+  "main": "dist/lib/index.js",
+  "module": "dist/lib/index.js",
+  "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
@@ -35,7 +35,6 @@
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
-    "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
     "precommit": "lint-staged",
@@ -117,9 +116,7 @@
   },
   "dependencies": {
     "@types/core-js": "^2.5.2",
-    "@types/treeify": "^1.0.0",
     "antlr4ts": "^0.5.0-alpha.3",
-    "immutable": "^4.0.0-rc.12",
-    "treeify": "^1.1.0"
+    "immutable": "^4.0.0-rc.12"
   }
 }

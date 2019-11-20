@@ -424,4 +424,35 @@ describe('Operator', () => {
         );
         expect(one.equals(another)).toBeFalsy();
     });
+
+    it('it treeifies', () => {
+        const expr: Operator = new Operator(
+            OperatorSymbol.Div,
+            List([
+                new Operator(
+                    OperatorSymbol.Plus,
+                    List([
+                        new Operator(
+                            OperatorSymbol.Minus,
+                            List([new Rewritable('u'), new Symbol('x')])
+                        ),
+                        new Num(5),
+                    ])
+                ),
+                new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
+            ])
+        );
+        const treefied: string[] = [
+            '/',
+            '├─ +',
+            '│  ├─ -',
+            '│  │  ├─ $u',
+            '│  │  └─ x',
+            '│  └─ 5',
+            '└─ ^',
+            '   ├─ g',
+            '   └─ 5',
+        ];
+        expect(expr.treeify('', ' ')).toEqual(treefied.join('\n'));
+    });
 });

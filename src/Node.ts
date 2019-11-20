@@ -24,6 +24,10 @@ export default class Node implements Executable {
         return this;
     }
 
+    treeify(..._: any[]) {
+        return this.toString();
+    }
+
     execute(namespace: Namespace): Output {
         const evaluated: Node = this.evaluate();
         return {
@@ -109,6 +113,20 @@ export class Operator extends Node {
             child instanceof Operator ? stringifier(child, index) : child.toString()
         );
         return infix(this.value, stringifiedChildren);
+    }
+
+    treeify(childPrefix: string = '', space: string = '\xa0'): string {
+        return this.children.reduce(
+            (treeified: string, child: Node, index: number, children: List<Node>) => {
+                const [branch, prefixExtention]: [string, string] =
+                    index === children.size - 1 ? ['└─', space] : ['├─', '│'];
+                return `${treeified}\n${childPrefix}${branch} ${child.treeify(
+                    `${childPrefix}${prefixExtention}${space}${space}`,
+                    space
+                )}`;
+            },
+            this.value
+        );
     }
 
     evaluate(): Node {
