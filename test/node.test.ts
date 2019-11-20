@@ -221,7 +221,24 @@ const cases = [
             ])
         ),
     ],
-    ['2^4/2*x+5*3', Algebrain.parse('2^4/2*x+5*3'), Algebrain.parse('x*8+15')],
+    ['2^4/2*x+5*3', Algebrain.parse('2^4/2*x+5*3'), Algebrain.parse('15+8*x')],
+    [
+        '5^g+g^5',
+        new Operator(
+            OperatorSymbol.Plus,
+            List([
+                new Operator(OperatorSymbol.Pow, List([new Num(5), new Symbol('g')])),
+                new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
+            ])
+        ),
+        new Operator(
+            OperatorSymbol.Plus,
+            List([
+                new Operator(OperatorSymbol.Pow, List([new Num(5), new Symbol('g')])),
+                new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
+            ])
+        ),
+    ],
 ];
 
 describe('Node evaluation', () => {

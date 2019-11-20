@@ -364,7 +364,10 @@ function evaluateNumericalOperator(
         if (notToEval.isEmpty()) {
             return resultNum;
         }
-        return new Operator(operatorSymbol, resultNum ? notToEval.push(resultNum) : notToEval);
+        return new Operator(
+            operatorSymbol,
+            resultNum ? List([resultNum]).concat(notToEval) : notToEval
+        );
     };
 }
 
