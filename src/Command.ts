@@ -116,7 +116,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
                 return {
                     namespace: namespace,
-                    stdOut: `--- algebrain version 0.0.3-d ---
+                    stdOut: `--- algebrain version 0.0.3-f ---
           Commands:
           ${commandRegistry
               .entrySeq()

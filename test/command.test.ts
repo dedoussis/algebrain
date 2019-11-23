@@ -1,7 +1,7 @@
 import { Map, List } from 'immutable';
 import Algebrain from '../src/Algebrain';
 import Command, { CommandName, ExecuteError } from '../src/Command';
-import { Num, Operator, OperatorSymbol } from '../src/Node';
+import { Num, Symbol, Operator, OperatorSymbol } from '../src/Node';
 import Transformation from '../src/Transformation';
 
 describe('Command', () => {
@@ -22,7 +22,6 @@ const transformations: Map<string, Transformation> = Map<string, Transformation>
 const exequtionCases = [
     [
         'transform',
-        Algebrain.parse('transform'),
         {
             expression: new Operator('fib', List([new Num(6)])),
             transformationName: 'fib',
@@ -39,7 +38,6 @@ const exequtionCases = [
     ],
     [
         'transform with no active transformation',
-        Algebrain.parse('transform'),
         {
             expression: new Num(5),
             transformations: Map(),
@@ -54,7 +52,6 @@ const exequtionCases = [
     ],
     [
         'evaluate',
-        Algebrain.parse('evaluate'),
         {
             expression: new Operator(OperatorSymbol.Pow, List([new Num(2), new Num(4)])),
             transformationName: 'fib',
@@ -71,7 +68,6 @@ const exequtionCases = [
     ],
     [
         'evaluate with no current expression',
-        Algebrain.parse('evaluate'),
         {
             transformationName: 'fib',
             transformations: Map(),
@@ -86,7 +82,6 @@ const exequtionCases = [
     ],
     [
         'rules',
-        Algebrain.parse('rules'),
         { expression: new Num(16), transformationName: 'fib', transformations: transformations },
         {
             namespace: {
@@ -97,10 +92,24 @@ const exequtionCases = [
             stdOut: '[ fib(0)=0, fib(1)=1, fib($a)=fib($a-1)+fib($a-2) if const($a) ]',
         },
     ],
+    [
+        'tree',
+        {
+            expression: new Operator(OperatorSymbol.Plus, List([new Num(5), new Symbol('k')])),
+            transformations: Map(),
+        },
+        {
+            namespace: {
+                expression: new Operator(OperatorSymbol.Plus, List([new Num(5), new Symbol('k')])),
+                transformations: Map(),
+            },
+            stdOut: ['+', '├─ 5', '└─ k'].join('\n'),
+        },
+    ],
 ];
 
 describe('command executions', () => {
-    test.each(exequtionCases)('Execution case %p', (title, command, namespace, output) => {
-        expect(command.execute(namespace)).toEqual(output);
+    test.each(exequtionCases)('Execution case %p', (title, namespace, output) => {
+        expect(Algebrain.parse(title).execute(namespace)).toEqual(output);
     });
 });
