@@ -56,6 +56,12 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         stdOut: ExecuteError.UndefinedTransformation,
                     };
                 }
+                if (expression === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.UndefinedExpression,
+                    };
+                }
                 const transformation: Transformation = transformations.get(
                     transformationName
                 ) as Transformation;
@@ -209,7 +215,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 };
             },
             description:
-                'Set active transformation - Requires new transformation name as a string parameter',
+                'Set active transformation - Requires transformation name as a string parameter',
         },
     ],
 ]);

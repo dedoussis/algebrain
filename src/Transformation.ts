@@ -33,7 +33,7 @@ export default class Transformation implements Executable {
     }
 
     toString(): string {
-        return `[ ${this.rules.join(', ')} ]`;
+        return `[\n\xa0\xa0${this.rules.join(`,\n\xa0\xa0`)}\n]`;
     }
 
     equals(other: any): boolean {

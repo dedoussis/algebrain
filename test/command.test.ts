@@ -38,7 +38,7 @@ const exequtionCases = [
         },
     ],
     [
-        'transform with no active transformation',
+        'transform',
         {
             expression: new Num(5),
             transformations: Map(),
@@ -49,6 +49,20 @@ const exequtionCases = [
                 transformations: Map(),
             },
             stdOut: ExecuteError.UndefinedTransformation,
+        },
+    ],
+    [
+        'transform',
+        {
+            transformationName: 'fib',
+            transformations: transformations,
+        },
+        {
+            namespace: {
+                transformationName: 'fib',
+                transformations: transformations,
+            },
+            stdOut: ExecuteError.UndefinedExpression,
         },
     ],
     [
@@ -68,7 +82,7 @@ const exequtionCases = [
         },
     ],
     [
-        'evaluate with no current expression',
+        'evaluate',
         {
             transformationName: 'fib',
             transformations: Map(),
@@ -90,7 +104,7 @@ const exequtionCases = [
                 transformationName: 'fib',
                 transformations: transformations,
             },
-            stdOut: '[ fib(0)=0, fib(1)=1, fib($a)=fib($a-1)+fib($a-2) if const($a) ]',
+            stdOut: (transformations.get('fib') as Transformation).toString(),
         },
     ],
     [
