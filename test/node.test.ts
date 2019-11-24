@@ -338,6 +338,23 @@ const toStringCases = [
     ],
     ['-10', new Operator(OperatorSymbol.Minus, List([new Num(10)]))],
     ['(6+5)*4/(2-x)-3', Algebrain.parse('(6+5)*4/(2-x)-3')],
+    [
+        'x+3-(x+2)',
+        new Operator(
+            OperatorSymbol.Minus,
+            List([
+                new Operator(OperatorSymbol.Plus, List([new Symbol('x'), new Num(3)])),
+                new Operator(OperatorSymbol.Plus, List([new Symbol('x'), new Num(2)])),
+            ])
+        ),
+    ],
+    [
+        '-x*3',
+        new Operator(
+            OperatorSymbol.Minus,
+            List([new Operator(OperatorSymbol.Mul, List([new Symbol('x'), new Num(3)]))])
+        ),
+    ],
 ];
 
 describe('Stringification', () => {

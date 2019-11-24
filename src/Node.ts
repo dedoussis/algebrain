@@ -110,7 +110,7 @@ export class Operator extends Node {
             return prefix(this.value, this.children.map(child => child.toString()));
         }
         const stringifiedChildren: List<string> = this.children.map((child: Node, index: number) =>
-            child instanceof Operator ? stringifier(child, index) : child.toString()
+            child instanceof Operator ? stringifier(child, index, this) : child.toString()
         );
         return infix(this.value, stringifiedChildren);
     }
@@ -176,7 +176,7 @@ type Evaluator = {
     recursive?: boolean;
 };
 
-type Stringifier = (child: Operator, index: number) => string;
+type Stringifier = (child: Operator, index: number, parent: Operator) => string;
 
 type Handlers = {
     evaluator: Evaluator;
@@ -427,23 +427,22 @@ function parenthesize(child: Node): string {
     );
 }
 
-function stringifyChildPlus(child: Operator, index: number): string {
+function stringifyChildPlus(child: Operator, index: number, _: any): string {
     return index !== 0 && child.value === OperatorSymbol.Minus && child.children.size === 1
         ? parenthesize(child)
         : child.toString();
 }
 
-function stringifyChildMinus(child: Operator, index: number): string {
-    return !(index === 0 && child.children.size === 1) &&
+function stringifyChildMinus(child: Operator, index: number, parent: Operator): string {
+    const startIdx: number = parent.children.size === 1 ? 0 : 1;
+    return index >= startIdx &&
         List<string>([OperatorSymbol.Plus, OperatorSymbol.Minus]).includes(child.value)
         ? parenthesize(child)
         : child.toString();
 }
 
-function stringifyChild(
-    parenthesized: List<OperatorSymbol>
-): (child: Operator, index: number) => string {
-    return (child: Operator, _: any) =>
+function stringifyChild(parenthesized: List<OperatorSymbol>): Stringifier {
+    return (child: Operator, ..._: any[]) =>
         parenthesized.includes(child.value as OperatorSymbol)
             ? parenthesize(child)
             : child.toString();
