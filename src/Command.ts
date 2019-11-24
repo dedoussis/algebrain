@@ -193,7 +193,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     };
                 }
                 const { transformations } = namespace;
-                const transformation = transformations.get(parameter);
+                const transformation: Executable | undefined = transformations.get(parameter);
                 if (transformation === undefined) {
                     return {
                         namespace: namespace,
