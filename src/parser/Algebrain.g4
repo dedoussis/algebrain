@@ -10,7 +10,7 @@ stat
 	;
 
 command
-  : COMMAND (COLON ID (COMMA ID)*)?
+  : COMMAND (COLON SPACE? ID (COMMA SPACE? ID)*)?
   ;
 
 transformation
@@ -72,6 +72,9 @@ COMMAND
   | 'rules'
   | 'help'
   | 'tree'
+  | 'transformations'
+  | 'transformation'
+  | 'active'
   ;
 TRUE: 'true';
 FALSE: 'false';

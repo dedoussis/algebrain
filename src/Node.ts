@@ -343,31 +343,39 @@ function evaluateNumericalOperator(
     operation: (left: number, right: number) => number
 ): (children: List<Node>, commutative: boolean) => Node {
     return (children: List<Node>, commutative: boolean) => {
-        if (children.size === 1) {
+        if (children.size < 2) {
             return new Operator(operatorSymbol, children);
         }
-        const [toEval, notToEval]: [List<Num>, List<Node>] = commutative
-            ? [
-                  children.filter(child => child instanceof Num),
-                  children.filter(child => !(child instanceof Num)),
-              ]
-            : [
-                  children.takeWhile(child => child instanceof Num),
-                  children.skipWhile(child => child instanceof Num),
-              ];
-        if (toEval.isEmpty()) {
-            return new Operator(operatorSymbol, children);
-        }
-        const resultNum: Num = toEval
-            .reduce((existing: Num, num: Num) => new Num(operation(existing.value, num.value)))
-            .evaluate();
-        if (notToEval.isEmpty()) {
-            return resultNum;
-        }
-        return new Operator(
-            operatorSymbol,
-            resultNum ? List([resultNum]).concat(notToEval) : notToEval
+        const reducedChildren: List<Node> = children.reduce(
+            (reducedChildren: List<Node>, child: Node) => {
+                const last = reducedChildren.last();
+                if (last instanceof Num && child instanceof Num) {
+                    return reducedChildren
+                        .butLast()
+                        .push(new Num(operation(last.value, child.value)));
+                }
+                const numComparator: (previous: Node, next: Node) => number = (previous, next) => {
+                    if (previous instanceof Num) {
+                        if (next instanceof Num) {
+                            return 0;
+                        }
+                        return 1;
+                    }
+                    if (next instanceof Num) {
+                        return -1;
+                    }
+                    return 0;
+                };
+                return commutative
+                    ? reducedChildren.push(child).sort(numComparator)
+                    : reducedChildren.push(child);
+            },
+            List()
         );
+        const first: Node = reducedChildren.first();
+        return reducedChildren.size === 1
+            ? first.evaluate()
+            : new Operator(operatorSymbol, reducedChildren);
     };
 }
 
@@ -435,7 +443,7 @@ function stringifyChildMinus(child: Operator, index: number): string {
 function stringifyChild(
     parenthesized: List<OperatorSymbol>
 ): (child: Operator, index: number) => string {
-    return (child: Operator, index: number) =>
+    return (child: Operator, _: any) =>
         parenthesized.includes(child.value as OperatorSymbol)
             ? parenthesize(child)
             : child.toString();

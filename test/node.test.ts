@@ -221,7 +221,7 @@ const cases = [
             ])
         ),
     ],
-    ['2^4/2*x+5*3', Algebrain.parse('2^4/2*x+5*3'), Algebrain.parse('15+8*x')],
+    ['2^4/2*x+5*3', Algebrain.parse('2^4/2*x+5*3'), Algebrain.parse('x*8+15')],
     [
         '5^g+g^5',
         new Operator(
@@ -236,6 +236,52 @@ const cases = [
             List([
                 new Operator(OperatorSymbol.Pow, List([new Num(5), new Symbol('g')])),
                 new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
+            ])
+        ),
+    ],
+    [
+        '+(5, x, z, 3, 2, y, 5)',
+        new Operator(
+            OperatorSymbol.Plus,
+            List([
+                new Num(5),
+                new Symbol('x'),
+                new Symbol('z'),
+                new Num(3),
+                new Num(2),
+                new Symbol('y'),
+                new Num(5),
+            ])
+        ),
+        new Operator(
+            OperatorSymbol.Plus,
+            List([new Symbol('x'), new Symbol('z'), new Symbol('y'), new Num(15)])
+        ),
+    ],
+    [
+        '/(10, 5, x, z, 6, 2, y, 5)',
+        new Operator(
+            OperatorSymbol.Div,
+            List([
+                new Num(10),
+                new Num(5),
+                new Symbol('x'),
+                new Symbol('z'),
+                new Num(6),
+                new Num(2),
+                new Symbol('y'),
+                new Num(5),
+            ])
+        ),
+        new Operator(
+            OperatorSymbol.Div,
+            List([
+                new Num(2),
+                new Symbol('x'),
+                new Symbol('z'),
+                new Num(3),
+                new Symbol('y'),
+                new Num(5),
             ])
         ),
     ],

@@ -237,28 +237,48 @@ export class AlgebrainParser extends Parser {
             {
                 this.state = 29;
                 this.match(AlgebrainParser.COMMAND);
-                this.state = 39;
+                this.state = 45;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
                 if (_la === AlgebrainParser.COLON) {
                     {
                         this.state = 30;
                         this.match(AlgebrainParser.COLON);
-                        this.state = 31;
+                        this.state = 32;
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la === AlgebrainParser.SPACE) {
+                            {
+                                this.state = 31;
+                                this.match(AlgebrainParser.SPACE);
+                            }
+                        }
+
+                        this.state = 34;
                         this.match(AlgebrainParser.ID);
-                        this.state = 36;
+                        this.state = 42;
                         this._errHandler.sync(this);
                         _la = this._input.LA(1);
                         while (_la === AlgebrainParser.COMMA) {
                             {
                                 {
-                                    this.state = 32;
+                                    this.state = 35;
                                     this.match(AlgebrainParser.COMMA);
-                                    this.state = 33;
+                                    this.state = 37;
+                                    this._errHandler.sync(this);
+                                    _la = this._input.LA(1);
+                                    if (_la === AlgebrainParser.SPACE) {
+                                        {
+                                            this.state = 36;
+                                            this.match(AlgebrainParser.SPACE);
+                                        }
+                                    }
+
+                                    this.state = 39;
                                     this.match(AlgebrainParser.ID);
                                 }
                             }
-                            this.state = 38;
+                            this.state = 44;
                             this._errHandler.sync(this);
                             _la = this._input.LA(1);
                         }
@@ -286,31 +306,31 @@ export class AlgebrainParser extends Parser {
         try {
             this.enterOuterAlt(_localctx, 1);
             {
-                this.state = 41;
+                this.state = 47;
                 this.match(AlgebrainParser.ID);
-                this.state = 42;
+                this.state = 48;
                 this.match(AlgebrainParser.EQUALS);
-                this.state = 43;
-                this.match(AlgebrainParser.LSQPAREN);
-                this.state = 44;
-                this.rewriting();
                 this.state = 49;
+                this.match(AlgebrainParser.LSQPAREN);
+                this.state = 50;
+                this.rewriting();
+                this.state = 55;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
                 while (_la === AlgebrainParser.COMMA) {
                     {
                         {
-                            this.state = 45;
+                            this.state = 51;
                             this.match(AlgebrainParser.COMMA);
-                            this.state = 46;
+                            this.state = 52;
                             this.rewriting();
                         }
                     }
-                    this.state = 51;
+                    this.state = 57;
                     this._errHandler.sync(this);
                     _la = this._input.LA(1);
                 }
-                this.state = 52;
+                this.state = 58;
                 this.match(AlgebrainParser.RSQPAREN);
             }
         } catch (re) {
@@ -334,24 +354,24 @@ export class AlgebrainParser extends Parser {
         try {
             this.enterOuterAlt(_localctx, 1);
             {
-                this.state = 54;
-                this.expr(0);
-                this.state = 55;
-                this.match(AlgebrainParser.EQUALS);
-                this.state = 56;
+                this.state = 60;
                 this.expr(0);
                 this.state = 61;
+                this.match(AlgebrainParser.EQUALS);
+                this.state = 62;
+                this.expr(0);
+                this.state = 67;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
                 if (_la === AlgebrainParser.SPACE) {
                     {
-                        this.state = 57;
+                        this.state = 63;
                         this.match(AlgebrainParser.SPACE);
-                        this.state = 58;
+                        this.state = 64;
                         this.match(AlgebrainParser.IF);
-                        this.state = 59;
+                        this.state = 65;
                         this.match(AlgebrainParser.SPACE);
-                        this.state = 60;
+                        this.state = 66;
                         this.booleanExpr();
                     }
                 }
@@ -377,17 +397,17 @@ export class AlgebrainParser extends Parser {
         try {
             this.enterOuterAlt(_localctx, 1);
             {
-                this.state = 63;
+                this.state = 69;
                 this.booleanAtom();
-                this.state = 70;
+                this.state = 76;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
                 while (_la === AlgebrainParser.SPACE) {
                     {
                         {
-                            this.state = 64;
+                            this.state = 70;
                             this.match(AlgebrainParser.SPACE);
-                            this.state = 65;
+                            this.state = 71;
                             _localctx._op = this._input.LT(1);
                             _la = this._input.LA(1);
                             if (!(_la === AlgebrainParser.AND || _la === AlgebrainParser.OR)) {
@@ -400,13 +420,13 @@ export class AlgebrainParser extends Parser {
                                 this._errHandler.reportMatch(this);
                                 this.consume();
                             }
-                            this.state = 66;
+                            this.state = 72;
                             this.match(AlgebrainParser.SPACE);
-                            this.state = 67;
+                            this.state = 73;
                             this.booleanAtom();
                         }
                     }
-                    this.state = 72;
+                    this.state = 78;
                     this._errHandler.sync(this);
                     _la = this._input.LA(1);
                 }
@@ -431,13 +451,13 @@ export class AlgebrainParser extends Parser {
         try {
             this.enterOuterAlt(_localctx, 1);
             {
-                this.state = 73;
+                this.state = 79;
                 this.expr(0);
-                this.state = 74;
+                this.state = 80;
                 this.match(AlgebrainParser.EQUALS);
-                this.state = 75;
+                this.state = 81;
                 this.match(AlgebrainParser.EQUALS);
-                this.state = 76;
+                this.state = 82;
                 this.expr(0);
             }
         } catch (re) {
@@ -458,14 +478,14 @@ export class AlgebrainParser extends Parser {
         let _localctx: BooleanAtomContext = new BooleanAtomContext(this._ctx, this.state);
         this.enterRule(_localctx, 12, AlgebrainParser.RULE_booleanAtom);
         try {
-            this.state = 86;
+            this.state = 92;
             this._errHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this._input, 6, this._ctx)) {
+            switch (this.interpreter.adaptivePredict(this._input, 8, this._ctx)) {
                 case 1:
                     _localctx = new BooleanAtomFunc_Context(_localctx);
                     this.enterOuterAlt(_localctx, 1);
                     {
-                        this.state = 78;
+                        this.state = 84;
                         this.func();
                     }
                     break;
@@ -474,7 +494,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new TrueContext(_localctx);
                     this.enterOuterAlt(_localctx, 2);
                     {
-                        this.state = 79;
+                        this.state = 85;
                         this.match(AlgebrainParser.TRUE);
                     }
                     break;
@@ -483,7 +503,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new FalseContext(_localctx);
                     this.enterOuterAlt(_localctx, 3);
                     {
-                        this.state = 80;
+                        this.state = 86;
                         this.match(AlgebrainParser.FALSE);
                     }
                     break;
@@ -492,7 +512,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new BooleanAtomEquation_Context(_localctx);
                     this.enterOuterAlt(_localctx, 4);
                     {
-                        this.state = 81;
+                        this.state = 87;
                         this.equation();
                     }
                     break;
@@ -501,11 +521,11 @@ export class AlgebrainParser extends Parser {
                     _localctx = new BooleanExprParensContext(_localctx);
                     this.enterOuterAlt(_localctx, 5);
                     {
-                        this.state = 82;
+                        this.state = 88;
                         this.match(AlgebrainParser.LPAREN);
-                        this.state = 83;
+                        this.state = 89;
                         this.booleanExpr();
-                        this.state = 84;
+                        this.state = 90;
                         this.match(AlgebrainParser.RPAREN);
                     }
                     break;
@@ -548,13 +568,13 @@ export class AlgebrainParser extends Parser {
                     this._ctx = _localctx;
                     _prevctx = _localctx;
 
-                    this.state = 89;
+                    this.state = 95;
                     this.signedAtom();
                 }
                 this._ctx._stop = this._input.tryLT(-1);
-                this.state = 102;
+                this.state = 108;
                 this._errHandler.sync(this);
-                _alt = this.interpreter.adaptivePredict(this._input, 8, this._ctx);
+                _alt = this.interpreter.adaptivePredict(this._input, 10, this._ctx);
                 while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
                     if (_alt === 1) {
                         if (this._parseListeners != null) {
@@ -562,9 +582,9 @@ export class AlgebrainParser extends Parser {
                         }
                         _prevctx = _localctx;
                         {
-                            this.state = 100;
+                            this.state = 106;
                             this._errHandler.sync(this);
-                            switch (this.interpreter.adaptivePredict(this._input, 7, this._ctx)) {
+                            switch (this.interpreter.adaptivePredict(this._input, 9, this._ctx)) {
                                 case 1:
                                     {
                                         _localctx = new PowExprContext(
@@ -575,16 +595,16 @@ export class AlgebrainParser extends Parser {
                                             _startState,
                                             AlgebrainParser.RULE_expr
                                         );
-                                        this.state = 91;
+                                        this.state = 97;
                                         if (!this.precpred(this._ctx, 4)) {
                                             throw new FailedPredicateException(
                                                 this,
                                                 'this.precpred(this._ctx, 4)'
                                             );
                                         }
-                                        this.state = 92;
+                                        this.state = 98;
                                         this.match(AlgebrainParser.POW);
-                                        this.state = 93;
+                                        this.state = 99;
                                         this.expr(5);
                                     }
                                     break;
@@ -599,14 +619,14 @@ export class AlgebrainParser extends Parser {
                                             _startState,
                                             AlgebrainParser.RULE_expr
                                         );
-                                        this.state = 94;
+                                        this.state = 100;
                                         if (!this.precpred(this._ctx, 3)) {
                                             throw new FailedPredicateException(
                                                 this,
                                                 'this.precpred(this._ctx, 3)'
                                             );
                                         }
-                                        this.state = 95;
+                                        this.state = 101;
                                         (_localctx as MultiplyingExprContext)._op = this._input.LT(
                                             1
                                         );
@@ -628,7 +648,7 @@ export class AlgebrainParser extends Parser {
                                             this._errHandler.reportMatch(this);
                                             this.consume();
                                         }
-                                        this.state = 96;
+                                        this.state = 102;
                                         this.expr(4);
                                     }
                                     break;
@@ -643,14 +663,14 @@ export class AlgebrainParser extends Parser {
                                             _startState,
                                             AlgebrainParser.RULE_expr
                                         );
-                                        this.state = 97;
+                                        this.state = 103;
                                         if (!this.precpred(this._ctx, 2)) {
                                             throw new FailedPredicateException(
                                                 this,
                                                 'this.precpred(this._ctx, 2)'
                                             );
                                         }
-                                        this.state = 98;
+                                        this.state = 104;
                                         (_localctx as AdditionExprContext)._op = this._input.LT(1);
                                         _la = this._input.LA(1);
                                         if (
@@ -670,16 +690,16 @@ export class AlgebrainParser extends Parser {
                                             this._errHandler.reportMatch(this);
                                             this.consume();
                                         }
-                                        this.state = 99;
+                                        this.state = 105;
                                         this.expr(3);
                                     }
                                     break;
                             }
                         }
                     }
-                    this.state = 104;
+                    this.state = 110;
                     this._errHandler.sync(this);
-                    _alt = this.interpreter.adaptivePredict(this._input, 8, this._ctx);
+                    _alt = this.interpreter.adaptivePredict(this._input, 10, this._ctx);
                 }
             }
         } catch (re) {
@@ -700,16 +720,16 @@ export class AlgebrainParser extends Parser {
         let _localctx: SignedAtomContext = new SignedAtomContext(this._ctx, this.state);
         this.enterRule(_localctx, 16, AlgebrainParser.RULE_signedAtom);
         try {
-            this.state = 109;
+            this.state = 115;
             this._errHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this._input, 9, this._ctx)) {
+            switch (this.interpreter.adaptivePredict(this._input, 11, this._ctx)) {
                 case 1:
                     _localctx = new UnaryContext(_localctx);
                     this.enterOuterAlt(_localctx, 1);
                     {
-                        this.state = 105;
+                        this.state = 111;
                         this.match(AlgebrainParser.MINUS);
-                        this.state = 106;
+                        this.state = 112;
                         this.signedAtom();
                     }
                     break;
@@ -718,7 +738,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new SignedAtomFunc_Context(_localctx);
                     this.enterOuterAlt(_localctx, 2);
                     {
-                        this.state = 107;
+                        this.state = 113;
                         this.func();
                     }
                     break;
@@ -727,7 +747,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new SignedAtomAtom_Context(_localctx);
                     this.enterOuterAlt(_localctx, 3);
                     {
-                        this.state = 108;
+                        this.state = 114;
                         this.atom();
                     }
                     break;
@@ -753,29 +773,29 @@ export class AlgebrainParser extends Parser {
         try {
             this.enterOuterAlt(_localctx, 1);
             {
-                this.state = 111;
+                this.state = 117;
                 this.match(AlgebrainParser.ID);
-                this.state = 112;
-                this.match(AlgebrainParser.LPAREN);
-                this.state = 113;
-                this.expr(0);
                 this.state = 118;
+                this.match(AlgebrainParser.LPAREN);
+                this.state = 119;
+                this.expr(0);
+                this.state = 124;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
                 while (_la === AlgebrainParser.COMMA) {
                     {
                         {
-                            this.state = 114;
+                            this.state = 120;
                             this.match(AlgebrainParser.COMMA);
-                            this.state = 115;
+                            this.state = 121;
                             this.expr(0);
                         }
                     }
-                    this.state = 120;
+                    this.state = 126;
                     this._errHandler.sync(this);
                     _la = this._input.LA(1);
                 }
-                this.state = 121;
+                this.state = 127;
                 this.match(AlgebrainParser.RPAREN);
             }
         } catch (re) {
@@ -796,16 +816,16 @@ export class AlgebrainParser extends Parser {
         let _localctx: AtomContext = new AtomContext(this._ctx, this.state);
         this.enterRule(_localctx, 20, AlgebrainParser.RULE_atom);
         try {
-            this.state = 131;
+            this.state = 137;
             this._errHandler.sync(this);
             switch (this._input.LA(1)) {
                 case AlgebrainParser.REWRITABLE_PREFIX:
                     _localctx = new RewritableContext(_localctx);
                     this.enterOuterAlt(_localctx, 1);
                     {
-                        this.state = 123;
+                        this.state = 129;
                         this.match(AlgebrainParser.REWRITABLE_PREFIX);
-                        this.state = 124;
+                        this.state = 130;
                         this.match(AlgebrainParser.ID);
                     }
                     break;
@@ -813,7 +833,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new NumberContext(_localctx);
                     this.enterOuterAlt(_localctx, 2);
                     {
-                        this.state = 125;
+                        this.state = 131;
                         this.match(AlgebrainParser.NUMBER);
                     }
                     break;
@@ -821,7 +841,7 @@ export class AlgebrainParser extends Parser {
                     _localctx = new IdContext(_localctx);
                     this.enterOuterAlt(_localctx, 3);
                     {
-                        this.state = 126;
+                        this.state = 132;
                         this.match(AlgebrainParser.ID);
                     }
                     break;
@@ -829,11 +849,11 @@ export class AlgebrainParser extends Parser {
                     _localctx = new ExprParensContext(_localctx);
                     this.enterOuterAlt(_localctx, 4);
                     {
-                        this.state = 127;
+                        this.state = 133;
                         this.match(AlgebrainParser.LPAREN);
-                        this.state = 128;
+                        this.state = 134;
                         this.expr(0);
-                        this.state = 129;
+                        this.state = 135;
                         this.match(AlgebrainParser.RPAREN);
                     }
                     break;
@@ -876,61 +896,64 @@ export class AlgebrainParser extends Parser {
     }
 
     public static readonly _serializedATN: string =
-        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x1C\x88\x04\x02' +
+        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x1C\x8E\x04\x02' +
         '\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07' +
         '\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x03\x02\x03\x02' +
-        '\x03\x02\x03\x02\x03\x02\x05\x02\x1E\n\x02\x03\x03\x03\x03\x03\x03\x03' +
-        '\x03\x03\x03\x07\x03%\n\x03\f\x03\x0E\x03(\v\x03\x05\x03*\n\x03\x03\x04' +
-        '\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x07\x042\n\x04\f\x04\x0E\x04' +
-        '5\v\x04\x03\x04\x03\x04\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05' +
-        '\x03\x05\x05\x05@\n\x05\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x07\x06' +
-        'G\n\x06\f\x06\x0E\x06J\v\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\x03' +
-        '\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x05\bY\n\b\x03\t\x03\t\x03' +
-        '\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07\tg\n\t\f' +
-        '\t\x0E\tj\v\t\x03\n\x03\n\x03\n\x03\n\x05\np\n\n\x03\v\x03\v\x03\v\x03' +
-        '\v\x03\v\x07\vw\n\v\f\v\x0E\vz\v\v\x03\v\x03\v\x03\f\x03\f\x03\f\x03\f' +
-        '\x03\f\x03\f\x03\f\x03\f\x05\f\x86\n\f\x03\f\x02\x02\x03\x10\r\x02\x02' +
-        '\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16' +
-        '\x02\x02\x05\x03\x02\t\n\x03\x02\x11\x12\x03\x02\x13\x14\x02\x92\x02\x1D' +
-        '\x03\x02\x02\x02\x04\x1F\x03\x02\x02\x02\x06+\x03\x02\x02\x02\b8\x03\x02' +
-        '\x02\x02\nA\x03\x02\x02\x02\fK\x03\x02\x02\x02\x0EX\x03\x02\x02\x02\x10' +
-        'Z\x03\x02\x02\x02\x12o\x03\x02\x02\x02\x14q\x03\x02\x02\x02\x16\x85\x03' +
-        '\x02\x02\x02\x18\x1E\x05\x04\x03\x02\x19\x1E\x05\x06\x04\x02\x1A\x1E\x05' +
-        '\b\x05\x02\x1B\x1E\x05\n\x06\x02\x1C\x1E\x05\x10\t\x02\x1D\x18\x03\x02' +
-        '\x02\x02\x1D\x19\x03\x02\x02\x02\x1D\x1A\x03\x02\x02\x02\x1D\x1B\x03\x02' +
-        '\x02\x02\x1D\x1C\x03\x02\x02\x02\x1E\x03\x03\x02\x02\x02\x1F)\x07\x05' +
-        '\x02\x02 !\x07\r\x02\x02!&\x07\v\x02\x02"#\x07\x19\x02\x02#%\x07\v\x02' +
-        '\x02$"\x03\x02\x02\x02%(\x03\x02\x02\x02&$\x03\x02\x02\x02&\'\x03\x02' +
-        "\x02\x02'*\x03\x02\x02\x02(&\x03\x02\x02\x02) \x03\x02\x02\x02)*\x03" +
-        '\x02\x02\x02*\x05\x03\x02\x02\x02+,\x07\v\x02\x02,-\x07\x1A\x02\x02-.' +
-        '\x07\x17\x02\x02.3\x05\b\x05\x02/0\x07\x19\x02\x0202\x05\b\x05\x021/\x03' +
-        '\x02\x02\x0225\x03\x02\x02\x0231\x03\x02\x02\x0234\x03\x02\x02\x0246\x03' +
-        '\x02\x02\x0253\x03\x02\x02\x0267\x07\x18\x02\x027\x07\x03\x02\x02\x02' +
-        '89\x05\x10\t\x029:\x07\x1A\x02\x02:?\x05\x10\t\x02;<\x07\x04\x02\x02<' +
-        '=\x07\b\x02\x02=>\x07\x04\x02\x02>@\x05\n\x06\x02?;\x03\x02\x02\x02?@' +
-        '\x03\x02\x02\x02@\t\x03\x02\x02\x02AH\x05\x0E\b\x02BC\x07\x04\x02\x02' +
-        'CD\t\x02\x02\x02DE\x07\x04\x02\x02EG\x05\x0E\b\x02FB\x03\x02\x02\x02G' +
-        'J\x03\x02\x02\x02HF\x03\x02\x02\x02HI\x03\x02\x02\x02I\v\x03\x02\x02\x02' +
-        'JH\x03\x02\x02\x02KL\x05\x10\t\x02LM\x07\x1A\x02\x02MN\x07\x1A\x02\x02' +
-        'NO\x05\x10\t\x02O\r\x03\x02\x02\x02PY\x05\x14\v\x02QY\x07\x06\x02\x02' +
-        'RY\x07\x07\x02\x02SY\x05\f\x07\x02TU\x07\x15\x02\x02UV\x05\n\x06\x02V' +
-        'W\x07\x16\x02\x02WY\x03\x02\x02\x02XP\x03\x02\x02\x02XQ\x03\x02\x02\x02' +
-        'XR\x03\x02\x02\x02XS\x03\x02\x02\x02XT\x03\x02\x02\x02Y\x0F\x03\x02\x02' +
-        '\x02Z[\b\t\x01\x02[\\\x05\x12\n\x02\\h\x03\x02\x02\x02]^\f\x06\x02\x02' +
-        '^_\x07\x10\x02\x02_g\x05\x10\t\x07`a\f\x05\x02\x02ab\t\x03\x02\x02bg\x05' +
-        '\x10\t\x06cd\f\x04\x02\x02de\t\x04\x02\x02eg\x05\x10\t\x05f]\x03\x02\x02' +
-        '\x02f`\x03\x02\x02\x02fc\x03\x02\x02\x02gj\x03\x02\x02\x02hf\x03\x02\x02' +
-        '\x02hi\x03\x02\x02\x02i\x11\x03\x02\x02\x02jh\x03\x02\x02\x02kl\x07\x14' +
-        '\x02\x02lp\x05\x12\n\x02mp\x05\x14\v\x02np\x05\x16\f\x02ok\x03\x02\x02' +
-        '\x02om\x03\x02\x02\x02on\x03\x02\x02\x02p\x13\x03\x02\x02\x02qr\x07\v' +
-        '\x02\x02rs\x07\x15\x02\x02sx\x05\x10\t\x02tu\x07\x19\x02\x02uw\x05\x10' +
-        '\t\x02vt\x03\x02\x02\x02wz\x03\x02\x02\x02xv\x03\x02\x02\x02xy\x03\x02' +
-        '\x02\x02y{\x03\x02\x02\x02zx\x03\x02\x02\x02{|\x07\x16\x02\x02|\x15\x03' +
-        '\x02\x02\x02}~\x07\x03\x02\x02~\x86\x07\v\x02\x02\x7F\x86\x07\x0F\x02' +
-        '\x02\x80\x86\x07\v\x02\x02\x81\x82\x07\x15\x02\x02\x82\x83\x05\x10\t\x02' +
-        '\x83\x84\x07\x16\x02\x02\x84\x86\x03\x02\x02\x02\x85}\x03\x02\x02\x02' +
-        '\x85\x7F\x03\x02\x02\x02\x85\x80\x03\x02\x02\x02\x85\x81\x03\x02\x02\x02' +
-        '\x86\x17\x03\x02\x02\x02\x0E\x1D&)3?HXfhox\x85';
+        '\x03\x02\x03\x02\x03\x02\x05\x02\x1E\n\x02\x03\x03\x03\x03\x03\x03\x05' +
+        '\x03#\n\x03\x03\x03\x03\x03\x03\x03\x05\x03(\n\x03\x03\x03\x07\x03+\n' +
+        '\x03\f\x03\x0E\x03.\v\x03\x05\x030\n\x03\x03\x04\x03\x04\x03\x04\x03\x04' +
+        '\x03\x04\x03\x04\x07\x048\n\x04\f\x04\x0E\x04;\v\x04\x03\x04\x03\x04\x03' +
+        '\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x05\x05F\n\x05\x03' +
+        '\x06\x03\x06\x03\x06\x03\x06\x03\x06\x07\x06M\n\x06\f\x06\x0E\x06P\v\x06' +
+        '\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x03\b\x03\b' +
+        '\x03\b\x03\b\x03\b\x05\b_\n\b\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03' +
+        '\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07\tm\n\t\f\t\x0E\tp\v\t\x03\n\x03\n' +
+        '\x03\n\x03\n\x05\nv\n\n\x03\v\x03\v\x03\v\x03\v\x03\v\x07\v}\n\v\f\v\x0E' +
+        '\v\x80\v\v\x03\v\x03\v\x03\f\x03\f\x03\f\x03\f\x03\f\x03\f\x03\f\x03\f' +
+        '\x05\f\x8C\n\f\x03\f\x02\x02\x03\x10\r\x02\x02\x04\x02\x06\x02\b\x02\n' +
+        '\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x02\x05\x03\x02\t\n' +
+        '\x03\x02\x11\x12\x03\x02\x13\x14\x02\x9A\x02\x1D\x03\x02\x02\x02\x04\x1F' +
+        '\x03\x02\x02\x02\x061\x03\x02\x02\x02\b>\x03\x02\x02\x02\nG\x03\x02\x02' +
+        '\x02\fQ\x03\x02\x02\x02\x0E^\x03\x02\x02\x02\x10`\x03\x02\x02\x02\x12' +
+        'u\x03\x02\x02\x02\x14w\x03\x02\x02\x02\x16\x8B\x03\x02\x02\x02\x18\x1E' +
+        '\x05\x04\x03\x02\x19\x1E\x05\x06\x04\x02\x1A\x1E\x05\b\x05\x02\x1B\x1E' +
+        '\x05\n\x06\x02\x1C\x1E\x05\x10\t\x02\x1D\x18\x03\x02\x02\x02\x1D\x19\x03' +
+        '\x02\x02\x02\x1D\x1A\x03\x02\x02\x02\x1D\x1B\x03\x02\x02\x02\x1D\x1C\x03' +
+        '\x02\x02\x02\x1E\x03\x03\x02\x02\x02\x1F/\x07\x05\x02\x02 "\x07\r\x02' +
+        '\x02!#\x07\x04\x02\x02"!\x03\x02\x02\x02"#\x03\x02\x02\x02#$\x03\x02' +
+        "\x02\x02$,\x07\v\x02\x02%'\x07\x19\x02\x02&(\x07\x04\x02\x02'&\x03\x02" +
+        "\x02\x02'(\x03\x02\x02\x02()\x03\x02\x02\x02)+\x07\v\x02\x02*%\x03\x02" +
+        '\x02\x02+.\x03\x02\x02\x02,*\x03\x02\x02\x02,-\x03\x02\x02\x02-0\x03\x02' +
+        '\x02\x02.,\x03\x02\x02\x02/ \x03\x02\x02\x02/0\x03\x02\x02\x020\x05\x03' +
+        '\x02\x02\x0212\x07\v\x02\x0223\x07\x1A\x02\x0234\x07\x17\x02\x0249\x05' +
+        '\b\x05\x0256\x07\x19\x02\x0268\x05\b\x05\x0275\x03\x02\x02\x028;\x03\x02' +
+        '\x02\x0297\x03\x02\x02\x029:\x03\x02\x02\x02:<\x03\x02\x02\x02;9\x03\x02' +
+        '\x02\x02<=\x07\x18\x02\x02=\x07\x03\x02\x02\x02>?\x05\x10\t\x02?@\x07' +
+        '\x1A\x02\x02@E\x05\x10\t\x02AB\x07\x04\x02\x02BC\x07\b\x02\x02CD\x07\x04' +
+        '\x02\x02DF\x05\n\x06\x02EA\x03\x02\x02\x02EF\x03\x02\x02\x02F\t\x03\x02' +
+        '\x02\x02GN\x05\x0E\b\x02HI\x07\x04\x02\x02IJ\t\x02\x02\x02JK\x07\x04\x02' +
+        '\x02KM\x05\x0E\b\x02LH\x03\x02\x02\x02MP\x03\x02\x02\x02NL\x03\x02\x02' +
+        '\x02NO\x03\x02\x02\x02O\v\x03\x02\x02\x02PN\x03\x02\x02\x02QR\x05\x10' +
+        '\t\x02RS\x07\x1A\x02\x02ST\x07\x1A\x02\x02TU\x05\x10\t\x02U\r\x03\x02' +
+        '\x02\x02V_\x05\x14\v\x02W_\x07\x06\x02\x02X_\x07\x07\x02\x02Y_\x05\f\x07' +
+        '\x02Z[\x07\x15\x02\x02[\\\x05\n\x06\x02\\]\x07\x16\x02\x02]_\x03\x02\x02' +
+        '\x02^V\x03\x02\x02\x02^W\x03\x02\x02\x02^X\x03\x02\x02\x02^Y\x03\x02\x02' +
+        '\x02^Z\x03\x02\x02\x02_\x0F\x03\x02\x02\x02`a\b\t\x01\x02ab\x05\x12\n' +
+        '\x02bn\x03\x02\x02\x02cd\f\x06\x02\x02de\x07\x10\x02\x02em\x05\x10\t\x07' +
+        'fg\f\x05\x02\x02gh\t\x03\x02\x02hm\x05\x10\t\x06ij\f\x04\x02\x02jk\t\x04' +
+        '\x02\x02km\x05\x10\t\x05lc\x03\x02\x02\x02lf\x03\x02\x02\x02li\x03\x02' +
+        '\x02\x02mp\x03\x02\x02\x02nl\x03\x02\x02\x02no\x03\x02\x02\x02o\x11\x03' +
+        '\x02\x02\x02pn\x03\x02\x02\x02qr\x07\x14\x02\x02rv\x05\x12\n\x02sv\x05' +
+        '\x14\v\x02tv\x05\x16\f\x02uq\x03\x02\x02\x02us\x03\x02\x02\x02ut\x03\x02' +
+        '\x02\x02v\x13\x03\x02\x02\x02wx\x07\v\x02\x02xy\x07\x15\x02\x02y~\x05' +
+        '\x10\t\x02z{\x07\x19\x02\x02{}\x05\x10\t\x02|z\x03\x02\x02\x02}\x80\x03' +
+        '\x02\x02\x02~|\x03\x02\x02\x02~\x7F\x03\x02\x02\x02\x7F\x81\x03\x02\x02' +
+        '\x02\x80~\x03\x02\x02\x02\x81\x82\x07\x16\x02\x02\x82\x15\x03\x02\x02' +
+        '\x02\x83\x84\x07\x03\x02\x02\x84\x8C\x07\v\x02\x02\x85\x8C\x07\x0F\x02' +
+        '\x02\x86\x8C\x07\v\x02\x02\x87\x88\x07\x15\x02\x02\x88\x89\x05\x10\t\x02' +
+        '\x89\x8A\x07\x16\x02\x02\x8A\x8C\x03\x02\x02\x02\x8B\x83\x03\x02\x02\x02' +
+        '\x8B\x85\x03\x02\x02\x02\x8B\x86\x03\x02\x02\x02\x8B\x87\x03\x02\x02\x02' +
+        '\x8C\x17\x03\x02\x02\x02\x10\x1D"\',/9EN^lnu~\x8B';
     public static __ATN: ATN;
     public static get _ATN(): ATN {
         if (!AlgebrainParser.__ATN) {
@@ -1002,6 +1025,15 @@ export class CommandContext extends ParserRuleContext {
             return this.getTokens(AlgebrainParser.ID);
         } else {
             return this.getToken(AlgebrainParser.ID, i);
+        }
+    }
+    public SPACE(): TerminalNode[];
+    public SPACE(i: number): TerminalNode;
+    public SPACE(i?: number): TerminalNode | TerminalNode[] {
+        if (i === undefined) {
+            return this.getTokens(AlgebrainParser.SPACE);
+        } else {
+            return this.getToken(AlgebrainParser.SPACE, i);
         }
     }
     public COMMA(): TerminalNode[];

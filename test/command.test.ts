@@ -17,6 +17,7 @@ const transformations: Map<string, Transformation> = Map<string, Transformation>
             `fib=[fib(0)=0,fib(1)=1,fib($a)=fib($a-1)+fib($a-2) if const($a)]`
         ) as Transformation,
     ],
+    ['increment', Algebrain.parse('increment=[increment($x)=$x+1]') as Transformation],
 ]);
 
 const exequtionCases = [
@@ -104,6 +105,71 @@ const exequtionCases = [
                 transformations: Map(),
             },
             stdOut: ['+', '├─ 5', '└─ k'].join('\n'),
+        },
+    ],
+    [
+        'transformations',
+        { transformationName: 'fib', transformations: transformations },
+        {
+            namespace: {
+                transformationName: 'fib',
+                transformations: transformations,
+            },
+            stdOut: '[ fib, increment ]',
+        },
+    ],
+    [
+        'active',
+        { transformationName: 'fib', transformations: transformations },
+        {
+            namespace: {
+                transformationName: 'fib',
+                transformations: transformations,
+            },
+            stdOut: 'fib',
+        },
+    ],
+    [
+        'active',
+        { transformations: transformations },
+        {
+            namespace: {
+                transformations: transformations,
+            },
+            stdOut: ExecuteError.UndefinedTransformation,
+        },
+    ],
+    [
+        'transformation: increment',
+        { transformationName: 'fib', transformations: transformations },
+        {
+            namespace: {
+                transformationName: 'increment',
+                transformations: transformations,
+            },
+            stdOut: (transformations.get('increment') as Transformation).toString(),
+        },
+    ],
+    [
+        'transformation',
+        { transformationName: 'fib', transformations: transformations },
+        {
+            namespace: {
+                transformationName: 'fib',
+                transformations: transformations,
+            },
+            stdOut: ExecuteError.MissingParameters,
+        },
+    ],
+    [
+        'transformation: brexit',
+        { transformationName: 'fib', transformations: transformations },
+        {
+            namespace: {
+                transformationName: 'fib',
+                transformations: transformations,
+            },
+            stdOut: ExecuteError.InvalidTransformation,
         },
     ],
 ];

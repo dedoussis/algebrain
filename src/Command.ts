@@ -21,6 +21,9 @@ export default class Command implements Executable {
 
 export enum CommandName {
     Transform = 'transform',
+    Transformation = 'transformation',
+    Transformations = 'transformations',
+    Active = 'active',
     Evaluate = 'evaluate',
     Rules = 'rules',
     Help = 'help',
@@ -29,6 +32,8 @@ export enum CommandName {
 
 export enum ExecuteError {
     UndefinedTransformation = 'No transformation has been set',
+    MissingParameters = 'Missing required parameters',
+    InvalidTransformation = 'Transformation does not exist',
     UndefinedExpression = 'No expression has been set',
     CommandNotFound = 'Command not found',
 }
@@ -143,6 +148,68 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 };
             },
             description: 'Tree representation of expression',
+        },
+    ],
+    [
+        CommandName.Transformations,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                return {
+                    namespace: namespace,
+                    stdOut: `[ ${namespace.transformations.keySeq().join(', ')} ]`,
+                };
+            },
+            description: 'List all defined transformations',
+        },
+    ],
+    [
+        CommandName.Active,
+        {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+                const { transformationName } = namespace;
+                if (transformationName === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.UndefinedTransformation,
+                    };
+                }
+                return {
+                    namespace: namespace,
+                    stdOut: transformationName,
+                };
+            },
+            description: 'Display active transformation',
+        },
+    ],
+    [
+        CommandName.Transformation,
+        {
+            executeConstructor: (command: Command): ExecuteFunc => (namespace: Namespace) => {
+                const parameter: string | undefined = command.parameters.first();
+                if (parameter === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.MissingParameters,
+                    };
+                }
+                const { transformations } = namespace;
+                const transformation = transformations.get(parameter);
+                if (transformation === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.InvalidTransformation,
+                    };
+                }
+                return {
+                    namespace: {
+                        ...namespace,
+                        transformationName: parameter,
+                    },
+                    stdOut: (transformation as Transformation).toString(),
+                };
+            },
+            description:
+                'Set active transformation - Requires new transformation name as a string parameter',
         },
     ],
 ]);
