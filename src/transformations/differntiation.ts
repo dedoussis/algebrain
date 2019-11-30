@@ -1,14 +1,6 @@
 import { List } from 'immutable';
 import { Operator, Num, Rewritable, OperatorSymbol } from '../Node';
-import {
-    generateOperator,
-    OperatorGenerator,
-    add,
-    substract,
-    multiply,
-    divide,
-    exp,
-} from '../utils';
+import { generateOperator, OperatorGenerator, plus, minus, mul, div, pow } from '../utils';
 import Rule from '../Rule';
 import Transformation from '../Transformation';
 
@@ -30,54 +22,48 @@ const diff: Transformation = new Transformation(
     name,
     List([
         new Rule(
-            differentiate(add(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            add(
+            differentiate(plus(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
+            plus(
                 differentiate(new Rewritable('a'), new Rewritable('v')),
                 differentiate(new Rewritable('b'), new Rewritable('v'))
             )
         ),
         new Rule(
-            differentiate(substract(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            substract(
+            differentiate(minus(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
+            minus(
                 differentiate(new Rewritable('a'), new Rewritable('v')),
                 differentiate(new Rewritable('b'), new Rewritable('v'))
             )
         ),
         new Rule(
-            differentiate(multiply(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            add(
-                multiply(
-                    differentiate(new Rewritable('a'), new Rewritable('v')),
-                    new Rewritable('b')
-                ),
-                multiply(
-                    differentiate(new Rewritable('b'), new Rewritable('v')),
-                    new Rewritable('a')
-                )
+            differentiate(mul(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
+            plus(
+                mul(differentiate(new Rewritable('a'), new Rewritable('v')), new Rewritable('b')),
+                mul(differentiate(new Rewritable('b'), new Rewritable('v')), new Rewritable('a'))
             )
         ),
         new Rule(
-            differentiate(divide(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            divide(
-                substract(
-                    multiply(
+            differentiate(div(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
+            div(
+                minus(
+                    mul(
                         differentiate(new Rewritable('a'), new Rewritable('v')),
                         new Rewritable('b')
                     ),
-                    multiply(
+                    mul(
                         differentiate(new Rewritable('b'), new Rewritable('v')),
                         new Rewritable('a')
                     )
                 ),
-                exp(new Rewritable('b'), new Num(2))
+                pow(new Rewritable('b'), new Num(2))
             )
         ),
         new Rule(
-            differentiate(exp(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            multiply(
-                multiply(
+            differentiate(pow(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
+            mul(
+                mul(
                     new Rewritable('b'),
-                    exp(new Rewritable('a'), substract(new Rewritable('b'), new Num(1)))
+                    pow(new Rewritable('a'), minus(new Rewritable('b'), new Num(1)))
                 ),
                 differentiate(new Rewritable('a'), new Rewritable('v'))
             )

@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 import { Operator, Num, Rewritable, OperatorSymbol } from '../Node';
-import { generateOperator, OperatorGenerator, add, substract } from '../utils';
+import { generateOperator, OperatorGenerator, plus, minus } from '../utils';
 import Rule from '../Rule';
 import Transformation from '../Transformation';
 
@@ -21,10 +21,7 @@ const fibonacci: Transformation = new Transformation(
         new Rule(fibonaccify(new Num(1)), new Num(1)),
         new Rule(
             fibonaccify(new Rewritable('a')),
-            add(
-                substract(new Rewritable('a'), new Num(1)),
-                substract(new Rewritable('a'), new Num(2))
-            ),
+            plus(minus(new Rewritable('a'), new Num(1)), minus(new Rewritable('a'), new Num(2))),
             new Operator(OperatorSymbol.Constant).addChild(new Rewritable('a'))
         ),
     ])
