@@ -7,20 +7,20 @@ import Visitor from './Visitor';
 import Executable from './Executable';
 
 export default class Algebrain {
-    private static retrieveTree(freeText: string) {
-        const inputStream = CharStreams.fromString(freeText);
+    private static retrieveTree(text: string) {
+        const inputStream = CharStreams.fromString(text);
         const lexer = new AlgebrainLexer(inputStream);
         const tokenStream = new CommonTokenStream(lexer);
         const parser = new AlgebrainParser(tokenStream);
         return parser.stat();
     }
 
-    public static parse(freeText: string): Executable {
-        const tree = Algebrain.retrieveTree(freeText);
+    public static parse(text: string): Executable {
+        const tree = Algebrain.retrieveTree(text);
         return new Visitor().visit(tree);
     }
 
-    public static multiParse(freeText: string): List<Executable> {
-        return List<string>(freeText.split('\n')).map(line => Algebrain.parse(line));
+    public static multiParse(text: string): List<Executable> {
+        return List<string>(text.split('\n')).map(line => Algebrain.parse(line));
     }
 }
