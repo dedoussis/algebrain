@@ -18,7 +18,7 @@ const name: string = 'diff';
 
 const differentiate: OperatorGenerator = generateOperator(name as OperatorSymbol);
 
-const diff: Transformation = new Transformation(
+const differentiation: Transformation = new Transformation(
     name,
     List([
         new Rule(
@@ -88,4 +88,4 @@ const diff: Transformation = new Transformation(
     ])
 );
 
-export default diff;
+export default differentiation;

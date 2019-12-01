@@ -26,7 +26,7 @@ const name: string = 'simpl';
 
 const simplify: OperatorGenerator = generateOperator(name as OperatorSymbol);
 
-const simpl: Transformation = new Transformation(
+const simplification: Transformation = new Transformation(
     name,
     List([
         new Rule(simplify(new Rewritable('s')), new Rewritable('s')),
@@ -47,4 +47,4 @@ const simpl: Transformation = new Transformation(
     ])
 );
 
-export default simpl;
+export default simplification;

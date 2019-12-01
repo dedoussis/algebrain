@@ -3,6 +3,8 @@ import Algebrain from '../src/Algebrain';
 import Command, { CommandName, ExecuteError } from '../src/Command';
 import { Num, Symbol, Operator, OperatorSymbol } from '../src/Node';
 import Transformation from '../src/Transformation';
+import fibonacci from '../src/transformations/fibonacci';
+import simplification from '../src/transformations/simplification';
 
 describe('Command', () => {
     it('constructs', () => {
@@ -11,27 +13,22 @@ describe('Command', () => {
 });
 
 const transformations: Map<string, Transformation> = Map<string, Transformation>([
-    [
-        'fib',
-        Algebrain.parse(
-            `fib=[fib(0)=0,fib(1)=1,fib($a)=fib($a-1)+fib($a-2) if const($a)]`
-        ) as Transformation,
-    ],
-    ['increment', Algebrain.parse('increment=[increment($x)=$x+1]') as Transformation],
+    [fibonacci.name, fibonacci],
+    [simplification.name, simplification],
 ]);
 
 const exequtionCases = [
     [
         'transform',
         {
-            expression: new Operator('fib', List([new Num(6)])),
-            transformationName: 'fib',
+            expression: new Operator(fibonacci.name, List([new Num(6)])),
+            transformationName: fibonacci.name,
             transformations: transformations,
         },
         {
             namespace: {
                 expression: new Num(8),
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
             stdOut: '8',
@@ -54,12 +51,12 @@ const exequtionCases = [
     [
         'transform',
         {
-            transformationName: 'fib',
+            transformationName: fibonacci.name,
             transformations: transformations,
         },
         {
             namespace: {
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
             stdOut: ExecuteError.UndefinedExpression,
@@ -69,13 +66,13 @@ const exequtionCases = [
         'evaluate',
         {
             expression: new Operator(OperatorSymbol.Pow, List([new Num(2), new Num(4)])),
-            transformationName: 'fib',
+            transformationName: fibonacci.name,
             transformations: transformations,
         },
         {
             namespace: {
                 expression: new Num(16),
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
             stdOut: '16',
@@ -84,12 +81,12 @@ const exequtionCases = [
     [
         'evaluate',
         {
-            transformationName: 'fib',
+            transformationName: fibonacci.name,
             transformations: Map(),
         },
         {
             namespace: {
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: Map(),
             },
             stdOut: ExecuteError.UndefinedExpression,
@@ -97,14 +94,18 @@ const exequtionCases = [
     ],
     [
         'rules',
-        { expression: new Num(16), transformationName: 'fib', transformations: transformations },
+        {
+            expression: new Num(16),
+            transformationName: fibonacci.name,
+            transformations: transformations,
+        },
         {
             namespace: {
                 expression: new Num(16),
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
-            stdOut: (transformations.get('fib') as Transformation).toString(),
+            stdOut: (transformations.get(fibonacci.name) as Transformation).toString(),
         },
     ],
     [
@@ -123,24 +124,24 @@ const exequtionCases = [
     ],
     [
         'transformations',
-        { transformationName: 'fib', transformations: transformations },
+        { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
-            stdOut: '[ fib, increment ]',
+            stdOut: `[ ${fibonacci.name}, ${simplification.name} ]`,
         },
     ],
     [
         'active',
-        { transformationName: 'fib', transformations: transformations },
+        { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
-            stdOut: 'fib',
+            stdOut: fibonacci.name,
         },
     ],
     [
@@ -154,22 +155,22 @@ const exequtionCases = [
         },
     ],
     [
-        'transformation: increment',
-        { transformationName: 'fib', transformations: transformations },
+        `transformation: ${simplification.name}`,
+        { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
-                transformationName: 'increment',
+                transformationName: simplification.name,
                 transformations: transformations,
             },
-            stdOut: (transformations.get('increment') as Transformation).toString(),
+            stdOut: simplification.toString(),
         },
     ],
     [
         'transformation',
-        { transformationName: 'fib', transformations: transformations },
+        { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
             stdOut: ExecuteError.MissingParameters,
@@ -177,10 +178,10 @@ const exequtionCases = [
     ],
     [
         'transformation: brexit',
-        { transformationName: 'fib', transformations: transformations },
+        { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
-                transformationName: 'fib',
+                transformationName: fibonacci.name,
                 transformations: transformations,
             },
             stdOut: ExecuteError.InvalidTransformation,

@@ -3,6 +3,8 @@ import Transformation from '../src/Transformation';
 import Rule from '../src/Rule';
 import Node, { Num, Operator, OperatorSymbol, Rewritable } from '../src/Node';
 import Algebrain from '../src/Algebrain';
+import differentiation from '../src/transformations/differntiation';
+import fibonacci from '../src/transformations/fibonacci';
 
 describe('Transformation', () => {
     it('constructs', () => {
@@ -41,20 +43,11 @@ describe('Transformation', () => {
         expect(transformation.transform(expression).equals(Algebrain.parse('cos(x)'))).toBeTruthy();
     });
     it('transforms fibonacci', () => {
-        const rules = Algebrain.multiParse(
-            `fib(0)=0
-        fib(1)=1
-        fib($a)=fib($a-1)+fib($a-2) if const($a)`
-        );
         const fibNum = new Operator('fib', List([new Num(15)]));
-        const fibonacci = new Transformation('fib', rules as List<Rule>);
         expect(fibonacci.transform(fibNum).value).toEqual(610);
     });
     it('transforms full diff', () => {
-        const transformation = Algebrain.parse(
-            `diff=[diff($a+$b,$v)=diff($a,$v)+diff($b,$v),diff($a-$b,$v)=diff($a,$v)-diff($b,$v),diff($a*$b,$v)=diff($a,$v)*$b+diff($b,$v)*$a,diff($a/$b,$v)=(diff($a,$v)*$b-diff($b,$v)*$a)/$b^2,diff($a^$b,$v)=$b*$a^($b-1)*diff($a,$v),diff($u,$v)=0 if const($u) and not(depends($u,$v)),diff($v,$v)=1]`
-        ) as Transformation;
         const expression = Algebrain.parse('diff(x,x)') as Node;
-        expect(transformation.transform(expression).equals(new Num(1))).toBeTruthy();
+        expect(differentiation.transform(expression).equals(new Num(1))).toBeTruthy();
     });
 });

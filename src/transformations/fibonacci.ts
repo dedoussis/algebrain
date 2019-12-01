@@ -10,7 +10,7 @@ import Transformation from '../Transformation';
 //   fib($a)=fib($a-1)+fib($a-2) if const($a)
 // ]
 
-const name: string = 'dib';
+const name: string = 'fib';
 
 const fibonaccify: OperatorGenerator = generateOperator(name as OperatorSymbol);
 
@@ -21,7 +21,10 @@ const fibonacci: Transformation = new Transformation(
         new Rule(fibonaccify(new Num(1)), new Num(1)),
         new Rule(
             fibonaccify(new Rewritable('a')),
-            plus(minus(new Rewritable('a'), new Num(1)), minus(new Rewritable('a'), new Num(2))),
+            plus(
+                fibonaccify(minus(new Rewritable('a'), new Num(1))),
+                fibonaccify(minus(new Rewritable('a'), new Num(2)))
+            ),
             new Operator(OperatorSymbol.Constant).addChild(new Rewritable('a'))
         ),
     ])

@@ -1,33 +1,14 @@
 import { List, Map } from 'immutable';
 import Node, { Operator, Num, Symbol, OperatorSymbol, TRUE, FALSE, Rewritable } from '../src/Node';
+import { plus, minus, mul, div, pow } from '../src/utils';
 import Algebrain from '../src/Algebrain';
 
 const cases = [
-    [
-        'unary should stay the same',
-        new Operator(OperatorSymbol.Minus, List([new Num(3)])),
-        new Operator(OperatorSymbol.Minus, List([new Num(3)])),
-    ],
-    [
-        'flat addition',
-        new Operator(OperatorSymbol.Plus, List([new Num(1), new Num(3)])),
-        new Num(4),
-    ],
-    [
-        'flat substraction',
-        new Operator(OperatorSymbol.Minus, List([new Num(6), new Num(5)])),
-        new Num(1),
-    ],
-    [
-        'flat multiplication',
-        new Operator(OperatorSymbol.Mul, List([new Num(8), new Num(3)])),
-        new Num(24),
-    ],
-    [
-        'flat division (3 children)',
-        new Operator(OperatorSymbol.Div, List([new Num(20), new Num(5), new Num(2)])),
-        new Num(2),
-    ],
+    ['unary should stay the same', minus(new Num(3)), minus(new Num(3))],
+    ['flat addition', plus(new Num(1), new Num(3)), new Num(4)],
+    ['flat substraction', minus(new Num(6), new Num(5)), new Num(1)],
+    ['flat multiplication', mul(new Num(8), new Num(3)), new Num(24)],
+    ['flat division (3 children)', div(new Num(20), new Num(5), new Num(2)), new Num(2)],
     [
         'equals true',
         new Operator(OperatorSymbol.Equals, List([new Symbol('x'), new Symbol('x')])),
@@ -188,102 +169,45 @@ const cases = [
         ),
         FALSE,
     ],
-    [
-        '5 - 4 / 2',
-        new Operator(
-            OperatorSymbol.Minus,
-            List([new Num(5), new Operator(OperatorSymbol.Div, List([new Num(4), new Num(2)]))])
-        ),
-        new Num(3),
-    ],
-    [
-        '5 + 4 / 1.25',
-        new Operator(
-            OperatorSymbol.Plus,
-            List([new Num(5), new Operator(OperatorSymbol.Div, List([new Num(4), new Num(1.25)]))])
-        ),
-        new Num(8.2),
-    ],
+    ['5 - 4 / 2', minus(new Num(5), div(new Num(4), new Num(2))), new Num(3)],
+    ['5 + 4 / 1.25', plus(new Num(5), div(new Num(4), new Num(1.25))), new Num(8.2)],
     [
         'x ^ 5 / 2 should remain the same',
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(5)])),
-                new Num(2),
-            ])
-        ),
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(5)])),
-                new Num(2),
-            ])
-        ),
+        div(pow(new Symbol('x'), new Num(5)), new Num(2)),
+        div(pow(new Symbol('x'), new Num(5)), new Num(2)),
     ],
     ['2^4/2*x+5*3', Algebrain.parse('2^4/2*x+5*3'), Algebrain.parse('x*8+15')],
     [
         '5^g+g^5',
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Num(5), new Symbol('g')])),
-                new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
-            ])
-        ),
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Num(5), new Symbol('g')])),
-                new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
-            ])
-        ),
+        plus(pow(new Num(5), new Symbol('g')), pow(new Symbol('g'), new Num(5))),
+        plus(pow(new Num(5), new Symbol('g')), pow(new Symbol('g'), new Num(5))),
     ],
     [
         '+(5, x, z, 3, 2, y, 5)',
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Symbol('z'),
-                new Num(3),
-                new Num(2),
-                new Symbol('y'),
-                new Num(5),
-            ])
+        plus(
+            new Num(5),
+            new Symbol('x'),
+            new Symbol('z'),
+            new Num(3),
+            new Num(2),
+            new Symbol('y'),
+            new Num(5)
         ),
-        new Operator(
-            OperatorSymbol.Plus,
-            List([new Symbol('x'), new Symbol('z'), new Symbol('y'), new Num(15)])
-        ),
+        plus(new Symbol('x'), new Symbol('z'), new Symbol('y'), new Num(15)),
     ],
     [
         '/(10, 5, x, z, 6, 2, y, 5)',
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Num(10),
-                new Num(5),
-                new Symbol('x'),
-                new Symbol('z'),
-                new Num(6),
-                new Num(2),
-                new Symbol('y'),
-                new Num(5),
-            ])
+        div(
+            new Num(10),
+            new Num(5),
+            new Symbol('x'),
+            new Symbol('z'),
+            new Num(6),
+            new Num(2),
+            new Symbol('y'),
+            new Num(5)
         ),
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Num(2),
-                new Symbol('x'),
-                new Symbol('z'),
-                new Num(3),
-                new Symbol('y'),
-                new Num(5),
-            ])
-        ),
+        div(new Num(2), new Symbol('x'), new Symbol('z'), new Num(3), new Symbol('y'), new Num(5)),
     ],
 ];
 
@@ -297,64 +221,16 @@ const toStringCases = [
     ['x', new Symbol('x')],
     ['6', new Num(6)],
     ['$u', new Rewritable('u')],
-    ['3+x', new Operator(OperatorSymbol.Plus, List([new Num(3), new Symbol('x')]))],
-    [
-        '(2+5)*x',
-        new Operator(
-            OperatorSymbol.Mul,
-            List([
-                new Operator(OperatorSymbol.Plus, List([new Num(2), new Num(5)])),
-                new Symbol('x'),
-            ])
-        ),
-    ],
+    ['3+x', plus(new Num(3), new Symbol('x'))],
+    ['(2+5)*x', mul(plus(new Num(2), new Num(5)), new Symbol('x'))],
     ['2^(3+1)/2*x+5*3', Algebrain.parse('2^(3+1)/2*x+5*3')],
-    [
-        '-4+x',
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Operator(OperatorSymbol.Minus, List([new Num(3), new Num(7)])),
-                new Symbol('x'),
-            ])
-        ).evaluate(),
-    ],
-    [
-        '-(x-5)',
-        new Operator(
-            OperatorSymbol.Minus,
-            List([new Operator(OperatorSymbol.Minus, List([new Symbol('x'), new Num(5)]))])
-        ),
-    ],
-    [
-        '-4-(-x)',
-        new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Operator(OperatorSymbol.Minus, List([new Num(4)])),
-                new Operator(OperatorSymbol.Minus, List([new Symbol('x')])),
-            ])
-        ),
-    ],
-    ['-10', new Operator(OperatorSymbol.Minus, List([new Num(10)]))],
+    ['-4+x', plus(minus(new Num(3), new Num(7)), new Symbol('x')).evaluate()],
+    ['-(x-5)', minus(minus(new Symbol('x'), new Num(5)))],
+    ['-4-(-x)', minus(minus(new Num(4)), minus(new Symbol('x')))],
+    ['-10', minus(new Num(10))],
     ['(6+5)*4/(2-x)-3', Algebrain.parse('(6+5)*4/(2-x)-3')],
-    [
-        'x+3-(x+2)',
-        new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Operator(OperatorSymbol.Plus, List([new Symbol('x'), new Num(3)])),
-                new Operator(OperatorSymbol.Plus, List([new Symbol('x'), new Num(2)])),
-            ])
-        ),
-    ],
-    [
-        '-x*3',
-        new Operator(
-            OperatorSymbol.Minus,
-            List([new Operator(OperatorSymbol.Mul, List([new Symbol('x'), new Num(3)]))])
-        ),
-    ],
+    ['x+3-(x+2)', minus(plus(new Symbol('x'), new Num(3)), plus(new Symbol('x'), new Num(2)))],
+    ['-x*3', minus(mul(new Symbol('x'), new Num(3)))],
 ];
 
 describe('Stringification', () => {
@@ -366,62 +242,25 @@ describe('Stringification', () => {
 const rewriteCases = [
     [
         new Num(5),
-        Map<string, Node>([
-            ['$u', new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)]))],
-            ['$v', new Operator(OperatorSymbol.Minus, List([new Num(5)]))],
-        ]),
+        Map<string, Node>([['$u', pow(new Symbol('x'), new Num(3))], ['$v', minus(new Num(5))]]),
         new Num(5),
     ],
     [
         new Rewritable('u'),
-        Map<string, Node>([
-            ['$u', new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)]))],
-            ['$v', new Operator(OperatorSymbol.Minus, List([new Num(5)]))],
-        ]),
-        new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)])),
+        Map<string, Node>([['$u', pow(new Symbol('x'), new Num(3))], ['$v', minus(new Num(5))]]),
+        pow(new Symbol('x'), new Num(3)),
     ],
     [
-        new Operator(OperatorSymbol.Plus, List([new Rewritable('u'), new Rewritable('v')])),
-        Map<string, Node>([
-            ['$u', new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)]))],
-            ['$v', new Operator(OperatorSymbol.Minus, List([new Num(5)]))],
-        ]),
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)])),
-                new Operator(OperatorSymbol.Minus, List([new Num(5)])),
-            ])
-        ),
+        plus(new Rewritable('u'), new Rewritable('v')),
+        Map<string, Node>([['$u', pow(new Symbol('x'), new Num(3))], ['$v', minus(new Num(5))]]),
+        plus(pow(new Symbol('x'), new Num(3)), minus(new Num(5))),
     ],
     [
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Rewritable('u'),
-                new Operator(
-                    OperatorSymbol.Div,
-                    List([new Rewritable('v'), new Symbol('k'), new Rewritable('u')])
-                ),
-            ])
-        ),
-        Map<string, Node>([
-            ['$u', new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)]))],
-            ['$v', new Operator(OperatorSymbol.Minus, List([new Num(5)]))],
-        ]),
-        new Operator(
-            OperatorSymbol.Plus,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)])),
-                new Operator(
-                    OperatorSymbol.Div,
-                    List([
-                        new Operator(OperatorSymbol.Minus, List([new Num(5)])),
-                        new Symbol('k'),
-                        new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(3)])),
-                    ])
-                ),
-            ])
+        plus(new Rewritable('u'), div(new Rewritable('v'), new Symbol('k'), new Rewritable('u'))),
+        Map<string, Node>([['$u', pow(new Symbol('x'), new Num(3))], ['$v', minus(new Num(5))]]),
+        plus(
+            pow(new Symbol('x'), new Num(3)),
+            div(minus(new Num(5)), new Symbol('k'), pow(new Symbol('x'), new Num(3)))
         ),
     ],
 ];
@@ -446,81 +285,51 @@ describe('Operator', () => {
     });
 
     it('is equal with another Operator when all children are equal', () => {
-        const one: Operator = new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
-            ])
+        const one: Operator = minus(
+            new Num(5),
+            new Symbol('x'),
+            new Operator('diff', List([new Rewritable('u'), new Rewritable('y')]))
         );
-        const another: Operator = new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
-            ])
+        const another: Operator = minus(
+            new Num(5),
+            new Symbol('x'),
+            new Operator('diff', List([new Rewritable('u'), new Rewritable('y')]))
         );
         expect(one.equals(another)).toBeTruthy();
     });
 
     it('it is not equal with another Operator that has more children', () => {
-        const one: Operator = new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
-            ])
+        const one: Operator = minus(
+            new Num(5),
+            new Symbol('x'),
+            new Operator('diff', List([new Rewritable('u'), new Rewritable('y')]))
         );
-        const another: Operator = new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Operator('ndiff', List([new Rewritable('u'), new Rewritable('y'), new Num(2)])),
-            ])
+        const another: Operator = minus(
+            new Num(5),
+            new Symbol('x'),
+            new Operator('ndiff', List([new Rewritable('u'), new Rewritable('y'), new Num(2)]))
         );
         expect(one.equals(another)).toBeFalsy();
     });
 
     it('it is not equal with another Operator that has different children', () => {
-        const one: Operator = new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Operator('diff', List([new Rewritable('u'), new Rewritable('y')])),
-            ])
+        const one: Operator = minus(
+            new Num(5),
+            new Symbol('x'),
+            new Operator('diff', List([new Rewritable('u'), new Rewritable('y')]))
         );
-        const another: Operator = new Operator(
-            OperatorSymbol.Minus,
-            List([
-                new Num(5),
-                new Symbol('x'),
-                new Operator('ndiff', List([new Rewritable('u'), new Rewritable('z')])),
-            ])
+        const another: Operator = minus(
+            new Num(5),
+            new Symbol('x'),
+            new Operator('ndiff', List([new Rewritable('u'), new Rewritable('z')]))
         );
         expect(one.equals(another)).toBeFalsy();
     });
 
     it('it treeifies', () => {
-        const expr: Operator = new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Operator(
-                    OperatorSymbol.Plus,
-                    List([
-                        new Operator(
-                            OperatorSymbol.Minus,
-                            List([new Rewritable('u'), new Symbol('x')])
-                        ),
-                        new Num(5),
-                    ])
-                ),
-                new Operator(OperatorSymbol.Pow, List([new Symbol('g'), new Num(5)])),
-            ])
+        const expr: Operator = div(
+            plus(minus(new Rewritable('u'), new Symbol('x')), new Num(5)),
+            pow(new Symbol('g'), new Num(5))
         );
         const treefied: string[] = [
             '/',
