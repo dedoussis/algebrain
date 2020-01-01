@@ -24,7 +24,7 @@ export default abstract class Node implements Executable {
         return this;
     }
 
-    treeify(..._: any[]) {
+    treeify(..._: any[]): string {
         return this.toString();
     }
 
