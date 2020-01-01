@@ -271,13 +271,6 @@ describe('Rewriting', () => {
     });
 });
 
-describe('Node superclass', () => {
-    it('constructs', () => {
-        const value: any = 'tacos';
-        expect(new Node(value).value).toEqual(value);
-    });
-});
-
 describe('Operator', () => {
     it('constructs', () => {
         const value: OperatorSymbol = OperatorSymbol.Plus;

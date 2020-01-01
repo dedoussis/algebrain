@@ -1,4 +1,6 @@
 import { Map } from 'immutable';
+import Node from './Node';
+import Transformation from './Transformation';
 
 export default interface Executable {
     equals(other: any): boolean;
@@ -7,9 +9,9 @@ export default interface Executable {
 }
 
 export type Namespace = {
-    expression?: Executable;
+    expression?: Node;
     transformationName?: string;
-    transformations: Map<string, Executable>;
+    transformations: Map<string, Transformation>;
 };
 
 export type Output = {

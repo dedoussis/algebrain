@@ -4,7 +4,7 @@ import Rule from './Rule';
 import Node, { Operator } from './Node';
 
 export default class Transformation implements Executable {
-    constructor(readonly name: string, readonly rules: List<Rule> = List<Rule>()) {}
+    constructor(readonly name: string, readonly rules: List<Rule> = List()) {}
 
     addRule(rule: Rule): Transformation {
         return new Transformation(this.name, this.rules.push(rule));

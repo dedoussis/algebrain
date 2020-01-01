@@ -139,7 +139,7 @@ const matchCases = [
 
 describe('matches', () => {
     test.each(matchCases)('Matching case %p', (title, lhs, other, condition, matches) => {
-        const rule = new Rule(lhs, new Node(null), condition);
+        const rule = new Rule(lhs, new Num(0), condition);
         expect(rule.matches(other)).toEqual(matches);
     });
 });
@@ -176,7 +176,7 @@ const mirrorCases = [
 ];
 describe('mirrorCases', () => {
     test.each(mirrorCases)('Mirror case %p', (title, lhs, other, condition, outcome) => {
-        const rule = new Rule(lhs, new Node(null), condition);
+        const rule = new Rule(lhs, new Num(0), condition);
         expect(rule.mirrors(other)).toBe(outcome);
     });
 });

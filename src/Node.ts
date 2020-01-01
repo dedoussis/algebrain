@@ -1,8 +1,8 @@
 import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 
-export default class Node implements Executable {
-    constructor(readonly value: any) {}
+export default abstract class Node implements Executable {
+    abstract readonly value: number | string;
 
     toString(): string {
         return this.value.toString();
@@ -20,7 +20,7 @@ export default class Node implements Executable {
         );
     }
 
-    rewrite(matches: Map<string, Node>): Node {
+    rewrite(_: any): Node {
         return this;
     }
 
@@ -38,15 +38,14 @@ export default class Node implements Executable {
 }
 
 export class Num extends Node {
-    constructor(value: number) {
-        super(value);
+    constructor(readonly value: number) {
+        super();
     }
 
     evaluate(): Node {
-        if (this.value < 0) {
-            return new Operator(OperatorSymbol.Minus, List([new Num(this.value * -1)]));
-        }
-        return super.evaluate();
+        return this.value < 0
+            ? new Operator(OperatorSymbol.Minus, List([new Num(this.value * -1)]))
+            : super.evaluate();
     }
 }
 
@@ -78,11 +77,11 @@ export class Operator extends Node {
     private readonly stringifier: Stringifier | undefined;
 
     constructor(
-        value: string,
+        readonly value: string,
         readonly children: List<Node> = List<Node>(),
         operatorHandlers: Map<OperatorSymbol, Handlers> = operatorSymbolHandlers
     ) {
-        super(value);
+        super();
         const notFoundHandlers: Handlers = {
             evaluator: {
                 f: (children: List<Node>) => new Operator(this.value, children),
@@ -152,14 +151,14 @@ export class Operator extends Node {
 }
 
 export class Symbol extends Node {
-    constructor(value: string) {
-        super(value);
+    constructor(readonly value: string) {
+        super();
     }
 }
 
 export class Rewritable extends Node {
-    constructor(value: string) {
-        super(value);
+    constructor(readonly value: string) {
+        super();
     }
 
     rewrite(matches: Map<string, Node>): Node {

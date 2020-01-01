@@ -6,16 +6,27 @@ import Transformation from './Transformation';
 export default class Command implements Executable {
     readonly execute: ExecuteFunc;
 
-    constructor(readonly name: CommandName, readonly parameters: List<string> = List<string>()) {
-        this.execute = commandRegistry.get(this.name, commandNotFound).executeConstructor(this);
+    constructor(
+        readonly name: CommandName,
+        readonly parameters: List<string> = List(),
+        registry: Map<CommandName, CommandSpec> = commandRegistry
+    ) {
+        this.execute = registry.get(this.name, commandNotFound).executeConstructor(this);
     }
 
     toString(): string {
-        return `${this.name}: ${this.parameters.join(', ')}`;
+        return this.parameters.isEmpty()
+            ? this.name
+            : `${this.name}: ${this.parameters.join(', ')}`;
     }
 
     equals(other: any): boolean {
-        return true;
+        return (
+            other !== undefined &&
+            this.constructor === other.constructor &&
+            this.name === other.name &&
+            this.parameters === other.parameters
+        );
     }
 }
 
@@ -65,7 +76,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 const transformation: Transformation = transformations.get(
                     transformationName
                 ) as Transformation;
-                const transformed: Node = transformation.transform(expression as Node);
+                const transformed: Node = transformation.transform(expression);
                 return {
                     namespace: {
                         ...namespace,
@@ -87,7 +98,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         stdOut: ExecuteError.UndefinedExpression,
                     };
                 }
-                const evaluated: Node = (namespace.expression as Node).evaluate();
+                const evaluated: Node = namespace.expression.evaluate();
                 return {
                     namespace: {
                         ...namespace,
@@ -127,7 +138,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
                 return {
                     namespace: namespace,
-                    stdOut: `--- algebrain version 0.0.3-f ---
+                    stdOut: `--- algebrain version 0.0.4-b ---
           Commands:
           ${commandRegistry
               .entrySeq()
@@ -211,7 +222,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         ...namespace,
                         transformationName: parameter,
                     },
-                    stdOut: (transformation as Transformation).toString(),
+                    stdOut: transformation.toString(),
                 };
             },
             description:

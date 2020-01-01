@@ -50,7 +50,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     defaultResult(): Node {
-        return new Node(null);
+        return FALSE;
     }
 
     visitNumber(ctx: NumberContext): Num {

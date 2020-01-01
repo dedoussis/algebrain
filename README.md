@@ -85,7 +85,7 @@ const rules = Algebrain.multiParse(`
     fib($a)=fib($a-1)+fib($a-2) if const($a)
 `);
 
-const fibonacci = new Transformation(rules);
+const fibonacci = new Transformation("fib", rules);
 
 const expr = Algebrain.parse("fib(15)");
 
@@ -100,8 +100,13 @@ Every Algebrain statement or expression, when parsed, results to an object imple
 
 ✍️ more documentation to come...
 
-## Develop
+## Web UI
 
+There is a web-app client that materiliases a friendly interface for exploring algebrain at https://algebrain.io 
+
+The source repo of the React app can be found [here](https://github.com/dedoussis/algebrain.io).
+
+## Develop
 
 ```bash
 # Linting
