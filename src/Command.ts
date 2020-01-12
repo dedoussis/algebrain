@@ -32,7 +32,7 @@ export default class Command implements Executable {
 
 export enum CommandName {
     Transform = 'transform',
-    Transformation = 'transformation',
+    Use = 'use',
     Transformations = 'transformations',
     Active = 'active',
     Evaluate = 'evaluate',
@@ -61,7 +61,10 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
         {
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
                 const { expression, transformationName, transformations } = namespace;
-                if (transformationName === undefined) {
+                const transformation = transformationName
+                    ? transformations.get(transformationName)
+                    : undefined;
+                if (transformation === undefined) {
                     return {
                         namespace: namespace,
                         stdOut: ExecuteError.UndefinedTransformation,
@@ -73,10 +76,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         stdOut: ExecuteError.UndefinedExpression,
                     };
                 }
-                const transformation: Transformation = transformations.get(
-                    transformationName
-                ) as Transformation;
-                const transformed: Node = transformation.transform(expression);
+                const transformed: Node = expression.transform(transformation);
                 return {
                     namespace: {
                         ...namespace,
@@ -199,7 +199,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
         },
     ],
     [
-        CommandName.Transformation,
+        CommandName.Use,
         {
             executeConstructor: (command: Command): ExecuteFunc => (namespace: Namespace) => {
                 const parameter: string | undefined = command.parameters.first();

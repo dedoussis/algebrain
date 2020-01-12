@@ -2,6 +2,11 @@ import { List, Map } from 'immutable';
 import Node, { Operator, Num, Symbol, OperatorSymbol, TRUE, FALSE, Rewritable } from '../src/Node';
 import { plus, minus, mul, div, pow } from '../src/utils';
 import Algebrain from '../src/Algebrain';
+import differentiation, { differentiate } from '../src/transformations/differntiation';
+import fibonacci, { fibonaccify } from '../src/transformations/fibonacci';
+import simplification from '../src/transformations/simplification';
+
+import { Transformation, Rule } from '../src';
 
 const cases = [
     ['unary should stay the same', minus(new Num(3)), minus(new Num(3))],
@@ -211,7 +216,7 @@ const cases = [
     ],
 ];
 
-describe('Node evaluation', () => {
+describe('Evaluation', () => {
     test.each(cases)('Evaluating case %p', (title, node, evaluatedNode) => {
         expect(node.evaluate()).toEqual(evaluatedNode);
     });
@@ -269,6 +274,30 @@ describe('Rewriting', () => {
     test.each(rewriteCases)('Rewriting case %p with %p', (rhs, matches, rewritten) => {
         expect(rhs.rewrite(matches)).toEqual(rewritten);
     });
+});
+
+const transformationCases = [
+    [fibonaccify(new Num(15)), fibonacci, new Num(610)],
+    [differentiate(new Symbol('x'), new Symbol('x')), differentiation, new Num(1)],
+    [
+        differentiate(new Operator('sin', List([new Symbol('x')])), new Symbol('x')),
+        new Transformation('diff', List([
+            Algebrain.parse('diff(tan($v),$v)=1+tan($v)^2'),
+            Algebrain.parse('diff(sin($v),$v)=cos($v)'),
+            Algebrain.parse('diff(cos($v),$v)=0-sin($v)'),
+        ]) as List<Rule>),
+        new Operator('cos', List([new Symbol('x')])),
+    ],
+    [plus(new Symbol('y'), mul(new Symbol('x'), new Num(0))), simplification, new Symbol('y')],
+];
+
+describe('Transformation', () => {
+    test.each(transformationCases)(
+        'Transformation case %p with %p',
+        (expression: Node, transformation: Transformation, transformed: Node) => {
+            expect(expression.transform(transformation).equals(transformed)).toBeTruthy();
+        }
+    );
 });
 
 describe('Operator', () => {

@@ -1,5 +1,6 @@
 import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
+import { Transformation } from '.';
 
 export default abstract class Node implements Executable {
     abstract readonly value: number | string;
@@ -20,12 +21,41 @@ export default abstract class Node implements Executable {
         );
     }
 
-    rewrite(_: any): Node {
+    rewrite(_?: any): Node {
         return this;
     }
 
     treeify(..._: any[]): string {
         return this.toString();
+    }
+
+    transform(transformation: Transformation): Node {
+        let transformed: Node = this;
+        transformation.rules.forEach(rule => {
+            if (rule.mirrors(transformed)) {
+                transformed = rule.rhs;
+                return false;
+            }
+            const matches = rule.matches(this);
+            if (!matches.isEmpty()) {
+                transformed = rule.rhs.rewrite(matches).evaluate();
+                return false;
+            }
+        });
+        if (transformed instanceof Operator) {
+            const transformedChildren = transformed.children.map(child =>
+                child.transform(transformation)
+            );
+            return transformed.children.every((child, idx) =>
+                child.equals(transformedChildren.get(idx))
+            )
+                ? transformed
+                : transformed
+                      .setChildren(transformedChildren)
+                      .evaluate()
+                      .transform(transformation);
+        }
+        return transformed;
     }
 
     execute(namespace: Namespace): Output {

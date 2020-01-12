@@ -8,7 +8,7 @@ export default class Rule implements Executable {
     private static matchNodes(
         one: Node,
         other: Node,
-        matches: Map<string, Node> = Map<string, Node>()
+        matches: Map<string, Node> = Map()
     ): Map<string, Node> {
         if (one instanceof Rewritable) {
             if (!matches.get(one.toString(), other).equals(other)) {

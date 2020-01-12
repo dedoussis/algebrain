@@ -24,7 +24,7 @@ import Transformation from '../Transformation';
 
 const name: string = 'simpl';
 
-const simplify: OperatorGenerator = generateOperator(name as OperatorSymbol);
+export const simplify: OperatorGenerator = generateOperator(name as OperatorSymbol);
 
 const simplification: Transformation = new Transformation(
     name,

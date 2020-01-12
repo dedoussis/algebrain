@@ -73,7 +73,7 @@ COMMAND
   | 'help'
   | 'tree'
   | 'transformations'
-  | 'transformation'
+  | 'use'
   | 'active'
   ;
 TRUE: 'true';

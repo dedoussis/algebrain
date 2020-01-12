@@ -79,17 +79,17 @@ By exploiting the concept of [rewriting rules](https://en.wikipedia.org/wiki/Rew
 ```javascript
 import Algebrain, { Transformation } from "algebrain";
 
-const rules = Algebrain.multiParse(`
-    fib(0)=0
-    fib(1)=1
-    fib($a)=fib($a-1)+fib($a-2) if const($a)
-`);
+const rules = [
+    Algebrain.parse("fib(0)=0"),
+    Algebrain.parse("fib(1)=1"),
+    Algebrain.parse("fib($a)=fib($a-1)+fib($a-2) if const($a)"),
+];
 
 const fibonacci = new Transformation("fib", rules);
 
 const expr = Algebrain.parse("fib(15)");
 
-console.log(`The 15th term of fibonacci is: ${fibonacci.transform(expr)}`);
+console.log(`The 15th term of fibonacci is: ${expr.transform(fibonacci)}`);
 // > The 15h term of fibonacci is 610
 ```
 

@@ -16,7 +16,7 @@ import Transformation from '../Transformation';
 
 const name: string = 'diff';
 
-const differentiate: OperatorGenerator = generateOperator(name as OperatorSymbol);
+export const differentiate: OperatorGenerator = generateOperator(name as OperatorSymbol);
 
 const differentiation: Transformation = new Transformation(
     name,

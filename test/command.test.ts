@@ -19,7 +19,7 @@ const transformations: Map<string, Transformation> = Map<string, Transformation>
 
 const exequtionCases = [
     [
-        'transform',
+        CommandName.Transform,
         {
             expression: new Operator(fibonacci.name, List([new Num(6)])),
             transformationName: fibonacci.name,
@@ -35,7 +35,7 @@ const exequtionCases = [
         },
     ],
     [
-        'transform',
+        CommandName.Transform,
         {
             expression: new Num(5),
             transformations: Map(),
@@ -49,7 +49,7 @@ const exequtionCases = [
         },
     ],
     [
-        'transform',
+        CommandName.Transform,
         {
             transformationName: fibonacci.name,
             transformations: transformations,
@@ -63,7 +63,7 @@ const exequtionCases = [
         },
     ],
     [
-        'evaluate',
+        CommandName.Evaluate,
         {
             expression: new Operator(OperatorSymbol.Pow, List([new Num(2), new Num(4)])),
             transformationName: fibonacci.name,
@@ -79,7 +79,7 @@ const exequtionCases = [
         },
     ],
     [
-        'evaluate',
+        CommandName.Evaluate,
         {
             transformationName: fibonacci.name,
             transformations: Map(),
@@ -93,7 +93,7 @@ const exequtionCases = [
         },
     ],
     [
-        'rules',
+        CommandName.Rules,
         {
             expression: new Num(16),
             transformationName: fibonacci.name,
@@ -109,7 +109,7 @@ const exequtionCases = [
         },
     ],
     [
-        'tree',
+        CommandName.Tree,
         {
             expression: new Operator(OperatorSymbol.Plus, List([new Num(5), new Symbol('k')])),
             transformations: Map(),
@@ -123,7 +123,7 @@ const exequtionCases = [
         },
     ],
     [
-        'transformations',
+        CommandName.Transformations,
         { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
@@ -134,7 +134,7 @@ const exequtionCases = [
         },
     ],
     [
-        'active',
+        CommandName.Active,
         { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
@@ -145,7 +145,7 @@ const exequtionCases = [
         },
     ],
     [
-        'active',
+        CommandName.Active,
         { transformations: transformations },
         {
             namespace: {
@@ -155,7 +155,7 @@ const exequtionCases = [
         },
     ],
     [
-        `transformation: ${simplification.name}`,
+        `${CommandName.Use}: ${simplification.name}`,
         { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
@@ -166,7 +166,7 @@ const exequtionCases = [
         },
     ],
     [
-        'transformation',
+        CommandName.Use,
         { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {
@@ -177,7 +177,7 @@ const exequtionCases = [
         },
     ],
     [
-        'transformation: brexit',
+        `${CommandName.Use}: brexit`,
         { transformationName: fibonacci.name, transformations: transformations },
         {
             namespace: {

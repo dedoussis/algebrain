@@ -10,28 +10,6 @@ export default class Transformation implements Executable {
         return new Transformation(this.name, this.rules.push(rule));
     }
 
-    transform(expression: Node, recursive: boolean = true): Node {
-        let transformed: Node = expression;
-        this.rules.some(rule => {
-            if (rule.mirrors(transformed)) {
-                transformed = rule.rhs;
-                return true;
-            }
-            const matches = rule.matches(expression);
-            if (!matches.isEmpty()) {
-                transformed = rule.rhs.rewrite(matches).evaluate();
-                return true;
-            }
-            return false;
-        });
-        if (recursive && transformed instanceof Operator) {
-            return transformed
-                .setChildren(transformed.children.map(child => this.transform(child)))
-                .evaluate();
-        }
-        return transformed;
-    }
-
     toString(): string {
         return `[\n\xa0\xa0${this.rules.join(`,\n\xa0\xa0`)}\n]`;
     }

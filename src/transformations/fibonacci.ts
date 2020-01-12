@@ -12,7 +12,7 @@ import Transformation from '../Transformation';
 
 const name: string = 'fib';
 
-const fibonaccify: OperatorGenerator = generateOperator(name as OperatorSymbol);
+export const fibonaccify: OperatorGenerator = generateOperator(name as OperatorSymbol);
 
 const fibonacci: Transformation = new Transformation(
     name,
