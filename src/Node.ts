@@ -43,17 +43,13 @@ export default abstract class Node implements Executable {
             }
         });
         if (transformed instanceof Operator) {
-            const transformedChildren = transformed.children.map(child =>
-                child.transform(transformation)
-            );
-            return transformed.children.every((child, idx) =>
-                child.equals(transformedChildren.get(idx))
-            )
+            const withTransformedChildren = transformed
+                .setChildren(transformed.children.map(child => child.transform(transformation)))
+                .evaluate();
+
+            return transformed.equals(withTransformedChildren)
                 ? transformed
-                : transformed
-                      .setChildren(transformedChildren)
-                      .evaluate()
-                      .transform(transformation);
+                : withTransformedChildren.transform(transformation);
         }
         return transformed;
     }
