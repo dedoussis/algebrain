@@ -1,6 +1,6 @@
 {
   "name": "algebrain",
-  "version": "0.0.4-d",
+  "version": "0.0.5",
   "description": "Combuter Algebra System focusing on symbolic transformations",
   "keywords": [
     "algebra",

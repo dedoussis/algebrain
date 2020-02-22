@@ -138,12 +138,16 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
                 return {
                     namespace: namespace,
-                    stdOut: `--- algebrain version 0.0.4-b ---
-          Commands:
-          ${commandRegistry
-              .entrySeq()
-              .map(([name, spec]: [CommandName, CommandSpec]) => `- ${name}: ${spec.description}`)
-              .join('\n')}`,
+                    stdOut: List(['--- algebrain version 0.0.5 ---', 'Commands:'])
+                        .concat(
+                            commandRegistry
+                                .entrySeq()
+                                .map(
+                                    ([name, spec]: [CommandName, CommandSpec]) =>
+                                        `- ${name}: ${spec.description}`
+                                )
+                        )
+                        .join('\n'),
                 };
             },
             description: 'Print this message',
