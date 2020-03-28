@@ -29,8 +29,8 @@ export default abstract class Node implements Executable {
         return this.toString();
     }
 
-    transform(transformations: List<Transformation>): Node {
-        let transformed: Node = this;
+    transform(transformation, namespace) {
+        let transformed = this;
         transformation.rules.forEach(rule => {
             if (rule.mirrors(transformed)) {
                 transformed = rule.rhs;
@@ -43,8 +43,11 @@ export default abstract class Node implements Executable {
             }
         });
         if (transformed instanceof Operator) {
-            transformation = namespace.transformations.get(transformed.value) || transformation;
-            const withTransformedChildren = transformed
+            const maybeTransformation = namespace.transformations.get(transformed.value);
+            if (maybeTransformation && maybeTransformation !== transformation) {
+                return transformed.transform(maybeTransformation, namespace);
+            }
+            const withTransformedChildren: any = transformed
                 .setChildren(
                     transformed.children.map(child => child.transform(transformation, namespace))
                 )
