@@ -29,7 +29,7 @@ export default abstract class Node implements Executable {
         return this.toString();
     }
 
-    transform(transformation: Transformation): Node {
+    transform(transformations: List<Transformation>): Node {
         let transformed: Node = this;
         transformation.rules.forEach(rule => {
             if (rule.mirrors(transformed)) {
@@ -43,13 +43,16 @@ export default abstract class Node implements Executable {
             }
         });
         if (transformed instanceof Operator) {
+            transformation = namespace.transformations.get(transformed.value) || transformation;
             const withTransformedChildren = transformed
-                .setChildren(transformed.children.map(child => child.transform(transformation)))
+                .setChildren(
+                    transformed.children.map(child => child.transform(transformation, namespace))
+                )
                 .evaluate();
 
-            return transformed.equals(withTransformedChildren)
-                ? transformed
-                : withTransformedChildren.transform(transformation);
+            return this.equals(withTransformedChildren)
+                ? withTransformedChildren
+                : withTransformedChildren.transform(transformation, namespace);
         }
         return transformed;
     }

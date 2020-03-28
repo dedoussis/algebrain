@@ -10,7 +10,6 @@ export default interface Executable {
 
 export type Namespace = {
     expression?: Node;
-    transformationName?: string;
     transformations: Map<string, Transformation>;
 };
 

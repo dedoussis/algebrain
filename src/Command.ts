@@ -32,9 +32,7 @@ export default class Command implements Executable {
 
 export enum CommandName {
     Transform = 'transform',
-    Use = 'use',
     Transformations = 'transformations',
-    Active = 'active',
     Evaluate = 'evaluate',
     Rules = 'rules',
     Help = 'help',
@@ -60,23 +58,14 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
         CommandName.Transform,
         {
             executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
-                const { expression, transformationName, transformations } = namespace;
-                const transformation = transformationName
-                    ? transformations.get(transformationName)
-                    : undefined;
-                if (transformation === undefined) {
-                    return {
-                        namespace: namespace,
-                        stdOut: ExecuteError.UndefinedTransformation,
-                    };
-                }
+                const { expression, transformations } = namespace;
                 if (expression === undefined) {
                     return {
                         namespace: namespace,
                         stdOut: ExecuteError.UndefinedExpression,
                     };
                 }
-                const transformed: Node = expression.transform(transformation);
+                const transformed: Node = expression.transform(transformations);
                 return {
                     namespace: {
                         ...namespace,
@@ -113,23 +102,29 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Rules,
         {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
-                const { transformationName, transformations } = namespace;
-                if (transformationName === undefined) {
+            executeConstructor: (command: Command): ExecuteFunc => (namespace: Namespace) => {
+                const parameter = command.parameters.first<undefined>();
+                if (parameter === undefined) {
+                    return {
+                        namespace: namespace,
+                        stdOut: ExecuteError.MissingParameters,
+                    };
+                }
+                const { transformations } = namespace;
+                const transformation = transformations.get(parameter);
+                if (transformation === undefined) {
                     return {
                         namespace: namespace,
                         stdOut: ExecuteError.UndefinedTransformation,
                     };
                 }
-                const transformation: Transformation = transformations.get(
-                    transformationName
-                ) as Transformation;
                 return {
                     namespace: namespace,
                     stdOut: transformation.toString(),
                 };
             },
-            description: 'List rules of active transformation',
+            description:
+                'List rules of given transformation - Requires transformation name as a string parameter',
         },
     ],
     [
@@ -181,56 +176,6 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 };
             },
             description: 'List all defined transformations',
-        },
-    ],
-    [
-        CommandName.Active,
-        {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
-                const { transformationName } = namespace;
-                if (transformationName === undefined) {
-                    return {
-                        namespace: namespace,
-                        stdOut: ExecuteError.UndefinedTransformation,
-                    };
-                }
-                return {
-                    namespace: namespace,
-                    stdOut: transformationName,
-                };
-            },
-            description: 'Display active transformation',
-        },
-    ],
-    [
-        CommandName.Use,
-        {
-            executeConstructor: (command: Command): ExecuteFunc => (namespace: Namespace) => {
-                const parameter: string | undefined = command.parameters.first();
-                if (parameter === undefined) {
-                    return {
-                        namespace: namespace,
-                        stdOut: ExecuteError.MissingParameters,
-                    };
-                }
-                const { transformations } = namespace;
-                const transformation: Executable | undefined = transformations.get(parameter);
-                if (transformation === undefined) {
-                    return {
-                        namespace: namespace,
-                        stdOut: ExecuteError.InvalidTransformation,
-                    };
-                }
-                return {
-                    namespace: {
-                        ...namespace,
-                        transformationName: parameter,
-                    },
-                    stdOut: transformation.toString(),
-                };
-            },
-            description:
-                'Set active transformation - Requires transformation name as a string parameter',
         },
     ],
 ]);
