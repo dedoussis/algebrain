@@ -1,6 +1,6 @@
 import { List, Map } from 'immutable';
-import Executable, { Namespace, Output } from './Executable';
-import { Transformation } from '.';
+import Executable, { Namespace, Output, TransformationMap } from './Executable';
+import Transformation from './Transformation';
 
 export default abstract class Node implements Executable {
     abstract readonly value: number | string;
@@ -21,7 +21,7 @@ export default abstract class Node implements Executable {
         );
     }
 
-    rewrite(_?: any): Node {
+    rewrite(matches: Map<string, Node>): Node {
         return this;
     }
 
@@ -29,35 +29,8 @@ export default abstract class Node implements Executable {
         return this.toString();
     }
 
-    transform(transformation, namespace) {
-        let transformed = this;
-        transformation.rules.forEach(rule => {
-            if (rule.mirrors(transformed)) {
-                transformed = rule.rhs;
-                return false;
-            }
-            const matches = rule.matches(this);
-            if (!matches.isEmpty()) {
-                transformed = rule.rhs.rewrite(matches).evaluate();
-                return false;
-            }
-        });
-        if (transformed instanceof Operator) {
-            const maybeTransformation = namespace.transformations.get(transformed.value);
-            if (maybeTransformation && maybeTransformation !== transformation) {
-                return transformed.transform(maybeTransformation, namespace);
-            }
-            const withTransformedChildren: any = transformed
-                .setChildren(
-                    transformed.children.map(child => child.transform(transformation, namespace))
-                )
-                .evaluate();
-
-            return this.equals(withTransformedChildren)
-                ? withTransformedChildren
-                : withTransformedChildren.transform(transformation, namespace);
-        }
-        return transformed;
+    transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
+        return this;
     }
 
     execute(namespace: Namespace): Output {
@@ -158,6 +131,29 @@ export class Operator extends Node {
             },
             this.value
         );
+    }
+
+    transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
+        const transformation = transformationMap.get(this.value, defaultTransformation);
+        if (transformation === undefined) {
+            return this;
+        }
+        const transformed = transformation.apply(this).evaluate();
+
+        const recursivelyTransformed =
+            transformed instanceof Operator
+                ? transformed
+                      .setChildren(
+                          transformed.children.map(child =>
+                              child.transform(transformationMap, defaultTransformation)
+                          )
+                      )
+                      .evaluate()
+                : transformed;
+
+        return this.equals(recursivelyTransformed)
+            ? recursivelyTransformed
+            : recursivelyTransformed.transform(transformationMap, defaultTransformation);
     }
 
     evaluate(): Node {

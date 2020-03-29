@@ -2,6 +2,7 @@ import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
 import Transformation from './Transformation';
+import simplification from './transformations/simplification';
 
 export default class Command implements Executable {
     readonly execute: ExecuteFunc;
@@ -65,7 +66,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         stdOut: ExecuteError.UndefinedExpression,
                     };
                 }
-                const transformed: Node = expression.transform(transformations);
+                const transformed: Node = expression.transform(transformations, simplification);
                 return {
                     namespace: {
                         ...namespace,

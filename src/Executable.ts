@@ -8,9 +8,11 @@ export default interface Executable {
     execute(namespace: Namespace): Output;
 }
 
+export type TransformationMap = Map<string, Transformation>;
+
 export type Namespace = {
     expression?: Node;
-    transformations: Map<string, Transformation>;
+    transformations: TransformationMap;
 };
 
 export type Output = {
