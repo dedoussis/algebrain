@@ -135,9 +135,7 @@ export class Operator extends Node {
 
     transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
         const transformation = transformationMap.get(this.value, defaultTransformation);
-        if (transformation === undefined) {
-            return this;
-        }
+
         const transformed = transformation.apply(this).evaluate();
 
         const recursivelyTransformed =
@@ -414,17 +412,19 @@ function evaluateDepends(children: List<Node>, commutative: boolean = false): Nu
     const dependents: List<Node> = children.butLast();
     if (dependents.size === 1) {
         const dependent: Node = dependents.first();
+        if (dependent.equals(dependency)) {
+            return TRUE;
+        }
         if (dependent instanceof Operator) {
-            return dependent.children.some(
-                child => evaluateDepends(List([child, dependency])) === TRUE
-            )
-                ? TRUE
-                : FALSE;
+            if (
+                dependent.children.some(child =>
+                    evaluateDepends(List([child, dependency])).equals(TRUE)
+                )
+            ) {
+                return TRUE;
+            }
         }
-        if (!dependent.equals(dependency)) {
-            return FALSE;
-        }
-        return TRUE;
+        return FALSE;
     }
     return dependents.every(dependent =>
         evaluateDepends(List([dependent, dependency])).equals(TRUE)

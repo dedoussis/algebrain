@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Rule from './Rule';
-import Node, { Operator } from './Node';
+import Node from './Node';
 
 export default class Transformation implements Executable {
     constructor(readonly name: string, readonly rules: List<Rule> = List()) {}

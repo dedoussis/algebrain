@@ -8,14 +8,15 @@ import Transformation from '../Transformation';
 //   integral($v^$b,$v)=$v^($b+1)/($b+1),
 //   integral($b/$v,$v)=$b*ln(abs($v)),
 //   integral($b^$v,$v)=$b^x/ln($b),
-//   integral($a*$b,$v)=$b*integral($a,$v) if not(depends($b,$v)),
+//   integral($a*$b,$v)=integral($a,$v)*$b if not(depends($b,$v)),
+//   integral($a/$b,$v)=integral($a,$v)/$b if not(depends($b,$v)),
 //   integral($a+$b,$v)=integral($a,$v)+integral($b,$v),
 //   integral($a-$b,$v)=integral($a,$v)-integral($b,$v),
 //   integral($a,$b,1)=integral($a,$b),
-//   integral($a*$b,$v,$n)=$a*integral($b,$v)-integral(diff($a,$v)*integral($b,$v),$v,$n-1),
-//   integral($v,$v)=$v^2/$v,
+//   integral($a*$b,$v,$n)=$a*integral($b,$v)-integral(diff($a,$v)*integral($b,$v),$v, $n-1),
+//   integral($v,$v)=$v^2/2,
 //   integral($a,$v)=$a*$v if const($a),
-//   integral($v/$b,$v)=integral($v^-$b,$v)
+//   integral($v/$b,$v)=integral($v^-$b,$v),
 //   integral($a*$b,$v)=integral($a,$b) if depends($a,simpl(integral($b,$v)))
 // ]
 
