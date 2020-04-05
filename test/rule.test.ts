@@ -1,6 +1,6 @@
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 import Rule from '../src/Rule';
-import Node, { Operator, OperatorSymbol, Rewritable, Num, Symbol, TRUE, FALSE } from '../src/Node';
+import { Rewritable, Num, Symbol, TRUE, FALSE } from '../src/Node';
 import Algebrain from '../src/Algebrain';
 import { plus, minus, pow, mul, flag } from '../src/utils';
 

@@ -1,7 +1,7 @@
 import { Map, List } from 'immutable';
 import Algebrain from '../src/Algebrain';
 import Command, { CommandName, ExecuteError } from '../src/Command';
-import { Num, Symbol, Operator, OperatorSymbol } from '../src/Node';
+import { Num, Symbol, Operator } from '../src/Node';
 import Transformation from '../src/Transformation';
 import fibonacci from '../src/transformations/fibonacci';
 import simplification from '../src/transformations/simplification';

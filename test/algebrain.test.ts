@@ -1,6 +1,6 @@
 import Algebrain from '../src/Algebrain';
 import { List } from 'immutable';
-import { Operator, Num, Symbol, OperatorSymbol } from '../src/Node';
+import { Num, Symbol } from '../src/Node';
 import Rule from '../src/Rule';
 import { mul, plus, minus, div, pow, equals } from '../src/utils';
 import { differentiate } from '../src/transformations/differntiation';

@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { Symbol, Num, Rewritable, OperatorSymbol } from '../Node';
+import { Num, Rewritable, OperatorSymbol } from '../Node';
 import { generateOperator, plus, minus, mul, div, pow, depends, not, constant } from '../utils';
 import Rule from '../Rule';
 import Transformation from '../Transformation';

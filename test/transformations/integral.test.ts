@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import { plus, minus, mul, div, pow } from '../../src/utils';
+import { minus, mul, div, pow } from '../../src/utils';
 import { Node, Symbol, Num, differentiation, simplification } from '../../src';
 import integral, { integrate } from '../../src/transformations/integral';
 

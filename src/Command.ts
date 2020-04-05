@@ -1,7 +1,6 @@
 import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
-import Transformation from './Transformation';
 import simplification from './transformations/simplification';
 
 export default class Command implements Executable {
