@@ -23,7 +23,7 @@ import { simplify } from './simplification';
 //   integral($a*$b,$v)=integral($a,$b) if depends($a,simpl(integral($b,$v)))
 // ]
 
-const name: string = 'integral';
+const name = 'integral';
 
 export const integrate = generateOperator(name as OperatorSymbol);
 const ln = generateOperator('ln' as OperatorSymbol);

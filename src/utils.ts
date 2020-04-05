@@ -4,7 +4,7 @@ import Node, { Operator, OperatorSymbol } from './Node';
 export type OperatorGenerator = (...children: Node[]) => Operator;
 
 export function generateOperator(value: OperatorSymbol): OperatorGenerator {
-    return (...children: Node[]) => new Operator(value, List(children));
+    return (...children: Node[]): Operator => new Operator(value, List(children));
 }
 
 export const plus = generateOperator(OperatorSymbol.Plus);

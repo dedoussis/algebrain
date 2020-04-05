@@ -3,33 +3,6 @@ import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
 import simplification from './transformations/simplification';
 
-export default class Command implements Executable {
-    readonly execute: ExecuteFunc;
-
-    constructor(
-        readonly name: CommandName,
-        readonly parameters: List<string> = List(),
-        registry: Map<CommandName, CommandSpec> = commandRegistry
-    ) {
-        this.execute = registry.get(this.name, commandNotFound).executeConstructor(this);
-    }
-
-    toString(): string {
-        return this.parameters.isEmpty()
-            ? this.name
-            : `${this.name}: ${this.parameters.join(', ')}`;
-    }
-
-    equals(other: any): boolean {
-        return (
-            other !== undefined &&
-            this.constructor === other.constructor &&
-            this.name === other.name &&
-            this.parameters === other.parameters
-        );
-    }
-}
-
 export enum CommandName {
     Transform = 'transform',
     Transformations = 'transformations',
@@ -57,7 +30,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Transform,
         {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace): Output => {
                 const { expression, transformations } = namespace;
                 if (expression === undefined) {
                     return {
@@ -66,7 +39,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     };
                 }
                 const setSimplification = transformations.get(simplification.name, simplification);
-                const transformed = expression.transform(transformations, setSimplification);
+                const transformed = expression.transform(setSimplification, transformations);
                 return {
                     namespace: {
                         ...namespace,
@@ -81,7 +54,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Evaluate,
         {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace): Output => {
                 if (namespace.expression === undefined) {
                     return {
                         namespace: namespace,
@@ -103,7 +76,9 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Rules,
         {
-            executeConstructor: (command: Command): ExecuteFunc => (namespace: Namespace) => {
+            executeConstructor: (command: Command): ExecuteFunc => (
+                namespace: Namespace
+            ): Output => {
                 const parameter = command.parameters.first<undefined>();
                 if (parameter === undefined) {
                     return {
@@ -131,7 +106,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Help,
         {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace): Output => {
                 return {
                     namespace: namespace,
                     stdOut: List(['--- algebrain version 0.0.5 ---', 'Commands:'])
@@ -152,7 +127,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Tree,
         {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace): Output => {
                 if (!(namespace.expression instanceof Node)) {
                     return {
                         namespace: namespace,
@@ -170,7 +145,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
     [
         CommandName.Transformations,
         {
-            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace) => {
+            executeConstructor: (_: Command): ExecuteFunc => (namespace: Namespace): Output => {
                 return {
                     namespace: namespace,
                     stdOut: `[ ${namespace.transformations.keySeq().join(', ')} ]`,
@@ -182,7 +157,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
 ]);
 
 const commandNotFound: CommandSpec = {
-    executeConstructor: (command: Command) => (namespace: Namespace) => {
+    executeConstructor: (command: Command) => (namespace: Namespace): Output => {
         return {
             namespace: namespace,
             stdOut: ExecuteError.CommandNotFound,
@@ -190,3 +165,30 @@ const commandNotFound: CommandSpec = {
     },
     description: 'Placeholder command',
 };
+
+export default class Command implements Executable {
+    readonly execute: ExecuteFunc;
+
+    constructor(
+        readonly name: CommandName,
+        readonly parameters: List<string> = List(),
+        registry: Map<CommandName, CommandSpec> = commandRegistry
+    ) {
+        this.execute = registry.get(this.name, commandNotFound).executeConstructor(this);
+    }
+
+    toString(): string {
+        return this.parameters.isEmpty()
+            ? this.name
+            : `${this.name}: ${this.parameters.join(', ')}`;
+    }
+
+    equals(other: any): boolean {
+        return (
+            other !== undefined &&
+            this.constructor === other.constructor &&
+            this.name === other.name &&
+            this.parameters === other.parameters
+        );
+    }
+}

@@ -259,7 +259,7 @@ describe('Transformation', () => {
     test.each(transformationCases)(
         'Transformation case %p with %p',
         (expression: Node, transformation: Transformation, transformed: Node) => {
-            expect(expression.transform(Map(), transformation).equals(transformed)).toBeTruthy();
+            expect(expression.transform(transformation).equals(transformed)).toBeTruthy();
         }
     );
 });

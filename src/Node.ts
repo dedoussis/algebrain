@@ -29,11 +29,14 @@ export default abstract class Node implements Executable {
         return this.toString();
     }
 
-    transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
-        let transformed: Node = this;
+    transform(
+        defaultTransformation: Transformation,
+        transformationMap: TransformationMap = Map()
+    ): Node {
+        let transformed;
 
         defaultTransformation.rules.forEach(rule => {
-            if (rule.lhs.equals(transformed)) {
+            if (rule.lhs.equals(this)) {
                 transformed = rule.rhs;
                 return false;
             }
@@ -44,12 +47,14 @@ export default abstract class Node implements Executable {
             }
         });
 
+        transformed = transformed || this;
+
         const recursivelyTransformed =
             transformed instanceof Operator
                 ? transformed
                       .setChildren(
                           transformed.children.map(child =>
-                              child.transform(transformationMap, defaultTransformation)
+                              child.transform(defaultTransformation, transformationMap)
                           )
                       )
                       .evaluate()
@@ -57,7 +62,7 @@ export default abstract class Node implements Executable {
 
         return this.equals(recursivelyTransformed)
             ? recursivelyTransformed
-            : recursivelyTransformed.transform(transformationMap, defaultTransformation);
+            : recursivelyTransformed.transform(defaultTransformation, transformationMap);
     }
 
     execute(namespace: Namespace): Output {
@@ -160,9 +165,12 @@ export class Operator extends Node {
         );
     }
 
-    transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
+    transform(
+        defaultTransformation: Transformation,
+        transformationMap: TransformationMap = Map()
+    ): Node {
         const transformation = transformationMap.get(this.value, defaultTransformation);
-        return super.transform(transformationMap, transformation);
+        return super.transform(transformation, transformationMap);
     }
 
     evaluate(): Node {
@@ -415,7 +423,7 @@ function evaluateNumericalOperator(
     };
 }
 
-function evaluateDepends(children: List<Node>, commutative: boolean = false): Num {
+function evaluateDepends(children: List<Node>, commutative = false): Num {
     const dependency: Node = children.last();
     if (dependency instanceof Num) {
         throw Error(`No expression can depend on ${dependency}`);
