@@ -66,7 +66,8 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         stdOut: ExecuteError.UndefinedExpression,
                     };
                 }
-                const transformed: Node = expression.transform(transformations, simplification);
+                const setSimplification = transformations.get(simplification.name, simplification);
+                const transformed = expression.transform(transformations, setSimplification);
                 return {
                     namespace: {
                         ...namespace,
@@ -88,7 +89,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                         stdOut: ExecuteError.UndefinedExpression,
                     };
                 }
-                const evaluated: Node = namespace.expression.evaluate();
+                const evaluated = namespace.expression.evaluate();
                 return {
                     namespace: {
                         ...namespace,
@@ -161,7 +162,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 }
                 return {
                     namespace: namespace,
-                    stdOut: namespace.expression.treeify(),
+                    stdOut: namespace.expression.treeify('', '\xa0'),
                 };
             },
             description: 'Tree representation of expression',

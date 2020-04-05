@@ -51,13 +51,6 @@ export default class Rule implements Executable {
         }
     }
 
-    mirrors(other: Node): boolean {
-        return (
-            this.lhs.equals(other) &&
-            (this.condition === undefined || this.condition.evaluate().equals(TRUE))
-        );
-    }
-
     equals(other: any): boolean {
         return (
             this.constructor === other.constructor &&

@@ -25,7 +25,7 @@ export default abstract class Node implements Executable {
         return this;
     }
 
-    treeify(..._: any[]): string {
+    treeify(childPrefix: string, space: string): string {
         return this.toString();
     }
 
@@ -119,7 +119,7 @@ export class Operator extends Node {
         return infix(this.value, stringifiedChildren);
     }
 
-    treeify(childPrefix: string = '', space: string = '\xa0'): string {
+    treeify(childPrefix: string, space: string): string {
         return this.children.reduce(
             (treeified: string, child: Node, index: number, children: List<Node>) => {
                 const [branch, prefixExtention]: [string, string] =
@@ -136,7 +136,19 @@ export class Operator extends Node {
     transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
         const transformation = transformationMap.get(this.value, defaultTransformation);
 
-        const transformed = transformation.apply(this).evaluate();
+        let transformed: Node = this;
+
+        transformation.rules.forEach(rule => {
+            if (rule.lhs.equals(transformed)) {
+                transformed = rule.rhs;
+                return false;
+            }
+            const matches = rule.matches(this);
+            if (!matches.isEmpty()) {
+                transformed = rule.rhs.rewrite(matches).evaluate();
+                return false;
+            }
+        });
 
         const recursivelyTransformed =
             transformed instanceof Operator
@@ -155,7 +167,7 @@ export class Operator extends Node {
     }
 
     evaluate(): Node {
-        const evaluatedChildren: List<Node> = this.evaluator.recursive
+        const evaluatedChildren = this.evaluator.recursive
             ? this.children
             : this.children.map((child: Node) => {
                   return child instanceof Operator ? child.evaluate() : child;
