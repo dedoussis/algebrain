@@ -7,8 +7,15 @@ export function generateOperator(value: OperatorSymbol): OperatorGenerator {
     return (...children: Node[]) => new Operator(value, List(children));
 }
 
-export const plus: OperatorGenerator = generateOperator(OperatorSymbol.Plus);
-export const minus: OperatorGenerator = generateOperator(OperatorSymbol.Minus);
-export const mul: OperatorGenerator = generateOperator(OperatorSymbol.Mul);
-export const div: OperatorGenerator = generateOperator(OperatorSymbol.Div);
-export const pow: OperatorGenerator = generateOperator(OperatorSymbol.Pow);
+export const plus = generateOperator(OperatorSymbol.Plus);
+export const minus = generateOperator(OperatorSymbol.Minus);
+export const mul = generateOperator(OperatorSymbol.Mul);
+export const div = generateOperator(OperatorSymbol.Div);
+export const pow = generateOperator(OperatorSymbol.Pow);
+export const depends = generateOperator(OperatorSymbol.Depends);
+export const constant = generateOperator(OperatorSymbol.Constant);
+export const not = generateOperator(OperatorSymbol.Not);
+export const and = generateOperator(OperatorSymbol.And);
+export const or = generateOperator(OperatorSymbol.Or);
+export const flag = generateOperator(OperatorSymbol.Flag);
+export const equals = generateOperator(OperatorSymbol.Equals);

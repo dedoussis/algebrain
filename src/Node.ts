@@ -1,6 +1,6 @@
 import { List, Map } from 'immutable';
-import Executable, { Namespace, Output } from './Executable';
-import { Transformation } from '.';
+import Executable, { Namespace, Output, TransformationMap } from './Executable';
+import Transformation from './Transformation';
 
 export default abstract class Node implements Executable {
     abstract readonly value: number | string;
@@ -21,18 +21,19 @@ export default abstract class Node implements Executable {
         );
     }
 
-    rewrite(_?: any): Node {
+    rewrite(matches: Map<string, Node>): Node {
         return this;
     }
 
-    treeify(..._: any[]): string {
+    treeify(childPrefix: string, space: string): string {
         return this.toString();
     }
 
-    transform(transformation: Transformation): Node {
+    transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
         let transformed: Node = this;
-        transformation.rules.forEach(rule => {
-            if (rule.mirrors(transformed)) {
+
+        defaultTransformation.rules.forEach(rule => {
+            if (rule.lhs.equals(transformed)) {
                 transformed = rule.rhs;
                 return false;
             }
@@ -42,16 +43,21 @@ export default abstract class Node implements Executable {
                 return false;
             }
         });
-        if (transformed instanceof Operator) {
-            const withTransformedChildren = transformed
-                .setChildren(transformed.children.map(child => child.transform(transformation)))
-                .evaluate();
 
-            return transformed.equals(withTransformedChildren)
+        const recursivelyTransformed =
+            transformed instanceof Operator
                 ? transformed
-                : withTransformedChildren.transform(transformation);
-        }
-        return transformed;
+                      .setChildren(
+                          transformed.children.map(child =>
+                              child.transform(transformationMap, defaultTransformation)
+                          )
+                      )
+                      .evaluate()
+                : transformed;
+
+        return this.equals(recursivelyTransformed)
+            ? recursivelyTransformed
+            : recursivelyTransformed.transform(transformationMap, defaultTransformation);
     }
 
     execute(namespace: Namespace): Output {
@@ -140,7 +146,7 @@ export class Operator extends Node {
         return infix(this.value, stringifiedChildren);
     }
 
-    treeify(childPrefix: string = '', space: string = '\xa0'): string {
+    treeify(childPrefix: string, space: string): string {
         return this.children.reduce(
             (treeified: string, child: Node, index: number, children: List<Node>) => {
                 const [branch, prefixExtention]: [string, string] =
@@ -154,8 +160,13 @@ export class Operator extends Node {
         );
     }
 
+    transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
+        const transformation = transformationMap.get(this.value, defaultTransformation);
+        return super.transform(transformationMap, transformation);
+    }
+
     evaluate(): Node {
-        const evaluatedChildren: List<Node> = this.evaluator.recursive
+        const evaluatedChildren = this.evaluator.recursive
             ? this.children
             : this.children.map((child: Node) => {
                   return child instanceof Operator ? child.evaluate() : child;
@@ -412,17 +423,19 @@ function evaluateDepends(children: List<Node>, commutative: boolean = false): Nu
     const dependents: List<Node> = children.butLast();
     if (dependents.size === 1) {
         const dependent: Node = dependents.first();
+        if (dependent.equals(dependency)) {
+            return TRUE;
+        }
         if (dependent instanceof Operator) {
-            return dependent.children.some(
-                child => evaluateDepends(List([child, dependency])) === TRUE
-            )
-                ? TRUE
-                : FALSE;
+            if (
+                dependent.children.some(child =>
+                    evaluateDepends(List([child, dependency])).equals(TRUE)
+                )
+            ) {
+                return TRUE;
+            }
         }
-        if (!dependent.equals(dependency)) {
-            return FALSE;
-        }
-        return TRUE;
+        return FALSE;
     }
     return dependents.every(dependent =>
         evaluateDepends(List([dependent, dependency])).equals(TRUE)

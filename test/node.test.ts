@@ -1,12 +1,24 @@
 import { List, Map } from 'immutable';
 import Node, { Operator, Num, Symbol, OperatorSymbol, TRUE, FALSE, Rewritable } from '../src/Node';
-import { plus, minus, mul, div, pow } from '../src/utils';
+import {
+    plus,
+    minus,
+    mul,
+    div,
+    pow,
+    equals,
+    depends,
+    constant,
+    flag,
+    and,
+    or,
+    not,
+} from '../src/utils';
 import Algebrain from '../src/Algebrain';
 import differentiation, { differentiate } from '../src/transformations/differntiation';
 import fibonacci, { fibonaccify } from '../src/transformations/fibonacci';
-import simplification from '../src/transformations/simplification';
 
-import { Transformation, Rule } from '../src';
+import { Transformation, Rule, simplification } from '../src';
 
 const cases = [
     ['unary should stay the same', minus(new Num(3)), minus(new Num(3))],
@@ -14,163 +26,115 @@ const cases = [
     ['flat substraction', minus(new Num(6), new Num(5)), new Num(1)],
     ['flat multiplication', mul(new Num(8), new Num(3)), new Num(24)],
     ['flat division (3 children)', div(new Num(20), new Num(5), new Num(2)), new Num(2)],
+    ['x==x should be true', equals(new Symbol('x'), new Symbol('x')), TRUE],
+    ['equals false', equals(new Num(5), new Num(33)), FALSE],
+    ['is(5==5) should be true', flag(equals(new Num(5), new Num(5))), TRUE],
+    ['is(8==10) should be false', flag(equals(new Num(8), new Num(10))), FALSE],
     [
-        'equals true',
-        new Operator(OperatorSymbol.Equals, List([new Symbol('x'), new Symbol('x')])),
+        'depends(5*(x/10),x) should be true',
+        depends(mul(new Num(5), div(new Symbol('x'), new Num(10))), new Symbol('x')),
         TRUE,
     ],
-    ['equals false', new Operator(OperatorSymbol.Equals, List([new Num(5), new Num(33)])), FALSE],
     [
-        'flag true',
-        new Operator(
-            OperatorSymbol.Flag,
-            List([new Operator(OperatorSymbol.Equals, List([new Num(5), new Num(5)]))])
+        'depends(x-10,y) should be false',
+        depends(minus(new Symbol('x'), new Num(10)), new Symbol('y')),
+        FALSE,
+    ],
+    [
+        'depends(k+3-y^6*(2*x+5),2*x+5) should be true',
+        depends(
+            plus(
+                new Symbol('k'),
+                minus(
+                    new Num(3),
+                    pow(
+                        new Symbol('y'),
+                        mul(new Num(6), plus(mul(new Num(2), new Symbol('x')), new Num(5)))
+                    )
+                )
+            ),
+            plus(mul(new Num(2), new Symbol('x')), new Num(5))
         ),
         TRUE,
     ],
     [
-        'flag false',
-        new Operator(
-            OperatorSymbol.Flag,
-            List([new Operator(OperatorSymbol.Equals, List([new Num(8), new Num(10)]))])
+        'depends(k+3-y^6*(2*x+5),2*x) should be true',
+        depends(
+            plus(
+                new Symbol('k'),
+                minus(
+                    new Num(3),
+                    pow(
+                        new Symbol('y'),
+                        mul(new Num(6), plus(mul(new Num(2), new Symbol('x')), new Num(5)))
+                    )
+                )
+            ),
+            mul(new Num(2), new Symbol('x'))
+        ),
+        TRUE,
+    ],
+    [
+        'depends(k+3-y^6*(2*x+5),x+5) should be false',
+        depends(
+            plus(
+                new Symbol('k'),
+                minus(
+                    new Num(3),
+                    pow(
+                        new Symbol('y'),
+                        mul(new Num(6), plus(mul(new Num(2), new Symbol('x')), new Num(5)))
+                    )
+                )
+            ),
+            plus(new Symbol('x'), new Num(5))
         ),
         FALSE,
     ],
     [
-        'depends on true',
-        new Operator(
-            OperatorSymbol.Depends,
-            List([
-                new Operator(
-                    OperatorSymbol.Mul,
-                    List([
-                        new Num(5),
-                        new Operator(OperatorSymbol.Div, List([new Symbol('x'), new Num(10)])),
-                    ])
-                ),
-                new Symbol('x'),
-            ])
+        'depends(3+k+x/y,x/y) should be true',
+        depends(
+            plus(new Num(3), new Symbol('k'), div(new Symbol('x'), new Symbol('y'))),
+            div(new Symbol('x'), new Symbol('y'))
         ),
         TRUE,
     ],
     [
-        'depends on false',
-        new Operator(
-            OperatorSymbol.Depends,
-            List([
-                new Operator(OperatorSymbol.Minus, List([new Symbol('x'), new Num(10)])),
-                new Symbol('y'),
-            ])
+        'v==v and not(depends(y,x)) and True should be true',
+        and(
+            equals(new Rewritable('v'), new Rewritable('v')),
+            not(depends(new Symbol('y'), new Symbol('x'))),
+            TRUE
+        ),
+        TRUE,
+    ],
+    [
+        'v==v and not(depends(y,y)) and True should be false',
+        and(
+            equals(new Rewritable('v'), new Rewritable('v')),
+            not(depends(new Symbol('y'), new Symbol('y'))),
+            TRUE
         ),
         FALSE,
     ],
-
+    ['const($u) should be false', constant(new Rewritable('u')), FALSE],
+    ['const(x) should be true', constant(new Symbol('x')), TRUE],
+    ['const(6) should be true', constant(new Num(6)), TRUE],
     [
-        'depends on true',
-        new Operator(
-            OperatorSymbol.Depends,
-            List([
-                new Operator(
-                    OperatorSymbol.Mul,
-                    List([
-                        new Symbol('5'),
-                        new Operator(OperatorSymbol.Div, List([new Symbol('x'), new Num(10)])),
-                    ])
-                ),
-                new Symbol('x'),
-            ])
+        '2==$v or not(depends(y,x)) or False should be true',
+        or(
+            equals(new Num(2), new Rewritable('v')),
+            not(depends(new Symbol('y'), new Symbol('x'))),
+            FALSE
         ),
         TRUE,
     ],
     [
-        'logical And true',
-        new Operator(
-            OperatorSymbol.And,
-            List([
-                new Operator(
-                    OperatorSymbol.Equals,
-                    List([new Rewritable('v'), new Rewritable('v')])
-                ),
-                new Operator(
-                    OperatorSymbol.Not,
-                    List([
-                        new Operator(
-                            OperatorSymbol.Depends,
-                            List([new Symbol('y'), new Symbol('x')])
-                        ),
-                    ])
-                ),
-                TRUE,
-            ])
-        ),
-        TRUE,
-    ],
-    ['const of $u', new Operator(OperatorSymbol.Constant, List([new Rewritable('u')])), FALSE],
-    ['const of x', new Operator(OperatorSymbol.Constant, List([new Symbol('x')])), TRUE],
-    ['const of 6', new Operator(OperatorSymbol.Constant, List([new Num(6)])), TRUE],
-    [
-        'logical And false',
-        new Operator(
-            OperatorSymbol.And,
-            List([
-                new Operator(
-                    OperatorSymbol.Equals,
-                    List([new Rewritable('v'), new Rewritable('v')])
-                ),
-                new Operator(
-                    OperatorSymbol.Not,
-                    List([
-                        new Operator(
-                            OperatorSymbol.Depends,
-                            List([new Symbol('y'), new Symbol('y')])
-                        ),
-                    ])
-                ),
-                TRUE,
-            ])
-        ),
-        FALSE,
-    ],
-    [
-        'logical Or true',
-        new Operator(
-            OperatorSymbol.Or,
-            List([
-                new Operator(OperatorSymbol.Equals, List([new Num(2), new Rewritable('v')])),
-                new Operator(
-                    OperatorSymbol.Not,
-                    List([
-                        new Operator(
-                            OperatorSymbol.Depends,
-                            List([new Symbol('y'), new Symbol('x')])
-                        ),
-                    ])
-                ),
-                FALSE,
-            ])
-        ),
-        TRUE,
-    ],
-    [
-        'logical Or false',
-        new Operator(
-            OperatorSymbol.Or,
-            List([
-                new Operator(
-                    OperatorSymbol.Equals,
-                    List([new Rewritable('u'), new Rewritable('v')])
-                ),
-                new Operator(
-                    OperatorSymbol.Not,
-                    List([
-                        new Operator(
-                            OperatorSymbol.Depends,
-                            List([new Symbol('x'), new Symbol('x')])
-                        ),
-                    ])
-                ),
-                FALSE,
-            ])
+        '$u==$v or not(depends(x,x)) or False should be false',
+        or(
+            equals(new Rewritable('u'), new Rewritable('v')),
+            not(depends(new Symbol('x'), new Symbol('x'))),
+            FALSE
         ),
         FALSE,
     ],
@@ -295,14 +259,14 @@ describe('Transformation', () => {
     test.each(transformationCases)(
         'Transformation case %p with %p',
         (expression: Node, transformation: Transformation, transformed: Node) => {
-            expect(expression.transform(transformation).equals(transformed)).toBeTruthy();
+            expect(expression.transform(Map(), transformation).equals(transformed)).toBeTruthy();
         }
     );
 });
 
 describe('Operator', () => {
     it('constructs', () => {
-        const value: OperatorSymbol = OperatorSymbol.Plus;
+        const value = OperatorSymbol.Plus;
         expect(new Operator(value).value).toEqual(value);
     });
 
@@ -326,7 +290,7 @@ describe('Operator', () => {
             new Symbol('x'),
             new Operator('diff', List([new Rewritable('u'), new Rewritable('y')]))
         );
-        const another: Operator = minus(
+        const another = minus(
             new Num(5),
             new Symbol('x'),
             new Operator('ndiff', List([new Rewritable('u'), new Rewritable('y'), new Num(2)]))
@@ -335,12 +299,12 @@ describe('Operator', () => {
     });
 
     it('it is not equal with another Operator that has different children', () => {
-        const one: Operator = minus(
+        const one = minus(
             new Num(5),
             new Symbol('x'),
             new Operator('diff', List([new Rewritable('u'), new Rewritable('y')]))
         );
-        const another: Operator = minus(
+        const another = minus(
             new Num(5),
             new Symbol('x'),
             new Operator('ndiff', List([new Rewritable('u'), new Rewritable('z')]))

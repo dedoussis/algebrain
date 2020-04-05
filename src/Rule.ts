@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
-import Node, { Operator, Rewritable, TRUE, FALSE } from './Node';
+import Node, { Operator, Rewritable, FALSE } from './Node';
 
 export default class Rule implements Executable {
     constructor(readonly lhs: Node, readonly rhs: Node, readonly condition?: Node) {}
@@ -49,13 +49,6 @@ export default class Rule implements Executable {
         } catch {
             return Map<string, Node>();
         }
-    }
-
-    mirrors(other: Node): boolean {
-        return (
-            this.lhs.equals(other) &&
-            (this.condition === undefined || this.condition.evaluate().equals(TRUE))
-        );
     }
 
     equals(other: any): boolean {

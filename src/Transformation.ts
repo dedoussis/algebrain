@@ -1,7 +1,6 @@
 import { List } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Rule from './Rule';
-import Node, { Operator } from './Node';
 
 export default class Transformation implements Executable {
     constructor(readonly name: string, readonly rules: List<Rule> = List()) {}
@@ -27,7 +26,6 @@ export default class Transformation implements Executable {
             namespace: {
                 ...namespace,
                 transformations: namespace.transformations.set(this.name, this),
-                transformationName: this.name,
             },
             stdOut: this.toString(),
         };

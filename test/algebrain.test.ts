@@ -1,47 +1,19 @@
 import Algebrain from '../src/Algebrain';
 import { List } from 'immutable';
-import { Operator, Num, Symbol, OperatorSymbol } from '../src/Node';
+import { Num, Symbol } from '../src/Node';
 import Rule from '../src/Rule';
+import { mul, plus, minus, div, pow, equals } from '../src/utils';
+import { differentiate } from '../src/transformations/differntiation';
 
 const cases = [
     ['x', new Symbol('x')],
-    ['1+3', new Operator(OperatorSymbol.Plus, List([new Num(1), new Num(3)]))],
-    [
-        '1-3/2',
-        new Operator(
-            OperatorSymbol.Minus,
-            List([new Num(1), new Operator(OperatorSymbol.Div, List([new Num(3), new Num(2)]))])
-        ),
-    ],
-    [
-        'x^5/2',
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(5)])),
-                new Num(2),
-            ])
-        ),
-    ],
-    [
-        'x^5/(2+y)',
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(5)])),
-                new Operator(OperatorSymbol.Plus, List([new Num(2), new Symbol('y')])),
-            ])
-        ),
-    ],
+    ['1+3', plus(new Num(1), new Num(3))],
+    ['1-3/2', minus(new Num(1), div(new Num(3), new Num(2)))],
+    ['x^5/2', div(pow(new Symbol('x'), new Num(5)), new Num(2))],
+    ['x^5/(2+y)', div(pow(new Symbol('x'), new Num(5)), plus(new Num(2), new Symbol('y')))],
     [
         'x^5.67/(122.31+y)',
-        new Operator(
-            OperatorSymbol.Div,
-            List([
-                new Operator(OperatorSymbol.Pow, List([new Symbol('x'), new Num(5.67)])),
-                new Operator(OperatorSymbol.Plus, List([new Num(122.31), new Symbol('y')])),
-            ])
-        ),
+        div(pow(new Symbol('x'), new Num(5.67)), plus(new Num(122.31), new Symbol('y'))),
     ],
 ];
 
@@ -58,16 +30,13 @@ const multilineCases = [
     3`,
         List([
             new Rule(
-                new Operator('diff', List([new Symbol('x')])),
-                new Operator('diff', List([new Symbol('y')])),
-                new Operator(OperatorSymbol.Equals, List([new Num(3), new Num(5)]))
+                differentiate(new Symbol('x')),
+                differentiate(new Symbol('y')),
+                equals(new Num(3), new Num(5))
             ),
             new Rule(
-                new Operator(
-                    'diff',
-                    List([new Operator(OperatorSymbol.Mul, List([new Num(2), new Symbol('x')]))])
-                ),
-                new Operator('diff', List([new Symbol('y')]))
+                differentiate(mul(new Num(2), new Symbol('x'))),
+                differentiate(new Symbol('y'))
             ),
             new Num(3),
         ]),
