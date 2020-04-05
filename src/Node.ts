@@ -30,7 +30,34 @@ export default abstract class Node implements Executable {
     }
 
     transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
-        return this;
+        let transformed: Node = this;
+
+        defaultTransformation.rules.forEach(rule => {
+            if (rule.lhs.equals(transformed)) {
+                transformed = rule.rhs;
+                return false;
+            }
+            const matches = rule.matches(this);
+            if (!matches.isEmpty()) {
+                transformed = rule.rhs.rewrite(matches).evaluate();
+                return false;
+            }
+        });
+
+        const recursivelyTransformed =
+            transformed instanceof Operator
+                ? transformed
+                      .setChildren(
+                          transformed.children.map(child =>
+                              child.transform(transformationMap, defaultTransformation)
+                          )
+                      )
+                      .evaluate()
+                : transformed;
+
+        return this.equals(recursivelyTransformed)
+            ? recursivelyTransformed
+            : recursivelyTransformed.transform(transformationMap, defaultTransformation);
     }
 
     execute(namespace: Namespace): Output {
@@ -135,35 +162,7 @@ export class Operator extends Node {
 
     transform(transformationMap: TransformationMap, defaultTransformation: Transformation): Node {
         const transformation = transformationMap.get(this.value, defaultTransformation);
-
-        let transformed: Node = this;
-
-        transformation.rules.forEach(rule => {
-            if (rule.lhs.equals(transformed)) {
-                transformed = rule.rhs;
-                return false;
-            }
-            const matches = rule.matches(this);
-            if (!matches.isEmpty()) {
-                transformed = rule.rhs.rewrite(matches).evaluate();
-                return false;
-            }
-        });
-
-        const recursivelyTransformed =
-            transformed instanceof Operator
-                ? transformed
-                      .setChildren(
-                          transformed.children.map(child =>
-                              child.transform(transformationMap, defaultTransformation)
-                          )
-                      )
-                      .evaluate()
-                : transformed;
-
-        return this.equals(recursivelyTransformed)
-            ? recursivelyTransformed
-            : recursivelyTransformed.transform(transformationMap, defaultTransformation);
+        return super.transform(transformationMap, transformation);
     }
 
     evaluate(): Node {

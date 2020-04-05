@@ -16,7 +16,7 @@ import { simplify } from './simplification';
 //   integral($a+$b,$v)=integral($a,$v)+integral($b,$v),
 //   integral($a-$b,$v)=integral($a,$v)-integral($b,$v),
 //   integral($a,$v,1)=integral($a,$v),
-//   integral($a*$b,$v,$n)=$a*integral($b,$v)-integral(diff($a,$v)*integral($b,$v),$v, $n-1),
+//   integral($a*$b,$v,$n)=$a*integral($b,$v)-integral(diff($a,$v)*integral($b,$v),$v,$n-1),
 //   integral($v,$v)=$v^2/2,
 //   integral($a,$v)=$a*$v if const($a),
 //   integral($v/$b,$v)=integral($v^-$b,$v),
@@ -49,17 +49,17 @@ const integral: Transformation = new Transformation(
         ),
         new Rule(
             integrate(mul(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            mul(integrate(new Rewritable('a'), new Rewritable('v'), new Rewritable('b'))),
+            mul(integrate(new Rewritable('a'), new Rewritable('v')), new Rewritable('b')),
             not(depends(new Rewritable('b'), new Rewritable('v')))
         ),
         new Rule(
             integrate(mul(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            mul(integrate(new Rewritable('b'), new Rewritable('v'), new Rewritable('a'))),
+            mul(integrate(new Rewritable('b'), new Rewritable('v')), new Rewritable('a')),
             not(depends(new Rewritable('a'), new Rewritable('v')))
         ),
         new Rule(
             integrate(div(new Rewritable('a'), new Rewritable('b')), new Rewritable('v')),
-            div(integrate(new Rewritable('a'), new Rewritable('v'), new Rewritable('b'))),
+            div(integrate(new Rewritable('a'), new Rewritable('v')), new Rewritable('b')),
             not(depends(new Rewritable('b'), new Rewritable('v')))
         ),
         new Rule(
@@ -84,17 +84,17 @@ const integral: Transformation = new Transformation(
             integrate(
                 mul(new Rewritable('a'), new Rewritable('b')),
                 new Rewritable('v'),
-                new Symbol('n')
+                new Rewritable('n')
             ),
             minus(
-                mul(new Rewritable('a'), integrate(new Rewritable('a'), new Rewritable('v'))),
+                mul(new Rewritable('a'), integrate(new Rewritable('b'), new Rewritable('v'))),
                 integrate(
                     mul(
                         differentiate(new Rewritable('a'), new Rewritable('v')),
                         integrate(new Rewritable('b'), new Rewritable('v'))
                     ),
                     new Rewritable('v'),
-                    minus(new Symbol('n'), new Num(1))
+                    minus(new Rewritable('n'), new Num(1))
                 )
             )
         ),
