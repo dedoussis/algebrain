@@ -22,8 +22,8 @@ const integralCases = [
 
 describe('integral', () => {
     test.each(integralCases)('Integral case %p', (title: string, expr: Node, expected: Node) => {
-        const transformed = expr.transform(transformationMap, simplification);
-        const actual = transformed.transform(Map(), simplification);
+        const transformed = expr.transform(simplification, transformationMap);
+        const actual = transformed.transform(simplification);
         expect(actual).toEqual(expected);
     });
 });

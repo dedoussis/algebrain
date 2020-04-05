@@ -23,7 +23,7 @@ import Transformation from '../Transformation';
 //   $s-$s=0
 // ]
 
-const name: string = 'simpl';
+const name = 'simpl';
 
 export const simplify: OperatorGenerator = generateOperator(name as OperatorSymbol);
 

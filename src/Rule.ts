@@ -61,7 +61,7 @@ export default class Rule implements Executable {
     }
 
     toString(): string {
-        const equation: string = `${this.lhs}=${this.rhs}`;
+        const equation = `${this.lhs}=${this.rhs}`;
         return this.condition === undefined ? equation : `${equation} if ${this.condition}`;
     }
 

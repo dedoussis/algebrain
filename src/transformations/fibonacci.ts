@@ -10,7 +10,7 @@ import Transformation from '../Transformation';
 //   fib($a)=fib($a-1)+fib($a-2) if const($a)
 // ]
 
-const name: string = 'fib';
+const name = 'fib';
 
 export const fibonaccify: OperatorGenerator = generateOperator(name as OperatorSymbol);
 

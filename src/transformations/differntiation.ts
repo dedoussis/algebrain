@@ -14,7 +14,7 @@ import Transformation from '../Transformation';
 //   diff($v,$v)=1
 // ]
 
-const name: string = 'diff';
+const name = 'diff';
 
 export const differentiate: OperatorGenerator = generateOperator(name as OperatorSymbol);
 

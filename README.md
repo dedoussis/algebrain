@@ -54,14 +54,14 @@ Under the hood, the above parsing uses an extensive API for structuring algebrai
 ```javascript
 // Algebrain heavily relies on the immutable package for persistent data structures
 import { List } from "immutable";
-import { Operator, Num, Symbol } from "algebrain";
+import { Operator, Num, Symbol, OperatorSymbol } from "algebrain";
 
 // The above expression: 14.4+5/(y-12.34), is constructed as:
-const expr = new Operator("+", List([
+const expr = new Operator(OperatorSymbol.Plus, List([
     new Num(14.4),
-    new Operator("/", List([
+    new Operator(OperatorSymbol.Div, List([
         new Num(5),
-        new Operator("-", List([
+        new Operator(OperatorSymbol.Minus, List([
             new Symbol("y"),
             new Num(12.34)
         ]))
