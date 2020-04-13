@@ -2,6 +2,7 @@ import { List, Map } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Node from './Node';
 import simplification from './transformations/simplification';
+import { treeify } from './utils';
 
 export enum CommandName {
     Transform = 'transform',
@@ -48,7 +49,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: transformed.toString(),
                 };
             },
-            description: 'Transform current expression using the active transformation',
+            description: 'Transform the current expression',
         },
     ],
     [
@@ -70,7 +71,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: evaluated.toString(),
                 };
             },
-            description: 'Evaluate current expression',
+            description: 'Evaluate the current expression',
         },
     ],
     [
@@ -100,7 +101,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 };
             },
             description:
-                'List rules of given transformation - Requires transformation name as a string parameter',
+                'List the rules of a given transformation - Requires transformation name as a string parameter',
         },
     ],
     [
@@ -136,10 +137,10 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                 }
                 return {
                     namespace: namespace,
-                    stdOut: namespace.expression.treeify('', '\xa0'),
+                    stdOut: treeify(namespace.expression),
                 };
             },
-            description: 'Tree representation of expression',
+            description: 'Tree representation of the expression',
         },
     ],
     [
@@ -151,7 +152,7 @@ export const commandRegistry: Map<CommandName, CommandSpec> = Map([
                     stdOut: `[ ${namespace.transformations.keySeq().join(', ')} ]`,
                 };
             },
-            description: 'List all defined transformations',
+            description: 'List all the defined transformations',
         },
     ],
 ]);

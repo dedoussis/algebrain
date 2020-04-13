@@ -19,3 +19,25 @@ export const and = generateOperator(OperatorSymbol.And);
 export const or = generateOperator(OperatorSymbol.Or);
 export const flag = generateOperator(OperatorSymbol.Flag);
 export const equals = generateOperator(OperatorSymbol.Equals);
+
+export const space = ' ';
+export const newLine = '\n';
+export const indent = space.repeat(2);
+
+export function treeify(node: Node, childPrefix = ''): string {
+    if (!(node instanceof Operator)) {
+        return node.toString();
+    }
+
+    return node.children.reduce(
+        (treeified: string, child: Node, index: number, children: List<Node>) => {
+            const [branch, prefixExtention] =
+                index === children.size - 1 ? ['└─', space] : ['├─', '│'];
+            const newPrefix = childPrefix + prefixExtention + indent;
+            const treefiedChild = treeify(child, newPrefix);
+            const prefixedTreefiedChild = childPrefix + branch + space + treefiedChild;
+            return treeified + newLine + prefixedTreefiedChild;
+        },
+        node.value
+    );
+}

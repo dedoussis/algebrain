@@ -311,23 +311,4 @@ describe('Operator', () => {
         );
         expect(one.equals(another)).toBeFalsy();
     });
-
-    it('it treeifies', () => {
-        const expr: Operator = div(
-            plus(minus(new Rewritable('u'), new Symbol('x')), new Num(5)),
-            pow(new Symbol('g'), new Num(5))
-        );
-        const treefied: string[] = [
-            '/',
-            '├─ +',
-            '│  ├─ -',
-            '│  │  ├─ $u',
-            '│  │  └─ x',
-            '│  └─ 5',
-            '└─ ^',
-            '   ├─ g',
-            '   └─ 5',
-        ];
-        expect(expr.treeify('', ' ')).toEqual(treefied.join('\n'));
-    });
 });

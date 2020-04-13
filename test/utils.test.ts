@@ -1,6 +1,16 @@
 import { List } from 'immutable';
-import { generateOperator, OperatorGenerator, plus, minus, mul, div, pow } from '../src/utils';
-import { Operator, OperatorSymbol, Num } from '../src/Node';
+import {
+    generateOperator,
+    OperatorGenerator,
+    plus,
+    minus,
+    mul,
+    div,
+    pow,
+    treeify,
+    newLine,
+} from '../src/utils';
+import { Operator, OperatorSymbol, Num, Rewritable, Symbol } from '../src/Node';
 
 describe('generateOperator', () => {
     it('generates any given operator symbol', () => {
@@ -31,5 +41,26 @@ describe('generateOperator', () => {
     it('implementes a pow partial', () => {
         const operator: Operator = pow();
         expect(new Operator(OperatorSymbol.Pow).equals(operator)).toBeTruthy;
+    });
+});
+
+describe('treeifier', () => {
+    it('it treeifies', () => {
+        const expr = div(
+            plus(minus(new Rewritable('u'), new Symbol('x')), new Num(5)),
+            pow(new Symbol('g'), new Num(5))
+        );
+        const expected = [
+            '/',
+            '├─ +',
+            '│  ├─ -',
+            '│  │  ├─ $u',
+            '│  │  └─ x',
+            '│  └─ 5',
+            '└─ ^',
+            '   ├─ g',
+            '   └─ 5',
+        ].join(newLine);
+        expect(treeify(expr)).toEqual(expected);
     });
 });
