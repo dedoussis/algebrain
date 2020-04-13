@@ -1,6 +1,7 @@
 import { List } from 'immutable';
 import Executable, { Namespace, Output } from './Executable';
 import Rule from './Rule';
+import { indent, newLine } from './utils';
 
 export default class Transformation implements Executable {
     constructor(readonly name: string, readonly rules: List<Rule> = List()) {}
@@ -10,7 +11,8 @@ export default class Transformation implements Executable {
     }
 
     toString(): string {
-        return `[\n\xa0\xa0${this.rules.join(`,\n\xa0\xa0`)}\n]`;
+        const newLineIndent = newLine + indent;
+        return '[' + newLineIndent + this.rules.join(',' + newLineIndent) + newLine + ']';
     }
 
     equals(other: any): boolean {
