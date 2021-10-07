@@ -128,7 +128,7 @@ export class Operator extends Node {
         this.stringifier = handlers.stringifier;
     }
 
-    setChildren(childen: List<Node>) {
+    setChildren(childen: List<Node>): Operator {
         return new Operator(this.value, childen);
     }
 

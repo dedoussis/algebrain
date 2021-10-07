@@ -21,36 +21,45 @@ import {
     AdditionExprContext,
     UnaryContext,
 } from './parser/AlgebrainParser';
-import Executable from './Executable';
-import Node, { Num, Symbol, Rewritable, Operator, OperatorSymbol, TRUE, FALSE } from './Node';
-import Rule from './Rule';
-import Transformation from './Transformation';
-import Command, { CommandName } from './Command';
+import Object, {
+    Expr,
+    Num,
+    Symbol,
+    Rewritable,
+    Operator,
+    OperatorSymbol,
+    True,
+    False,
+    Command,
+    CommandName,
+    Rule,
+    Transformation,
+} from './Object';
 import { Token } from 'antlr4ts/Token';
 
-export default class Visitor extends AbstractParseTreeVisitor<Executable>
-    implements AlgebrainVisitor<Executable> {
-    private constructOperator(symbol: string, childrenValues: List<any>): Operator {
-        const children: List<Node> = childrenValues.map(value => this.visitNodeCtx(value));
+export default class Visitor extends AbstractParseTreeVisitor<Object>
+    implements AlgebrainVisitor<Object> {
+    private constructOperator(symbol: string, childrenValues: List<ParseTree>): Operator {
+        const children: List<Expr> = childrenValues.map(value => this.visitNodeCtx(value));
         return new Operator(symbol, children);
     }
 
-    private visitNodeCtx: (tree: ParseTree) => Node = (tree: ParseTree) =>
-        this.visitTypeCtx(Node, tree);
+    private visitNodeCtx: (tree: ParseTree) => Expr = (tree: ParseTree) =>
+        this.visitTypeCtx(Expr, tree);
 
     private visitOperatorCtx: (tree: ParseTree) => Operator = (tree: ParseTree) =>
         this.visitTypeCtx(Operator, tree);
 
     private visitTypeCtx(type: Function, tree: ParseTree): any {
-        const result: Executable = this.visit(tree);
+        const result: Object = this.visit(tree);
         if (!(result instanceof type)) {
             throw Error(`Parsed tree should be of ${type.constructor.name} type`);
         }
         return result;
     }
 
-    defaultResult(): Node {
-        return FALSE;
+    defaultResult(): Expr {
+        return False;
     }
 
     visitNumber(ctx: NumberContext): Num {
@@ -65,7 +74,7 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
         return new Rewritable(ctx.ID().text);
     }
 
-    visitExprParens(ctx: ExprParensContext): Node {
+    visitExprParens(ctx: ExprParensContext): Expr {
         return this.visitNodeCtx(ctx.expr());
     }
 
@@ -74,14 +83,14 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     visitTrue(_: TrueContext): Num {
-        return TRUE;
+        return True;
     }
 
     visitFalse(_: FalseContext): Num {
-        return FALSE;
+        return False;
     }
 
-    visitBooleanExprParens(ctx: BooleanExprParensContext): Node {
+    visitBooleanExprParens(ctx: BooleanExprParensContext): Expr {
         return this.visitNodeCtx(ctx.booleanExpr());
     }
 
@@ -89,22 +98,22 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
         return this.constructOperator(OperatorSymbol.Equals, List(ctx.expr()));
     }
 
-    visitBooleanExpr(ctx: BooleanExprContext): Node {
+    visitBooleanExpr(ctx: BooleanExprContext): Expr {
         if ((ctx._op as Token | undefined) === undefined) {
             return this.visitNodeCtx(ctx.booleanAtom(0));
         }
         return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.booleanAtom()));
     }
 
-    visitAdditionExpr(ctx: AdditionExprContext): Node {
+    visitAdditionExpr(ctx: AdditionExprContext): Expr {
         return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.expr()));
     }
 
-    visitMultiplyingExpr(ctx: MultiplyingExprContext): Node {
+    visitMultiplyingExpr(ctx: MultiplyingExprContext): Expr {
         return this.constructOperator(ctx._op.text as OperatorSymbol, List(ctx.expr()));
     }
 
-    visitPowExpr(ctx: PowExprContext): Node {
+    visitPowExpr(ctx: PowExprContext): Expr {
         return this.constructOperator(OperatorSymbol.Pow, List(ctx.expr()));
     }
 
@@ -113,15 +122,15 @@ export default class Visitor extends AbstractParseTreeVisitor<Executable>
     }
 
     visitRewriting(ctx: RewritingContext): Rule {
-        const lhs: Node = this.visitNodeCtx(ctx.expr(0));
-        const rhs: Node = this.visitNodeCtx(ctx.expr(1));
+        const lhs: Expr = this.visitNodeCtx(ctx.expr(0));
+        const rhs: Expr = this.visitNodeCtx(ctx.expr(1));
         const bexpCtx: BooleanExprContext | undefined = ctx.booleanExpr();
-        const condition: Node | undefined =
+        const condition: Expr | undefined =
             bexpCtx !== undefined ? this.visitNodeCtx(bexpCtx) : bexpCtx;
         return new Rule(lhs, rhs, condition);
     }
 
-    visitCommand(ctx: CommandContext): Command | Symbol | Operator {
+    visitCommand(ctx: CommandContext): Command {
         const params: List<string> = List(ctx.ID().map(id => id.text));
         const cmd: CommandName = ctx.COMMAND().text as CommandName;
         return new Command(cmd, params);

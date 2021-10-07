@@ -1,11 +1,13 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { CharStreams } from 'antlr4ts/CharStreams';
 import { AlgebrainLexer } from './parser/AlgebrainLexer';
 import { AlgebrainParser, StatContext } from './parser/AlgebrainParser';
 
 import Visitor from './Visitor';
-import Executable from './Executable';
+import Executable, { TransformationMap } from './Executable';
+import Node from './Node';
+import Transformation from './Transformation';
 
 export default class Algebrain {
     private static retrieveTree(text: string): StatContext {
